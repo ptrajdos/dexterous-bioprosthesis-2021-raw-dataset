@@ -3,7 +3,7 @@ import platform
 
 def numpy_version():
     if "armv" in platform.machine():
-        return 'numpy==1.22.4'
+        return 'numpy==1.23.4'
     return 'numpy==1.22.4'
 
 def numba_version():
