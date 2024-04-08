@@ -1,3 +1,4 @@
+import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
 
@@ -10,8 +11,8 @@ class SetCreatorDummy(SetCreator):
     def transform(self, raw_signals: RawSignals):
 
         X = raw_signals
-        y = raw_signals.get_labels()
-        t = raw_signals.get_timestamps()
+        y =  np.asanyarray([rs.get_label() for rs in raw_signals])
+        t = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
         return X,y,t
     
     def fit_transform(self, raw_signals: RawSignals, y=None):

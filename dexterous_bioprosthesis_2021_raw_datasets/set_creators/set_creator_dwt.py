@@ -46,10 +46,14 @@ class SetCreatorDWT(SetCreator):
 
         n_signals = len(raw_signals)
         extracted_attribs = np.zeros( (n_signals, self._num_attribs))
+        labels = []
+        timestamps = []
 
         for raw_signal_id,  raw_signal in enumerate(raw_signals):
             
-            signal = raw_signal.to_numpy() 
+            signal = raw_signal.to_numpy()
+            labels.append(raw_signal.get_label())
+            timestamps.append(raw_signal.get_timestamp()) 
             decomposeds = pywt.wavedec(signal, wavelet=wavelet,axis=0, level=self.num_levels)
             offset = 0
             for extractor_id, extractor in enumerate(self.extractors):
@@ -58,8 +62,9 @@ class SetCreatorDWT(SetCreator):
                     n_extracted = extracted.shape[0]
                     extracted_attribs[raw_signal_id, offset:(offset+n_extracted)] = extracted
                     offset += n_extracted
-
-        return extracted_attribs, raw_signals.get_labels(), raw_signals.get_timestamps()
+        labels = np.asanyarray(labels)
+        timestamps = np.asanyarray(timestamps)
+        return extracted_attribs, labels, timestamps
     
     def fit_transform(self, raw_signals: RawSignals, y=None):
         return self.fit(raw_signals).transform(raw_signals)

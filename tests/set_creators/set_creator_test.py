@@ -1,4 +1,5 @@
 import unittest
+from sklearn.model_selection import GridSearchCV
 
 from sklearn.pipeline import Pipeline
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
@@ -111,6 +112,31 @@ class SetCreatorTest(unittest.TestCase):
             pipeline.fit(raw_set,y)
 
             y_pred = pipeline.predict(raw_set)
+
+    def test_gridsearch(self):
+        creators = self.get_creators()
+
+        for creator in creators:
+
+            raw_set = self.generate_sample_data()
+            
+            pipeline = Pipeline([
+                ('trans', SetCreatorTransformerWrapper(creator)), 
+                ('classifier', DecisionTreeClassifier())
+            ])
+            params = [{
+                "classifier__criterion":['gini', 'entropy' ]
+            }]
+
+
+            y = raw_set.get_labels()
+            gs = GridSearchCV(pipeline, param_grid=params, scoring='accuracy',cv=3)
+
+            gs.fit(raw_set,y)
+            y_pred = gs.predict(raw_set)
+
+            self.assertIsNotNone(y_pred, "Predictions are none")
+            self.assertTrue( len(y) == len(y_pred), "Wrong predictions length")
 
 
 

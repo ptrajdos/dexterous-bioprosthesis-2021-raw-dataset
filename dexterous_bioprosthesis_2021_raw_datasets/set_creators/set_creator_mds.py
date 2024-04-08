@@ -152,8 +152,8 @@ class SetCreatorMDS(SetCreator):
         
         X = self._calculate_mds(distance_matrix)
 
-        extracted_objs_classes = raw_signals.get_labels()
-        extracted_objs_timestamps = raw_signals.get_timestamps()
+        extracted_objs_classes = np.asanyarray([rs.get_label() for rs in raw_signals])
+        extracted_objs_timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
 
         return X, extracted_objs_classes, extracted_objs_timestamps
 
@@ -334,9 +334,3 @@ class SetCreatorMDS(SetCreator):
     def get_channel_attribs_indices(self):
 
         return self.attrib_indices_list
-
-
-
-
-
-        

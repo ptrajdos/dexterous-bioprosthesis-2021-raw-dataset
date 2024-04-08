@@ -69,23 +69,31 @@ class SetCreatorClusterDist(SetCreator):
                 self.channel_selected_attribs.append( offset + np.arange(n_best_sample_ids))
                 offset += n_best_sample_ids
 
-        return representation, raw_signals.get_labels(), raw_signals.get_timestamps()
+        labels = np.asanyarray([rs.get_label() for rs in raw_signals])
+        timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
+
+        return representation, labels, timestamps
 
         
 
     def fit(self, raw_signals: RawSignals, y=None):
-        self._fit(raw_signals)
+        raw_signals_n = RawSignals(raw_signals)
+        self._fit(raw_signals_n)
 
         return self
 
     def fit_transform(self, raw_signals: RawSignals, y=None):
-        return self._fit(raw_signals)
+        raw_signals_n = RawSignals(raw_signals)
+        return self._fit(raw_signals_n)
     
     def transform(self, raw_signals: RawSignals):
 
         repr = np.concatenate( self.flatten_function( self.distance_calculator.calculate_distance_matrix_set_2_set(raw_signals_1=raw_signals, raw_signals_2=self.reference_samples), keepdims=True),axis=1)
 
-        return repr, raw_signals.get_labels(), raw_signals.get_timestamps()
+        labels = np.asanyarray([rs.get_label() for rs in raw_signals])
+        timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
+
+        return repr, labels, timestamps
     
     def get_channel_attribs_indices(self):
         return self.channel_selected_attribs
