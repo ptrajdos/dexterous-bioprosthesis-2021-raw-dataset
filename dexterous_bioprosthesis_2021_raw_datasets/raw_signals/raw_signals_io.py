@@ -51,10 +51,10 @@ def _read_class_dir(class_dir):
 
         object_timestamp = 0
         try:
-            dat_handler = open(dat_path,"r")
-            data_text = dat_handler.read().strip()
-            element = datetime.datetime.strptime(data_text,date_format_string)
-            object_timestamp = datetime.datetime.timestamp(element)
+            with open(dat_path,"r") as dat_handler:
+                data_text = dat_handler.read().strip()
+                element = datetime.datetime.strptime(data_text,date_format_string)
+                object_timestamp = datetime.datetime.timestamp(element)
         except Exception as exc:
             logging.debug("Failed to determine timestamp for {}. Exception {}".format(csv_path, exc))
 
