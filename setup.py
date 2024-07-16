@@ -41,7 +41,7 @@ setup(
                 'librosa',
                 'audiomentations', 
                 numba_version(),
-                'statsmodels==0.13.5',
+                'statsmodels>=0.13.5',
                 'PyWavelets==1.4.1'
                 
         ],

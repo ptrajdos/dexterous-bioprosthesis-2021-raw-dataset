@@ -14,5 +14,5 @@ kneed==0.8.5
 librosa==0.10.1
 scipy==1.12.0
 audiomentations==0.34.1
-statsmodels==0.13.5
+statsmodels>=0.13.5
 PyWavelets==1.4.1
