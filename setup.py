@@ -12,6 +12,13 @@ def numba_version():
 
     return 'numba'
 
+def scikit_learn_version():
+    if "armv" in platform.machine():
+        return "scikit-learn==1.4.2"
+
+    return "scikit-learn>=1.4.2"
+
+
 setup(
         name='dexterous_bioprosthesis_2021_raw_datasets',
         version ='0.0.1',
@@ -30,7 +37,7 @@ setup(
                 'scipy>=1.12.0',
                 'liac-arff',
                 'joblib',
-                'scikit-learn>=1.4.0',
+                scikit_learn_version(),
                 'tqdm',
                 'joblib',
                 'dtw-python',
