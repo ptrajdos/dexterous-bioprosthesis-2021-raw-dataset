@@ -4,7 +4,7 @@ import platform
 def numpy_version():
     if "armv" in platform.machine():
         return 'numpy==1.23.4'
-    return 'numpy==1.22.4'
+    return 'numpy>=1.22.4'
 
 def numba_version():
     if "armv" in platform.machine():
@@ -27,10 +27,10 @@ setup(
                 'pandas',
                 numpy_version(),
                 'matplotlib',
-                'scipy>=1.10.1',
+                'scipy>=1.12.0',
                 'liac-arff',
                 'joblib',
-                'scikit-learn>=1.2.2',
+                'scikit-learn>=1.4.0',
                 'tqdm',
                 'joblib',
                 'dtw-python',
