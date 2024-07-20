@@ -36,7 +36,7 @@ setup(
                 'dtw-python',
                 'Cython',
                 'fastdtw',
-                'pygad==2.18.0',
+                'pygad>=2.18.3, <3.0.0',
                 'kneed',
                 'librosa',
                 'audiomentations', 
