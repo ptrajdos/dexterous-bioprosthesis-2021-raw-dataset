@@ -16,7 +16,7 @@ def scikit_learn_version():
     if "armv" in platform.machine():
         return "scikit-learn==1.4.2"
 
-    return "scikit-learn>=1.4.2"
+    return "scikit-learn>=1.2.2"
 
 
 setup(
