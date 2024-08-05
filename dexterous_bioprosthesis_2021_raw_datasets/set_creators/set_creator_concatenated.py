@@ -1,3 +1,4 @@
+from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_feature_extractor import SetCreatorFeatureExtractor
@@ -43,6 +44,8 @@ class SetCreatorConcatenated(SetCreator):
         return curr_max + 1
 
     def transform(self, raw_signals: RawSignals):
+        if self.get_channel_attribs_indices() is None:
+            raise NotFittedError("SetCreator has not been fitted.")
         X_es = []
         y_f = None
         t_f = None

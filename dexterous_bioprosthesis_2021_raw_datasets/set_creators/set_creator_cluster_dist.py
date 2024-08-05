@@ -1,3 +1,4 @@
+from sklearn.exceptions import NotFittedError
 from sklearn.metrics import silhouette_score, silhouette_samples
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
@@ -15,6 +16,7 @@ class SetCreatorClusterDist(SetCreator):
         self.distance_calculator:DistanceMatrixCalculator = distance_calculator
         self.flatten_function = flatten_function
         self.channel_selected_attribs = None # List containing number of attributes for each channel
+        self.is_fitted = False
 
     def _max_clusters_to_try(self, raw_signals:RawSignals):
         return int( sqrt( len(raw_signals) ) ) + 1
@@ -72,6 +74,8 @@ class SetCreatorClusterDist(SetCreator):
         labels = np.asanyarray([rs.get_label() for rs in raw_signals])
         timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
 
+        self.is_fitted = True
+
         return representation, labels, timestamps
 
         
@@ -80,6 +84,7 @@ class SetCreatorClusterDist(SetCreator):
         raw_signals_n = RawSignals(raw_signals)
         self._fit(raw_signals_n)
 
+
         return self
 
     def fit_transform(self, raw_signals: RawSignals, y=None):
@@ -87,6 +92,8 @@ class SetCreatorClusterDist(SetCreator):
         return self._fit(raw_signals_n)
     
     def transform(self, raw_signals: RawSignals):
+        if not self.is_fitted:
+            raise NotFittedError("SetCreator has not been fitted.")
 
         repr = np.concatenate( self.flatten_function( self.distance_calculator.calculate_distance_matrix_set_2_set(raw_signals_1=raw_signals, raw_signals_2=self.reference_samples), keepdims=True),axis=1)
 

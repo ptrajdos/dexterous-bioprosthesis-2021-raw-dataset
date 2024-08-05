@@ -1,4 +1,5 @@
 import unittest
+from sklearn.exceptions import NotFittedError
 from sklearn.model_selection import GridSearchCV
 
 from sklearn.pipeline import Pipeline
@@ -137,6 +138,24 @@ class SetCreatorTest(unittest.TestCase):
 
             self.assertIsNotNone(y_pred, "Predictions are none")
             self.assertTrue( len(y) == len(y_pred), "Wrong predictions length")
+
+    def test_not_fitted(self):
+
+        creators = self.get_creators()
+
+        for creator in creators:
+
+            raw_set = self.generate_sample_data()
+            n_samples = len(raw_set)
+            try:
+                X,y,t = creator.transform(raw_set)
+                self.fail("Applying transform on unfitted model!")
+            except NotFittedError as ex:
+                pass
+            except Exception as ex:
+                self.fail("An exception has been caught: {}".format(ex))
+
+    
 
 
 

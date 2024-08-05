@@ -1,6 +1,7 @@
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
+from sklearn.exceptions import NotFittedError
 import numpy as np 
 import pywt
 
@@ -42,8 +43,11 @@ class SetCreatorDWT(SetCreator):
     
 
     def transform(self, raw_signals: RawSignals):
+        
+        if self.get_channel_attribs_indices() is None:
+            raise NotFittedError("SetCreator has not been fitted.")
+        
         wavelet = pywt.Wavelet(self.wavelet_name)
-
         n_signals = len(raw_signals)
         extracted_attribs = np.zeros( (n_signals, self._num_attribs))
         labels = []
