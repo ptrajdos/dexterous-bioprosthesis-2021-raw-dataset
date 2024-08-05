@@ -2,6 +2,8 @@ import unittest
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 import numpy as np
 
+from tests.testing_tools import get_pickled_obj
+
 class RawSignalTest(unittest.TestCase):
 
     def test_rawsignal(self):
@@ -123,7 +125,16 @@ class RawSignalTest(unittest.TestCase):
 
         self.assertTrue(object_label == obj.get_label(),"Wrong label has been set")
 
+    def test_serialization(self):
+        R, C = 50,10
+        sig = np.zeros((R,C))
 
+        obj = RawSignal(signal=sig,timestamp=10,object_class=0)
+
+        pickled = get_pickled_obj(obj)
+        
+        self.assertIsNotNone(pickled, "Pickled should not have been None!")
+        self.assertTrue(obj == pickled, "Object and object reqd from pickle should have been equall")
 
 
 

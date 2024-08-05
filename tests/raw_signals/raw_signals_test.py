@@ -5,6 +5,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import Raw
 
 from copy import deepcopy
 
+from tests.testing_tools import get_pickled_obj
+
 class RawSignalsTest(unittest.TestCase):
 
     def test_creation(self):
@@ -250,6 +252,13 @@ class RawSignalsTest(unittest.TestCase):
             pass
         except Exception:
             self.fail("Wrong exception has been raised.")
+
+    def test_pickle(self):
+        signals = self.generate_sample_data()
+        pickled = get_pickled_obj(signals)
+
+        self.assertTrue( signals == pickled, "Object should have been equall with its pickled copy")
+
 
         
 
