@@ -26,7 +26,7 @@ class RawSignals():
 
         if not isinstance(key, tuple):
             if isinstance(key, slice):
-                return RawSignals(self.raw_signals_list[key])
+                return RawSignals(self.raw_signals_list[key],sample_rate=self.sample_rate)
 
             if isinstance(key, Collection):
                 if len(key) == len(self.raw_signals_list) and all( isinstance(item, bool) or isinstance(item, np.bool_) for item in key):
@@ -34,11 +34,11 @@ class RawSignals():
                 else:
                     sel_list = [ self.raw_signals_list[i] for i in key ]
                     
-                return RawSignals(sel_list)
+                return RawSignals(sel_list,sample_rate=self.sample_rate)
 
             if isinstance(key,Iterable):
                 sel_list = [ self.raw_signals_list[i] for i in key ]
-                return RawSignals(sel_list)
+                return RawSignals(sel_list,sample_rate=self.sample_rate)
 
             return self.raw_signals_list[key]
         
@@ -52,7 +52,7 @@ class RawSignals():
         if isinstance(selected_signals, RawSignal):
             return selected_signals[key[1:]]
         
-        return RawSignals( i[key[1:]] for i in selected_signals )
+        return RawSignals( [i[key[1:]] for i in selected_signals],sample_rate=self.sample_rate )
 
 
         
@@ -138,3 +138,12 @@ class RawSignals():
         
         for sig, label in zip(iter(self), labels):
             sig.set_label(label)
+    
+    def initialize_empty(self):
+        """
+        Initializes new, empty RawSignals object
+
+        Returns:
+        RawSignals with empty signals list
+        """
+        return RawSignals(raw_signal_list=[], sample_rate=self.sample_rate)

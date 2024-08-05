@@ -1,3 +1,4 @@
+import random
 import unittest
 import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
@@ -258,6 +259,21 @@ class RawSignalsTest(unittest.TestCase):
         pickled = get_pickled_obj(signals)
 
         self.assertTrue( signals == pickled, "Object should have been equall with its pickled copy")
+
+    def test_random_choice(self):
+        signals = self.generate_sample_data()
+        sig = random.choice(signals)
+
+        self.assertIsNotNone(sig, "Signal is none")
+        self.assertIsInstance(sig, RawSignal, "Not a raw Signal object")
+
+    def test_initialize_empty(self):
+        signals = self.generate_sample_data()
+        empty_sigs = signals.initialize_empty()
+
+        self.assertIsInstance(empty_sigs, RawSignals, "Not an instance of RawSignals")
+        self.assertTrue( len( empty_sigs ) == 0, "Not empty")
+
 
 
         
