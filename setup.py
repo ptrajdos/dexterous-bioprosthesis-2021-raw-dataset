@@ -8,7 +8,7 @@ def numpy_version():
 
 def numba_version():
     if "armv" in platform.machine():
-        return 'numba==0.56.4'
+        return 'numba>=0.56.4, <0.60.0'
 
     return 'numba'
 
