@@ -3,7 +3,7 @@ import platform
 
 def numpy_version():
     if "armv" in platform.machine():
-        return 'numpy==1.23.4'
+        return 'numpy>=1.22.4'
     return 'numpy>=1.22.4'
 
 def numba_version():
@@ -14,7 +14,7 @@ def numba_version():
 
 def scikit_learn_version():
     if "armv" in platform.machine():
-        return "scikit-learn==1.4.2"
+        return "scikit-learn>=1.2.2"
 
     return "scikit-learn>=1.2.2"
 
@@ -49,7 +49,7 @@ setup(
                 'audiomentations', 
                 numba_version(),
                 'statsmodels>=0.13.5',
-                'PyWavelets==1.4.1'
+                'PyWavelets>=1.4.1'
                 
         ],
         test_suite='test'
