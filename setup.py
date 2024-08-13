@@ -8,7 +8,9 @@ def numpy_version():
 
 def numba_version():
     if "armv" in platform.machine():
-        return 'numba==0.56.4'
+        #The highest version that uses LLVM 11 or 13
+        #Newer versions use LLVM 14 unavailable on Raspberry
+        return 'numba==0.56.4' 
 
     return 'numba'
 
