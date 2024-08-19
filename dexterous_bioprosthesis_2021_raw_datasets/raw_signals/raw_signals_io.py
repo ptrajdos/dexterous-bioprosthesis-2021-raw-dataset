@@ -12,16 +12,16 @@ from ..tools.progressparallel import ProgressParallel
 
 date_format_string = "%Y-%m-%d %H:%M:%S"
 
-def read_signals_from_dirs(input_dir, sample_rate=1000, n_jobs=-1):
+def read_signals_from_dirs(input_dir, sample_rate=1000, n_jobs=-1, parallel_options = dict()):
     """
      Reads raw signals from the directory structure.
      Return tuple of accepted and rejected signals
     """
-    accepted  = _read_signals_from_dirs_internal(input_dir, sample_rate, n_jobs=n_jobs)
+    accepted  = _read_signals_from_dirs_internal(input_dir, sample_rate, n_jobs=n_jobs, parallel_options = parallel_options)
 
     rejected_measurements_path = os.path.join(input_dir,"rejected")
     if os.path.exists(rejected_measurements_path):
-        rejected = _read_signals_from_dirs_internal(  rejected_measurements_path, sample_rate , n_jobs=n_jobs)
+        rejected = _read_signals_from_dirs_internal(  rejected_measurements_path, sample_rate , n_jobs=n_jobs, parallel_options= parallel_options)
     else:
         rejected = None
 
@@ -64,7 +64,7 @@ def _read_class_dir(class_dir):
 
         
 
-def _read_signals_from_dirs_internal(input_dir, sample_rate=1000, n_jobs=-1):
+def _read_signals_from_dirs_internal(input_dir, sample_rate=1000, n_jobs=-1, parallel_options = dict()):
     """
     Read the raw dataset from the directory structure.
     """
@@ -77,7 +77,7 @@ def _read_signals_from_dirs_internal(input_dir, sample_rate=1000, n_jobs=-1):
     if len(sorted_class_dirs) == 0:
             return data_objects
     
-    class_data_objects = ProgressParallel(n_jobs=n_jobs,use_tqdm=True,total=len(sorted_class_dirs),desc="Class directories")(delayed(_read_class_dir)(os.path.join(input_dir, directory)) 
+    class_data_objects = ProgressParallel(n_jobs=n_jobs,use_tqdm=True,total=len(sorted_class_dirs),desc="Class directories", **parallel_options)(delayed(_read_class_dir)(os.path.join(input_dir, directory)) 
                                         for directory in sorted_class_dirs )
     for class_data_obj in class_data_objects:
         data_objects+= class_data_obj

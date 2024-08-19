@@ -29,6 +29,46 @@ class RawSignalsIOTest(unittest.TestCase):
 
         except Exception as ex:
             self.fail("An exception has been caught during reading dataset from the file structure: " + str(ex))
+
+    def test_reading_parallel_multiprocessing(self):
+        data_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022")
+
+        try:
+            signals = read_signals_from_dirs(data_path, parallel_options={'backend':'multiprocessing'})
+            self.assertIn("accepted", signals)
+            self.assertIn("rejected", signals)
+
+            self.assertTrue( isinstance(signals["accepted"], RawSignals) )
+            self.assertTrue( isinstance(signals["rejected"], RawSignals) )
+
+            for acc in signals["accepted"]:
+                self.assertTrue( isinstance(acc, RawSignal) )
+
+            for rej in signals["rejected"]:
+                self.assertTrue( isinstance(rej, RawSignal) )
+
+        except Exception as ex:
+            self.fail("An exception has been caught during reading dataset from the file structure: " + str(ex))
+
+    def test_reading_parallel_threading(self):
+        data_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022")
+
+        try:
+            signals = read_signals_from_dirs(data_path, parallel_options={'backend':'threading'})
+            self.assertIn("accepted", signals)
+            self.assertIn("rejected", signals)
+
+            self.assertTrue( isinstance(signals["accepted"], RawSignals) )
+            self.assertTrue( isinstance(signals["rejected"], RawSignals) )
+
+            for acc in signals["accepted"]:
+                self.assertTrue( isinstance(acc, RawSignal) )
+
+            for rej in signals["rejected"]:
+                self.assertTrue( isinstance(rej, RawSignal) )
+
+        except Exception as ex:
+            self.fail("An exception has been caught during reading dataset from the file structure: " + str(ex))
     
     def test_writting(self):
         data_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022")
