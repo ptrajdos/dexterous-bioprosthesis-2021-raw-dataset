@@ -8,6 +8,9 @@ import shutil
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals_io import read_signals_from_dirs, save_signals_to_dirs
 
+def int_sort_key(x):
+    return int(x)
+
 class RawSignalsIOTest(unittest.TestCase):
 
     def test_reading(self):
@@ -80,6 +83,27 @@ class RawSignalsIOTest(unittest.TestCase):
         save_signals_to_dirs(raw_signals, output_directory)
 
         re_read_signals = read_signals_from_dirs(output_directory)["accepted"]
+
+        self.assertTrue( len(re_read_signals) == len(raw_signals), "Signals differ in length")
+
+        self.assertTrue(  set(re_read_signals.get_labels()) == set(raw_signals.get_labels()), "Different set of labels" )
+
+        self.assertTrue( raw_signals == re_read_signals, "Datasets should have been the same!")
+
+    def test_writting_sorts(self):
+        data_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022")
+        signals = read_signals_from_dirs(data_path)
+        output_directory = tempfile.mkdtemp()
+        # output_directory = os.path.join(settings.DATAPATH, output_directory)
+
+        raw_signals = signals["accepted"]
+        save_signals_to_dirs(raw_signals, output_directory)
+
+        
+
+        re_read_signals = read_signals_from_dirs(output_directory,
+                                                 dir_sorting_key=int_sort_key, 
+                                                 file_sorting_key=int_sort_key)["accepted"]
 
         self.assertTrue( len(re_read_signals) == len(raw_signals), "Signals differ in length")
 

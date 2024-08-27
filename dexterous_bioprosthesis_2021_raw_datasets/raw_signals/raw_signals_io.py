@@ -12,28 +12,38 @@ from ..tools.progressparallel import ProgressParallel
 
 date_format_string = "%Y-%m-%d %H:%M:%S"
 
-def read_signals_from_dirs(input_dir, sample_rate=1000, n_jobs=-1, parallel_options = dict()):
+def str_sort_key(x):
+    return str(x)
+
+def read_signals_from_dirs(input_dir, sample_rate=1000, n_jobs=-1, parallel_options = dict(), dir_sorting_key=str_sort_key,
+                           file_sorting_key=lambda x: str(x)):
     """
      Reads raw signals from the directory structure.
      Return tuple of accepted and rejected signals
     """
-    accepted  = _read_signals_from_dirs_internal(input_dir, sample_rate, n_jobs=n_jobs, parallel_options = parallel_options)
+    accepted  = _read_signals_from_dirs_internal(input_dir, sample_rate, n_jobs=n_jobs,
+                                                  parallel_options = parallel_options,
+                                                  dir_sorting_key=dir_sorting_key
+                                                  )
 
     rejected_measurements_path = os.path.join(input_dir,"rejected")
     if os.path.exists(rejected_measurements_path):
-        rejected = _read_signals_from_dirs_internal(  rejected_measurements_path, sample_rate , n_jobs=n_jobs, parallel_options= parallel_options)
+        rejected = _read_signals_from_dirs_internal(  rejected_measurements_path, sample_rate ,
+                                                     n_jobs=n_jobs, parallel_options= parallel_options,
+                                                     dir_sorting_key=dir_sorting_key
+                                                     )
     else:
         rejected = None
 
     return {"accepted": accepted, "rejected": rejected}
 
-def _read_class_dir(class_dir):
+def _read_class_dir(class_dir, file_order_key = str_sort_key):
     """
     Read objects from class-specific directory
     Arguments:
      class_dir -- class specific directories. It contains csv and dat files
     """
-    csv_files_list = [file for file in sorted(os.listdir(class_dir)) if file.endswith(".csv")]
+    csv_files_list = [file for file in sorted(os.listdir(class_dir), key=file_order_key) if file.endswith(".csv")]
     class_name = os.path.basename(class_dir)
 
     signal_objects = RawSignals()
@@ -64,12 +74,13 @@ def _read_class_dir(class_dir):
 
         
 
-def _read_signals_from_dirs_internal(input_dir, sample_rate=1000, n_jobs=-1, parallel_options = dict()):
+def _read_signals_from_dirs_internal(input_dir, sample_rate=1000, n_jobs=-1, parallel_options = dict(), dir_sorting_key=lambda x: str(x),
+                                     file_order_key = str_sort_key):
     """
     Read the raw dataset from the directory structure.
     """
     sorted_class_dirs = sorted( [ d for d in os.listdir(os.path.normpath(input_dir)) 
-            if  os.path.isdir( os.path.join(input_dir,d) ) and d != 'rejected'  ] )
+            if  os.path.isdir( os.path.join(input_dir,d) ) and d != 'rejected'  ], key=dir_sorting_key )
 
 
     data_objects = RawSignals( sample_rate=sample_rate)
@@ -77,7 +88,9 @@ def _read_signals_from_dirs_internal(input_dir, sample_rate=1000, n_jobs=-1, par
     if len(sorted_class_dirs) == 0:
             return data_objects
     
-    class_data_objects = ProgressParallel(n_jobs=n_jobs,use_tqdm=True,total=len(sorted_class_dirs),desc="Class directories", **parallel_options)(delayed(_read_class_dir)(os.path.join(input_dir, directory)) 
+    class_data_objects = ProgressParallel(n_jobs=n_jobs,use_tqdm=True,total=len(sorted_class_dirs),
+                                          desc="Class directories", **parallel_options)\
+                                            (delayed(_read_class_dir)(os.path.join(input_dir, directory), file_order_key) 
                                         for directory in sorted_class_dirs )
     for class_data_obj in class_data_objects:
         data_objects+= class_data_obj
