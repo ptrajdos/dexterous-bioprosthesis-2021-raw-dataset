@@ -1,4 +1,5 @@
 
+from copy import deepcopy
 import numpy as np
 from .raw_signal import RawSignal
 from collections.abc import Iterable
@@ -17,6 +18,7 @@ class RawSignals():
 
         if raw_signal_list is not None:
             for sig in raw_signal_list:
+                sig.set_sample_rate(self.sample_rate)
                 self.append(sig)
 
     def __iter__(self):
@@ -26,7 +28,7 @@ class RawSignals():
 
         if not isinstance(key, tuple):
             if isinstance(key, slice):
-                return RawSignals(self.raw_signals_list[key],sample_rate=self.sample_rate)
+                return RawSignals(self.raw_signals_list[key], sample_rate=self.sample_rate)
 
             if isinstance(key, Collection):
                 if len(key) == len(self.raw_signals_list) and all( isinstance(item, bool) or isinstance(item, np.bool_) for item in key):
@@ -138,7 +140,7 @@ class RawSignals():
         
         for sig, label in zip(iter(self), labels):
             sig.set_label(label)
-    
+
     def initialize_empty(self):
         """
         Initializes new, empty RawSignals object
@@ -147,3 +149,12 @@ class RawSignals():
         RawSignals with empty signals list
         """
         return RawSignals(raw_signal_list=[], sample_rate=self.sample_rate)
+    
+    def get_sample_rate(self):
+        return self.sample_rate
+    
+    def set_sample_rate(self, sample_rate):
+        self.sample_rate = sample_rate
+
+        for sig  in iter(self):
+            sig.set_sample_rate(self.sample_rate)

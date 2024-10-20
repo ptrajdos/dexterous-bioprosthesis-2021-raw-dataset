@@ -9,7 +9,7 @@ class RawSignal():
     Class represents raw signal (in the time domain).
     The signal may contain single or multiple channels.
     """
-    def __init__(self, signal, object_class=np.nan,channel_names=None, timestamp=0):
+    def __init__(self, signal, object_class=np.nan,channel_names=None, timestamp=0, sample_rate = 1000):
         """
          Initializaes the class instance
          Arguments:
@@ -17,11 +17,14 @@ class RawSignal():
          signal -- numpy array samples (rows) x channels (columns)
          object_class -- int/string represents class
          timestamp -- unix timestamp or zero
+         sample_rate -- sample rate of the signal
         """
 
         self.signal = signal
         self.object_class = object_class
         self.timestamp = timestamp
+        self.sample_rate = sample_rate
+
         if channel_names is None:
             self.channel_names = ["C{}".format(i) for i in range(signal.shape[1])]
         else:
@@ -46,6 +49,9 @@ class RawSignal():
 
         if not self.channel_names == __o.channel_names:
             return False
+        
+        if self.sample_rate != __o.sample_rate:
+            return False
 
         return True
         
@@ -63,7 +69,8 @@ class RawSignal():
                 return RawSignal(signal= self.signal[pos],
                          object_class= deepcopy(self.object_class), 
                          channel_names=  deepcopy(self.channel_names),
-                         timestamp= deepcopy(self.timestamp) 
+                         timestamp= deepcopy(self.timestamp),
+                         sample_rate= deepcopy(self.sample_rate), 
                          )
 
             if len(pos) > 2:
@@ -74,14 +81,16 @@ class RawSignal():
             return RawSignal(signal= self.signal[pos],
                          object_class= deepcopy(self.object_class), 
                          channel_names=  self._column_names_get(col_idx),
-                         timestamp= deepcopy(self.timestamp) 
+                         timestamp= deepcopy(self.timestamp),
+                         sample_rate= deepcopy(self.sample_rate), 
                          )
     
 
         return RawSignal(signal= self.signal[pos],
                          object_class= deepcopy(self.object_class), 
                          channel_names=  deepcopy(self.channel_names),
-                         timestamp= deepcopy(self.timestamp) 
+                         timestamp= deepcopy(self.timestamp),
+                         sample_rate= deepcopy(self.sample_rate), 
                          )
     
 
@@ -117,3 +126,9 @@ class RawSignal():
     
     def set_label(self,label):
         self.object_class = label
+
+    def get_sample_rate(self):
+        return self.sample_rate
+    
+    def set_sample_rate(self, sample_rate):
+        self.sample_rate = sample_rate
