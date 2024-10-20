@@ -30,7 +30,7 @@ class RawSignalsAugumenterInvertPolarity(RawSignalsAugumenter):
         return [new_signal]
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
-        new_signals = RawSignals()
+        new_signals = RawSignals(sample_rate=raw_signals.sample_rate)
         
         aug_sig_list = ProgressParallel(n_jobs=self.n_jobs,use_tqdm=True,total=len(raw_signals))(delayed(self._sig_augument)( sig ) for sig in raw_signals  )
 

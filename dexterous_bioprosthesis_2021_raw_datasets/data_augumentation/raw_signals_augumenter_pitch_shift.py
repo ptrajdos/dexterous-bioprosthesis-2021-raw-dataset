@@ -42,7 +42,7 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenter):
         return sig_list
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
-        new_signals = RawSignals()
+        new_signals = RawSignals(sample_rate=raw_signals.sample_rate)
 
         sample_rate = raw_signals.sample_rate
         

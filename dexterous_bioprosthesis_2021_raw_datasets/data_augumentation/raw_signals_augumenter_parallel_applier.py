@@ -31,7 +31,7 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
 
-        new_signals = RawSignals()
+        new_signals = RawSignals(sample_rate=raw_signals.sample_rate)
 
         for aug in self.augumenter_list:
             new_signals += aug.transform(raw_signals)
