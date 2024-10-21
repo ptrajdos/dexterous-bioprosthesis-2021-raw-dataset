@@ -143,7 +143,8 @@ class RawSignals():
 
     def initialize_empty(self):
         """
-        Initializes new, empty RawSignals object
+        Initializes new, empty RawSignals object.
+        Copy attributes of the original object.
 
         Returns:
         RawSignals with empty signals list

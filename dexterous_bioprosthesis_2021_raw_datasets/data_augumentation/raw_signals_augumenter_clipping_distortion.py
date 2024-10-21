@@ -44,7 +44,7 @@ class RawSignalsAugumenterClippingDistortion(RawSignalsAugumenter):
         return self
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
-        new_signals = RawSignals(sample_rate=raw_signals.sample_rate)
+        new_signals = raw_signals.initialize_empty()
 
         sample_rate = raw_signals.sample_rate
         
