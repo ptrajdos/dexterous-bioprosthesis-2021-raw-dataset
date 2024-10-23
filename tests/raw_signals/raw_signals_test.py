@@ -274,6 +274,35 @@ class RawSignalsTest(unittest.TestCase):
         self.assertIsInstance(empty_sigs, RawSignals, "Not an instance of RawSignals")
         self.assertTrue( len( empty_sigs ) == 0, "Not empty")
 
+    def test_to_numpy(self):
+        n_sig = 100
+        n_samples = 111
+        n_channels=10
+        signals = self.generate_sample_data(column_number=n_channels, samples_number=n_samples, signal_number=n_sig)
+
+        np_array = signals.to_numpy()
+
+        self.assertIsNotNone(np_array, "Returned object is None")
+        self.assertIsInstance(np_array, np.ndarray, "Returned object is not numpy ndarray")
+        self.assertTrue( np.issubdtype(np_array.dtype, np.floating), "Not floating dtype")
+        self.assertFalse(np.isnan(np_array).any(), "NaNs in returned array")
+        self.assertFalse(np.isinf(np_array).any(), "Infs in returned array")
+        self.assertTrue( np_array.shape ==(n_sig, n_samples, n_channels), "Wrong shape of the returned signal." )
+
+    def test_set_sample_rate(self):
+        n_sig = 100
+        n_samples = 111
+        n_channels=10
+        signals = self.generate_sample_data(column_number=n_channels, samples_number=n_samples, signal_number=n_sig)
+        sr  = 1666
+        signals.set_sample_rate(1666)
+
+        self.assertTrue(signals.get_sample_rate() == sr, "Wrong global sample rate.")
+        for sig in signals:
+            self.assertTrue(sig.get_sample_rate() == sr, "Wrong signal sample rate.")
+
+
+
 
 
         

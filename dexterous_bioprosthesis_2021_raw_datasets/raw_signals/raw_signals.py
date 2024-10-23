@@ -159,3 +159,16 @@ class RawSignals():
 
         for sig  in iter(self):
             sig.set_sample_rate(self.sample_rate)
+
+    def to_numpy(self):
+        """
+        Returns the raw_signals object as a numpy array.
+        Assuming that all raw_signal object have the same dimension
+
+        Returns:
+        ---------
+        numpy array of shape (n_objects, n_samples, n_channels)
+
+        """
+        np_array = np.asanyarray([ rs.to_numpy() for rs in self.raw_signals_list])
+        return np_array
