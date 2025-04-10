@@ -17,6 +17,7 @@ UNITTEST_PARALLEL = unittest-parallel
 PDOC= pdoc3
 PYTHON=python
 PIP=pip
+PYTEST=pytest
 
 LOGDIR=${ROOTDIR}/testlogs
 LOGFILE=${LOGDIR}/`date +'%y-%m-%d_%H-%M-%S'`.log
@@ -49,3 +50,7 @@ test_parallel: venv
 
 docs:
 	${ACTIVATE}; $(PDOC) --force --html ${SRCDIR} --output-dir ${DOCS_DIR}
+
+profile: venv
+	
+	${ACTIVATE}; ${PYTEST} -n auto --cov-report=html --cov=${SRCDIR} --profile ${TESTDIR}
