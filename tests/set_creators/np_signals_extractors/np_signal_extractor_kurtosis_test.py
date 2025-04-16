@@ -10,7 +10,8 @@ class NpSignalExtractorKurtosisTest(NpSignalExtractorTest):
 
     def get_extractors(self):
         return [
-            NpSignalExtractorKurtosis()
+            NpSignalExtractorKurtosis(), 
+            NpSignalExtractorKurtosis(sanitize_output=True,check_input=True, check_output=True),
         ]
     
 

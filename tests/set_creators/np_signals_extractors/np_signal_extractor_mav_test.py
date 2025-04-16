@@ -9,7 +9,8 @@ class NpSignalExtractorMavTest(NpSignalExtractorTest):
 
     def get_extractors(self):
         return [
-            NpSignalExtractorMav()
+            NpSignalExtractorMav(),
+            NpSignalExtractorMav(sanitize_output=True,check_input=True, check_output=True),
         ]
     
 

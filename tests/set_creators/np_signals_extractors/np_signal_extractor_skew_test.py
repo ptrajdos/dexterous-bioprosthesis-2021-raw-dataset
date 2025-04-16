@@ -9,7 +9,8 @@ class NpSignalExtractorSkewTest(NpSignalExtractorTest):
 
     def get_extractors(self):
         return [
-            NpSignalExtractorSkew()
+            NpSignalExtractorSkew(),
+            NpSignalExtractorSkew(sanitize_output=True,check_input=True, check_output=True),
         ]
     
 

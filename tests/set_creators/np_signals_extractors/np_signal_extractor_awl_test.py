@@ -10,7 +10,8 @@ class NpSignalExtractorAWLTest(NpSignalExtractorTest):
 
     def get_extractors(self):
         return [
-            NpSignalExtractorAWL()
+            NpSignalExtractorAWL(), 
+            NpSignalExtractorAWL(sanitize_output=True,check_input=True, check_output=True),
         ]
     
 

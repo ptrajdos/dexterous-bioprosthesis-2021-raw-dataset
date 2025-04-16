@@ -10,5 +10,6 @@ class NpSignalExtractorZcrTest(NpSignalExtractorTest):
 
     def get_extractors(self):
         return [
-            NpSignalExtractorZcr()
+            NpSignalExtractorZcr(),
+            NpSignalExtractorZcr(sanitize_output=True, check_input=True, check_output=True),
         ]

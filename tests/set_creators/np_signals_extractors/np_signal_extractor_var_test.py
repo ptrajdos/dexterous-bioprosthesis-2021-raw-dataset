@@ -10,6 +10,7 @@ class NpSignalExtractorVarTest(NpSignalExtractorTest):
 
     def get_extractors(self):
         return [
-            NpSignalExtractorVar()
+            NpSignalExtractorVar(),
+            NpSignalExtractorVar(sanitize_output=True,check_input=True, check_output=True),
         ]
     

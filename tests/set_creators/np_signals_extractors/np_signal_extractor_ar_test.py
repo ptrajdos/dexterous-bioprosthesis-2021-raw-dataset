@@ -10,7 +10,8 @@ class NpSignalExtractorArTest(NpSignalExtractorTest):
 
     def get_extractors(self):
         return [
-            NpSignalExtractorAr()
+            NpSignalExtractorAr(),
+            NpSignalExtractorAr(check_input=True),
         ]
 
         
