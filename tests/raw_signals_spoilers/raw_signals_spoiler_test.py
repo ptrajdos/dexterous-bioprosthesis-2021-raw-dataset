@@ -55,7 +55,7 @@ class RawSignalsSpoilerTest(RawSignalsSpoilerInterfaceTest):
                     )
 
     def test_dtype(self):
-        dtypes = [np.float32, np.float64, np.float_, np.double]
+        dtypes = [np.float32, np.float64, np.single, np.double]
         for dtype in dtypes:
             with self.subTest(dtype=dtype):
                 # Generate sample data with the specified dtype
