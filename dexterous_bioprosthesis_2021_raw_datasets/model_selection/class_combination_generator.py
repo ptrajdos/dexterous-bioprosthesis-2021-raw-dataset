@@ -30,7 +30,7 @@ class ClassCombinationGenerator:
         n_objects = len(self.y)
 
         for class_group in itertools.combinations(u_classes, self.num_to_select):
-            selection_mask = np.zeros( n_objects, dtype=np.bool8)
+            selection_mask = np.zeros( n_objects, dtype=np.bool_)
             for class_label in class_group:
                 selection_mask = np.bitwise_or(selection_mask, self.y == class_label)
 
