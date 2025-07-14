@@ -57,7 +57,8 @@ class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
 
             for ch_idx in selected_channels_idxs:    
                 alphas[ch_idx] = self._find_alpha(np_sig, ch_idx)
-                np_sig[:,ch_idx] = clipper(np_sig[:,ch_idx],t=alphas[ch_idx])
+                #FIXME  Woraround for  nummba issue with different dtypes
+                np_sig[:,ch_idx] = clipper(np_sig[:,ch_idx].astype(np.float32),t=alphas[ch_idx]).astype(np_sig.dtype)
 
         return copied_signals
 

@@ -1,4 +1,6 @@
 import unittest
+
+import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor_ar import NpSignalExtractorAr
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor_mav import NpSignalExtractorMav
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor_ssc import NpSignalExtractorSsc
@@ -23,8 +25,8 @@ class SetCreatorDWTTest(SetCreatorTest):
             ]
         return extractors
     
-    def generate_sample_data(self):
-        return generate_sample_data(samples_number=1000)
+    def generate_sample_data(self, dtype=np.double):
+        return generate_sample_data(samples_number=1000, dtype=dtype)
 
 
 if __name__ == '__main__':

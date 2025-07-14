@@ -30,7 +30,7 @@ class RawSignalsAugumenterWhiteNoise(RawSignalsAugumenter):
                 np_sig = new_signal.signal
                 for ch_id in range(np_sig.shape[1]):
                     noise_perc = np.random.uniform(self.noise_perc_min, self.noise_perc_max,1)
-                    noise_vec = np.random.normal(0,np_sig[:,ch_id].std(), np_sig[:,ch_id].size)
+                    noise_vec = np.random.normal(0,np_sig[:,ch_id].std(), np_sig[:,ch_id].size).astype(np_sig.dtype)
                     np_sig[:,ch_id]+= noise_perc * noise_vec
 
                 sig_list.append(new_signal)

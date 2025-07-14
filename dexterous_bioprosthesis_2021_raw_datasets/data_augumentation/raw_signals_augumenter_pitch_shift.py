@@ -36,7 +36,9 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenter):
                 for ch_id in range(np_sig.shape[1]):
                 
                     ch_sig = np_sig[:,ch_id]
-                    np_sig[:,ch_id] = transformer(ch_sig, sample_rate=sample_rate)
+                    # FIXME  Woraround for  nummba issue with different dtypes
+                    # FIXME NotImplementedError: Failed in nopython mode pipeline (step: native lowering)
+                    np_sig[:,ch_id] = transformer(ch_sig.astype(np.double), sample_rate=sample_rate).astype(np_sig.dtype)
                 sig_list.append(new_signal)
         
         return sig_list

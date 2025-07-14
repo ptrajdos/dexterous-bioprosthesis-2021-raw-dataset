@@ -8,7 +8,7 @@ from numba import jit
 
 # @jit(nopython=True)
 def ssc_int(input):
-    re = np.copy(input).astype(np.float_)
+    re = np.copy(input).astype(input.dtype)
     re[re <= 0] = 0.0
     re[re > 0] = 1.0
     return re
@@ -24,7 +24,7 @@ class NpSignalExtractorSsc(NPSignalExtractor):
             ssc_int(-np.diff(X, axis=0, prepend=1)[1:-1] * np.diff(X, axis=0)[1:]),
             axis=0,
         )
-        return SSC
+        return SSC.astype(X.dtype)
 
     def attribs_per_column(self):
         return 1

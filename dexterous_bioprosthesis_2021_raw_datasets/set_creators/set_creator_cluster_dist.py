@@ -96,7 +96,7 @@ class SetCreatorClusterDist(SetCreator):
             raise NotFittedError("SetCreator has not been fitted.")
 
         repr = np.concatenate( self.flatten_function( self.distance_calculator.calculate_distance_matrix_set_2_set(raw_signals_1=raw_signals, raw_signals_2=self.reference_samples), keepdims=True),axis=1)
-
+        repr = repr.astype(raw_signals[0].to_numpy().dtype)
         labels = np.asanyarray([rs.get_label() for rs in raw_signals])
         timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
 

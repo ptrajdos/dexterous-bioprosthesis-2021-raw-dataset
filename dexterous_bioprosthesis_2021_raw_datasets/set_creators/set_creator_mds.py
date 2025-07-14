@@ -323,7 +323,7 @@ class SetCreatorMDS(SetCreator):
     
         new_X = ProgressParallel(n_jobs=self.n_jobs,use_tqdm=not self.tqdm_disable,total=len(raw_signals),desc="Fitting new points")(delayed(self._new_X_vec)( new_to_train_distances,i ) for i in range(len(raw_signals)) )
 
-        tr_dataset = np.asanyarray(new_X)
+        tr_dataset = np.asanyarray(new_X).astype(self.raw_signals_set[0].to_numpy().dtype)
 
         extracted_objs_classes = [x.object_class for x in raw_signals]
         extracted_objs_timestamps = [x.timestamp for x in raw_signals]

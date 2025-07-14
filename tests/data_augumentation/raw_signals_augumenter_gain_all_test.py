@@ -2,7 +2,7 @@ from tests.data_augumentation.raw_signals_augumenter_test import RawSignalsAugum
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter_gain_all import RawSignalsAugumenterGainAll
 
 
-class RawSignalsAugumenterGainChannelTest(RawSignalsAugumenterTest):
+class RawSignalsAugumenterGainAllTest(RawSignalsAugumenterTest):
 
 
     __test__ = True

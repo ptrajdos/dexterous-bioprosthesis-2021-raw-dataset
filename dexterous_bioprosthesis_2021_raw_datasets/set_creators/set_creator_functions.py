@@ -57,6 +57,8 @@ class SetCreatorFunctions(SetCreator):
                 n_extracted = extracted.shape[0]
                 extracted_attribs[raw_signal_id, offset:(offset+n_extracted)] = extracted
                 offset += n_extracted
+                
+        extracted_attribs = extracted_attribs.astype(raw_signals[0].to_numpy().dtype)
         labels = np.asanyarray(labels)
         timestamps = np.asanyarray(timestamps)
         return extracted_attribs, labels, timestamps

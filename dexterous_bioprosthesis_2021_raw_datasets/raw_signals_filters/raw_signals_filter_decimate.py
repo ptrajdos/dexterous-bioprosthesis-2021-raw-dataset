@@ -25,7 +25,7 @@ class RawSignalsFilterDecimate(RawSignalsFilter):
         copied_signals.sample_rate = copied_signals.sample_rate//self.downsample_factor
 
         for signal in copied_signals:
-            signal.signal = decimate(signal.signal, q= self.downsample_factor, axis=0)
+            signal.signal = decimate(signal.signal, q= self.downsample_factor, axis=0).astype(signal.signal.dtype)
 
 
         return copied_signals

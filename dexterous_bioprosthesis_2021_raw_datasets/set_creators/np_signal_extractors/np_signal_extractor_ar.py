@@ -40,7 +40,7 @@ class NpSignalExtractorAr(NPSignalExtractor):
             m_params = [val for val in model.params]
             attribs += m_params
 
-        attribs = np.asanyarray(attribs)
+        attribs = np.asanyarray(attribs).astype(X.dtype)
         return attribs
 
     def attribs_per_column(self):

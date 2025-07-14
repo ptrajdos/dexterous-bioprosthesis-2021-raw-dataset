@@ -1,13 +1,22 @@
 import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_creators.raw_signals_creator import RawSignalsCreator
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_creators.raw_signals_creator import (
+    RawSignalsCreator,
+)
 
 import random
 
 
 class RawSignalsCreatorWhiteNoise(RawSignalsCreator):
-    def __init__(self, set_size:int=30, column_number:int=3, samples_number:int=100, class_indices = [0,1,2] ) -> None:
+    def __init__(
+        self,
+        set_size: int = 30,
+        column_number: int = 3,
+        samples_number: int = 100,
+        class_indices=[0, 1, 2],
+        dtype=np.double,
+    ) -> None:
         super().__init__()
         """
         Arguments:
@@ -22,14 +31,19 @@ class RawSignalsCreatorWhiteNoise(RawSignalsCreator):
         self.column_number = column_number
         self.samples_number = samples_number
         self.class_indices = class_indices
+        self.dtype = dtype
 
     def get_set(self) -> RawSignals:
         signals = RawSignals()
 
-        for i in range(1,self.set_size+1):
-            rnd_idx = random.randint(0, len(self.class_indices)-1)
+        for i in range(1, self.set_size + 1):
+            rnd_idx = random.randint(0, len(self.class_indices) - 1)
             rnd_class = self.class_indices[rnd_idx]
-            signals.append( RawSignal(signal=np.random.rand( self.samples_number,self.column_number), object_class=rnd_class ) )
+            signals.append(
+                RawSignal(
+                    signal=np.random.rand(self.samples_number, self.column_number).astype(self.dtype),
+                    object_class=rnd_class,
+                )
+            )
 
         return signals
-        
