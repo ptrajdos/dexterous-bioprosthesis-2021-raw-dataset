@@ -38,7 +38,7 @@ def read_signals_from_archive(
                 if member.endswith(".csv"):
                     base_filename = os.path.splitext(os.path.basename(member))[0]
                     class_name = os.path.basename(os.path.dirname(member))
-                    dat_name = os.path.join(os.path.dirname(member), "{}.dat".format(base_filename))
+                    dat_name = f"{os.path.dirname(member)}/{base_filename}.dat"
                     is_rejected = os.path.basename(os.path.dirname(os.path.dirname(member))) == "rejected"
                     dat_file_present = dat_name in memberlist
                     with z.open(member) as csv_handler:
@@ -86,7 +86,7 @@ def read_signals_from_archive(
                     member_name = member.name
                     base_filename = os.path.splitext(os.path.basename(member_name))[0]
                     class_name = os.path.basename(os.path.dirname(member_name))
-                    dat_name = os.path.join(os.path.dirname(member_name), "{}.dat".format(base_filename))
+                    dat_name = f"{os.path.dirname(member_name)}/{base_filename}.dat"
                     is_rejected = os.path.basename(os.path.dirname(os.path.dirname(member_name))) == "rejected"
                     dat_file_present = dat_name in members_names_list
                     csv_file_handler = tar.extractfile(member)
