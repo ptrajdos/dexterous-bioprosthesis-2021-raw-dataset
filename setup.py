@@ -23,7 +23,7 @@ def scikit_learn_version():
 
 setup(
         name='dexterous_bioprosthesis_2021_raw_datasets',
-        version ='0.0.2',
+        version ='0.0.3',
         author='Pawel Trajdos',
         author_email='pawel.trajdos@pwr.edu.pl',
         url = 'https://github.com/ptrajdos/dexterous-bioprosthesis-2021-raw-dataset',
@@ -33,7 +33,7 @@ setup(
                 'dexterous_bioprosthesis_2021_raw_datasets.*',
                 ]),
         install_requires=[ 
-                'pandas',
+                'pandas<3.0.0',
                 numpy_version(),
                 'matplotlib',
                 'scipy>=1.12.0',

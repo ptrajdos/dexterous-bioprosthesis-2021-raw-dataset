@@ -1,10 +1,12 @@
 import datetime
 import os
 import logging
+
 from joblib import delayed
 import pandas as pd
 import numpy as np
-import locale
+import zipfile
+import tarfile
 
 from .raw_signal import RawSignal
 from .raw_signals import RawSignals
@@ -15,6 +17,120 @@ date_format_string = "%Y-%m-%d %H:%M:%S"
 
 def str_sort_key(x):
     return str(x)
+
+
+def read_signals_from_archive(
+    archive_path,
+    sample_rate=1000,
+    dtype=np.double,
+    dir_sorting_key=str_sort_key,
+    file_sorting_key=lambda x: str(x),
+):
+    accapted = RawSignals(sample_rate=sample_rate)
+    rejected = RawSignals(sample_rate=sample_rate)
+    
+     # --- ZIP ---
+    if zipfile.is_zipfile(archive_path):
+        with zipfile.ZipFile(archive_path, "r", allowZip64=True) as z:
+            memberlist = z.namelist()
+            memberlist.sort(key=str_sort_key)
+            for member in memberlist:
+                if member.endswith(".csv"):
+                    base_filename = os.path.splitext(os.path.basename(member))[0]
+                    class_name = os.path.basename(os.path.dirname(member))
+                    dat_name = os.path.join(os.path.dirname(member), "{}.dat".format(base_filename))
+                    is_rejected = os.path.basename(os.path.dirname(os.path.dirname(member))) == "rejected"
+                    dat_file_present = dat_name in memberlist
+                    with z.open(member) as csv_handler:
+                        try:
+                            data = np.asfortranarray(
+                                pd.read_csv(csv_handler, delimiter=";", decimal=",", header=None).to_numpy(
+                                    dtype=dtype
+                                ),
+                                dtype=dtype,
+                            )
+                        except Exception as exc:
+                            logging.debug(
+                                "Failed to load {}. Exception: {}. Skipping".format(member, exc)
+                            )
+                            continue
+
+                        object_timestamp = 0
+                        if dat_file_present:
+                            try:
+                                with z.open(dat_name, "r") as dat_handler:
+                                    data_text_bytes = dat_handler.read().strip()
+                                    data_text = data_text_bytes.decode('utf-8')
+                                    element = datetime.datetime.strptime(data_text, date_format_string)
+                                    object_timestamp = datetime.datetime.timestamp(element)
+                            except Exception as exc:
+                                logging.debug(
+                                    "Failed to determine timestamp for {}. Exception {}".format(
+                                        member, exc
+                                    )
+                                )
+
+                        if not is_rejected:
+                            accapted.append(RawSignal(data, class_name, timestamp=object_timestamp))
+                        else:
+                            rejected.append(RawSignal(data, class_name, timestamp=object_timestamp))
+
+    # --- TAR (supports tar, tar.gz, tar.bz2, tar.xz) ---
+    elif tarfile.is_tarfile(archive_path):
+        with tarfile.open(archive_path, "r:*") as tar:
+            memberlist = tar.getmembers()
+            memberlist.sort(key=str_sort_key)
+            members_names_list = [m.name for m in memberlist]
+            for member in memberlist:
+                if member.isfile() and member.name.endswith(".csv"):
+                    member_name = member.name
+                    base_filename = os.path.splitext(os.path.basename(member_name))[0]
+                    class_name = os.path.basename(os.path.dirname(member_name))
+                    dat_name = os.path.join(os.path.dirname(member_name), "{}.dat".format(base_filename))
+                    is_rejected = os.path.basename(os.path.dirname(os.path.dirname(member_name))) == "rejected"
+                    dat_file_present = dat_name in members_names_list
+                    csv_file_handler = tar.extractfile(member)
+                    if csv_file_handler is not None:
+                        try:
+                            data = np.asfortranarray(
+                                pd.read_csv(csv_file_handler, delimiter=";", decimal=",", header=None).to_numpy(
+                                    dtype=dtype
+                                ),
+                                dtype=dtype,
+                            )
+                        except Exception as exc:
+                            logging.debug(
+                                "Failed to load {}. Exception: {}. Skipping".format(member, exc)
+                            )
+                            continue
+
+                        object_timestamp = 0
+                        if dat_file_present:
+                            try:
+                                data_file_member = tar.getmember(dat_name)
+                                data_handler = tar.extractfile(data_file_member)
+                                data_text_bytes = data_handler.read().strip()
+                                data_text = data_text_bytes.decode('utf-8')
+                                element = datetime.datetime.strptime(data_text, date_format_string)
+                                object_timestamp = datetime.datetime.timestamp(element)
+                            except Exception as exc:
+                                logging.debug(
+                                    "Failed to determine timestamp for {}. Exception {}".format(
+                                        member, exc
+                                    )
+                                )
+
+                        if not is_rejected:
+                            accapted.append(RawSignal(data, class_name, timestamp=object_timestamp))
+                        else:
+                            rejected.append(RawSignal(data, class_name, timestamp=object_timestamp))
+
+    else:
+        raise ValueError(f"Unsupported archive format: {archive_path}")
+    
+    if len(rejected) == 0:
+        rejected = None
+    return {"accepted": accapted, "rejected": rejected}
 
 
 def read_signals_from_dirs(

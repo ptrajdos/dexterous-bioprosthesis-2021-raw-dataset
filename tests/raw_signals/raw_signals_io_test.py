@@ -11,6 +11,7 @@ import shutil
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals_io import (
     read_signals_from_dirs,
     save_signals_to_dirs,
+    read_signals_from_archive,
 )
 
 
@@ -36,6 +37,11 @@ class RawSignalsIOTest(unittest.TestCase):
 
             for rej in signals["rejected"]:
                 self.assertTrue(isinstance(rej, RawSignal))
+
+            for name in ["accepted", "rejected"]:
+                rsignals: RawSignals = signals[name]
+                timestamps = rsignals.get_timestamps()
+                self.assertTrue(np.sum(timestamps) > 0, "All timestamps are zeros")
 
         except Exception as ex:
             self.fail(
@@ -71,6 +77,11 @@ class RawSignalsIOTest(unittest.TestCase):
                         f"Data type mismatch for rejected signals. Expected {dtype}, got {rej.signal.dtype}",
                     )
 
+                for name in ["accepted", "rejected"]:
+                    rsignals: RawSignals = signals[name]
+                    timestamps = rsignals.get_timestamps()
+                    self.assertTrue(np.sum(timestamps) > 0, "All timestamps are zeros")
+
     def test_reading_parallel_multiprocessing(self):
         data_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022")
 
@@ -89,6 +100,11 @@ class RawSignalsIOTest(unittest.TestCase):
 
             for rej in signals["rejected"]:
                 self.assertTrue(isinstance(rej, RawSignal))
+
+            for name in ["accepted", "rejected"]:
+                rsignals: RawSignals = signals[name]
+                timestamps = rsignals.get_timestamps()
+                self.assertTrue(np.sum(timestamps) > 0, "All timestamps are zeros")
 
         except Exception as ex:
             self.fail(
@@ -114,6 +130,11 @@ class RawSignalsIOTest(unittest.TestCase):
 
             for rej in signals["rejected"]:
                 self.assertTrue(isinstance(rej, RawSignal))
+
+            for name in ["accepted", "rejected"]:
+                rsignals: RawSignals = signals[name]
+                timestamps = rsignals.get_timestamps()
+                self.assertTrue(np.sum(timestamps) > 0, "All timestamps are zeros")
 
         except Exception as ex:
             self.fail(
@@ -172,6 +193,61 @@ class RawSignalsIOTest(unittest.TestCase):
         self.assertTrue(
             raw_signals == re_read_signals, "Datasets should have been the same!"
         )
+
+    def test_read_zip(self):
+        archive_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022.zip")
+        data_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022")
+
+
+        zip_readed = read_signals_from_archive(archive_path)
+        dir_readed = read_signals_from_dirs(data_path)
+
+        self.assertIn("accepted", zip_readed)
+        self.assertTrue(isinstance(zip_readed["accepted"], RawSignals))
+        self.assertTrue(isinstance(zip_readed["rejected"], RawSignals))
+
+        for acc in zip_readed["accepted"]:
+            self.assertTrue(isinstance(acc, RawSignal))
+
+        for rej in zip_readed["rejected"]:
+            self.assertTrue(isinstance(rej, RawSignal))
+
+        for name in ["accepted", "rejected"]:
+            signals:RawSignals = zip_readed[name]
+            timestamps = signals.get_timestamps()
+            self.assertTrue(np.sum(timestamps)>0, "All timestamps are zeros")
+
+        for name in ["accepted", "rejected"]:
+            z_signals:RawSignals = zip_readed[name]
+            d_signals:RawSignals = dir_readed[name]
+            self.assertTrue(z_signals == d_signals, "Zip readed incompatible with directory readed")
+
+    def test_read_tar(self):
+        archive_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022.tar.xz")
+        data_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022")
+
+        tar_readed = read_signals_from_archive(archive_path)
+        dir_readed = read_signals_from_dirs(data_path)
+
+        self.assertIn("accepted", tar_readed)
+        self.assertTrue(isinstance(tar_readed["accepted"], RawSignals))
+        self.assertTrue(isinstance(tar_readed["rejected"], RawSignals))
+
+        for acc in tar_readed["accepted"]:
+            self.assertTrue(isinstance(acc, RawSignal))
+
+        for rej in tar_readed["rejected"]:
+            self.assertTrue(isinstance(rej, RawSignal))
+
+        for name in ["accepted", "rejected"]:
+            signals:RawSignals = tar_readed[name]
+            timestamps = signals.get_timestamps()
+            self.assertTrue(np.sum(timestamps)>0, "All timestamps are zeros")
+
+        for name in ["accepted", "rejected"]:
+            tar_signals:RawSignals = tar_readed[name]
+            d_signals:RawSignals = dir_readed[name]
+            self.assertTrue(tar_signals == d_signals, "Tar readed incompatible with directory readed")
 
 
 if __name__ == "__main__":
