@@ -222,6 +222,16 @@ class RawSignalsIOTest(unittest.TestCase):
             d_signals:RawSignals = dir_readed[name]
             self.assertTrue(z_signals == d_signals, "Zip readed incompatible with directory readed")
 
+    def test_read_zip_regex(self):
+        archive_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022.zip")
+
+        regex = r".*/rejected/.*"
+        archive_readed = read_signals_from_archive(archive_path, filter_regex=regex)
+        self.assertTrue(len(archive_readed["accepted"]) == 0, "There should be no objects in accepted")
+        self.assertTrue(len(archive_readed["rejected"]) > 0, "There should be objects in rejected")
+
+
+
     def test_read_tar(self):
         archive_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022.tar.xz")
         data_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022")
@@ -248,6 +258,14 @@ class RawSignalsIOTest(unittest.TestCase):
             tar_signals:RawSignals = tar_readed[name]
             d_signals:RawSignals = dir_readed[name]
             self.assertTrue(tar_signals == d_signals, "Tar readed incompatible with directory readed")
+
+    def test_read_tar_regex(self):
+        archive_path = os.path.join(settings.DATAPATH, "Andrzej_19_10_2022.tar.xz")
+
+        regex = r".*/rejected/.*"
+        archive_readed = read_signals_from_archive(archive_path, filter_regex=regex)
+        self.assertTrue(len(archive_readed["accepted"]) == 0, "There should be no objects in accepted")
+        self.assertTrue(len(archive_readed["rejected"]) > 0, "There should be objects in rejected")
 
 
 if __name__ == "__main__":

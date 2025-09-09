@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import zipfile
 import tarfile
+import re
 
 from .raw_signal import RawSignal
 from .raw_signals import RawSignals
@@ -25,6 +26,7 @@ def read_signals_from_archive(
     dtype=np.double,
     dir_sorting_key=str_sort_key,
     file_sorting_key=lambda x: str(x),
+    filter_regex = None
 ):
     accapted = RawSignals(sample_rate=sample_rate)
     rejected = RawSignals(sample_rate=sample_rate)
@@ -35,7 +37,8 @@ def read_signals_from_archive(
             memberlist = z.namelist()
             memberlist.sort(key=str_sort_key)
             for member in memberlist:
-                if member.endswith(".csv"):
+                match_regex = True if filter_regex is None else re.match(filter_regex,member)
+                if member.endswith(".csv") and match_regex:
                     base_filename = os.path.splitext(os.path.basename(member))[0]
                     class_name = os.path.basename(os.path.dirname(member))
                     dat_name = f"{os.path.dirname(member)}/{base_filename}.dat"
@@ -82,7 +85,8 @@ def read_signals_from_archive(
             memberlist.sort(key=str_sort_key)
             members_names_list = [m.name for m in memberlist]
             for member in memberlist:
-                if member.isfile() and member.name.endswith(".csv"):
+                match_regex = True if filter_regex is None else re.match(filter_regex,member.name)
+                if member.isfile() and member.name.endswith(".csv") and match_regex:
                     member_name = member.name
                     base_filename = os.path.splitext(os.path.basename(member_name))[0]
                     class_name = os.path.basename(os.path.dirname(member_name))
