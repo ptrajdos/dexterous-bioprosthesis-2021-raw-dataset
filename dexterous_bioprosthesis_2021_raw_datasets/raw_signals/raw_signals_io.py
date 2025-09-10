@@ -14,7 +14,7 @@ from .raw_signals import RawSignals
 from ..tools.progressparallel import ProgressParallel
 
 date_format_string = "%Y-%m-%d %H:%M:%S"
-
+from tqdm import tqdm
 
 def str_sort_key(x):
     return str(x)
@@ -36,7 +36,8 @@ def read_signals_from_archive(
         with zipfile.ZipFile(archive_path, "r", allowZip64=True) as z:
             memberlist = z.namelist()
             memberlist.sort(key=str_sort_key)
-            for member in memberlist:
+            n_members = len(memberlist)
+            for member in tqdm(memberlist, total=n_members, desc="Zip file iterating archive elements", leave=True):
                 match_regex = True if filter_regex is None else re.match(filter_regex,member)
                 if member.endswith(".csv") and match_regex:
                     base_filename = os.path.splitext(os.path.basename(member))[0]
@@ -83,8 +84,9 @@ def read_signals_from_archive(
         with tarfile.open(archive_path, "r:*") as tar:
             memberlist = tar.getmembers()
             memberlist.sort(key=str_sort_key)
+            n_members = len(memberlist)
             members_names_list = [m.name for m in memberlist]
-            for member in memberlist:
+            for member in tqdm( memberlist, leave=True, desc= "Tar file iterating over archive members", total=n_members):
                 match_regex = True if filter_regex is None else re.match(filter_regex,member.name)
                 if member.isfile() and member.name.endswith(".csv") and match_regex:
                     member_name = member.name
