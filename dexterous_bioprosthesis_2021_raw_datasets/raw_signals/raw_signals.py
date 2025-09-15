@@ -172,3 +172,16 @@ class RawSignals():
         """
         np_array = np.asanyarray([ rs.to_numpy() for rs in self.raw_signals_list])
         return np_array
+    
+    def to_numpy_concat(self):
+        """
+        Returns the raw_signals object as a concatenated numpy array.
+        Assuming that all raw_signal object have the same number of channels
+
+        Returns:
+        ---------
+        numpy array of shape (sum(n_samples), n_channels)
+
+        """
+        np_array = np.concatenate([ rs.to_numpy() for rs in self.raw_signals_list], axis=0)
+        return np_array

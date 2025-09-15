@@ -327,28 +327,52 @@ class RawSignalsTest(unittest.TestCase):
         self.assertTrue(len(empty_sigs) == 0, "Not empty")
 
     def test_to_numpy(self):
-        n_sig = 100
-        n_samples = 111
-        n_channels = 10
-        signals = self.generate_sample_data(
-            column_number=n_channels, samples_number=n_samples, signal_number=n_sig
-        )
+        
+        for n_sig, n_samples, n_channels in [(1, 10, 1), (2, 20, 2), (5, 50, 5), (10, 100, 10), (100, 111, 10)]:
+            with self.subTest(n_sig=n_sig, n_samples=n_samples, n_channels=n_channels):
+                signals = self.generate_sample_data(
+                    column_number=n_channels, samples_number=n_samples, signal_number=n_sig
+                )
 
-        np_array = signals.to_numpy()
+                np_array = signals.to_numpy()
 
-        self.assertIsNotNone(np_array, "Returned object is None")
-        self.assertIsInstance(
-            np_array, np.ndarray, "Returned object is not numpy ndarray"
-        )
-        self.assertTrue(
-            np.issubdtype(np_array.dtype, np.floating), "Not floating dtype"
-        )
-        self.assertFalse(np.isnan(np_array).any(), "NaNs in returned array")
-        self.assertFalse(np.isinf(np_array).any(), "Infs in returned array")
-        self.assertTrue(
-            np_array.shape == (n_sig, n_samples, n_channels),
-            "Wrong shape of the returned signal.",
-        )
+                self.assertIsNotNone(np_array, "Returned object is None")
+                self.assertIsInstance(
+                    np_array, np.ndarray, "Returned object is not numpy ndarray"
+                )
+                self.assertTrue(
+                    np.issubdtype(np_array.dtype, np.floating), "Not floating dtype"
+                )
+                self.assertFalse(np.isnan(np_array).any(), "NaNs in returned array")
+                self.assertFalse(np.isinf(np_array).any(), "Infs in returned array")
+                self.assertTrue(
+                    np_array.shape == (n_sig, n_samples, n_channels),
+                    "Wrong shape of the returned signal.",
+                )
+
+    def test_to_numpy_concat(self):
+    
+        for n_sig, n_samples, n_channels in [(1, 10, 1), (2, 20, 2), (5, 50, 5), (10, 100, 10), (100, 111, 10)]:
+            with self.subTest(n_sig=n_sig, n_samples=n_samples, n_channels=n_channels):
+                signals = self.generate_sample_data(
+                    column_number=n_channels, samples_number=n_samples, signal_number=n_sig
+                )
+
+                np_array = signals.to_numpy_concat()
+
+                self.assertIsNotNone(np_array, "Returned object is None")
+                self.assertIsInstance(
+                    np_array, np.ndarray, "Returned object is not numpy ndarray"
+                )
+                self.assertTrue(
+                    np.issubdtype(np_array.dtype, np.floating), "Not floating dtype"
+                )
+                self.assertFalse(np.isnan(np_array).any(), "NaNs in returned array")
+                self.assertFalse(np.isinf(np_array).any(), "Infs in returned array")
+                self.assertTrue(
+                    np_array.shape == (n_sig * n_samples, n_channels),
+                    "Wrong shape of the returned signal.",
+            )
 
     def test_set_sample_rate(self):
         n_sig = 100
