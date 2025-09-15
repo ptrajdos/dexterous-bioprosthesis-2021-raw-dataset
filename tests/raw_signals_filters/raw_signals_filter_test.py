@@ -40,25 +40,30 @@ class RawSignalsFilterTest(unittest.TestCase):
 
     def test_filter_fit_then_transform(self):
         filters = self.get_filters()
-        signals = RawSignals()
-        N = 10
-        M = 30
-        C = 6
-        for filter in filters:
+        
+        for N,M,C in [(10,30,6),(2,30,3),(1,30,2), (5,30,10), (3,50,1)]:
+            for filter in filters:
+                signals = RawSignals()
+                with self.subTest(filter=filter, N=N, M=M, C=C):
 
-            for i in range(1, N + 1):
-                signals.append(RawSignal(signal=np.random.random((M * i, C))))
+                    for i in range(1, N + 1):
+                        signals.append(RawSignal(signal=np.random.random((M * i, C))))
 
-            try:
-                filter.fit(signals)
-                tr_signals = filter.transform(signals)
+                    try:
+                        filter.fit(signals)
+                        tr_signals = filter.transform(signals)
 
-                self.assertIsNotNone(tr_signals, "Transformed object is none.")
-                self.assertIsInstance(tr_signals, RawSignals)
-                self.assertTrue(id(signals) != id(tr_signals), "Objects are the same")
+                        self.assertIsNotNone(tr_signals, "Transformed object is none.")
+                        self.assertIsInstance(tr_signals, RawSignals)
+                        self.assertTrue(id(signals) != id(tr_signals), "Objects are the same")
 
-            except Exception as ex:
-                self.fail("An exception has been caught: {}".format(ex))
+                        for sig in tr_signals:
+                            np_data = sig.to_numpy()
+                            self.assertFalse(np.any(np.isnan(np_data)), "NaN values in the data.")
+                            self.assertFalse(np.any(np.isinf(np_data)), "Inf values in the data.")
+
+                    except Exception as ex:
+                        self.fail("An exception has been caught: {}".format(ex))
 
     def test_fit_transform(self):
         filters = self.get_filters()

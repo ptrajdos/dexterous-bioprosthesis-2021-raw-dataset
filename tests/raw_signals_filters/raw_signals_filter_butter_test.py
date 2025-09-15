@@ -4,7 +4,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 from tests.raw_signals_filters.raw_signals_filter_test import RawSignalsFilterTest
 
 
-class RawSignalsFilterAllPassTest(RawSignalsFilterTest):
+class RawSignalsFilterButterTest(RawSignalsFilterTest):
 
     __test__ = True
 

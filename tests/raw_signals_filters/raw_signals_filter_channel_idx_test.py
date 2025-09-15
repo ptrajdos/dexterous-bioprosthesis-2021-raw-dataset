@@ -8,7 +8,7 @@ class RawSignalsFilterChannelIdxTest(RawSignalsFilterTest):
     __test__ = True
 
     def get_filters(self):
-        indices_list = [0,1,2]
+        indices_list = [0]
         return [RawSignalsFilterChannelIdx(indices_list=indices_list)]
 
     def test_num_sel(self):
