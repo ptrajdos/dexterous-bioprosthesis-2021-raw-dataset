@@ -36,9 +36,12 @@ class RawSignalsFilterAllStandarizer(RawSignalsFilter):
     def fit(self, raw_signals: RawSignals):
         self._compute_mean(raw_signals)
         self._compute_std(raw_signals)
+        self._fitted = True
         return self
 
     def transform(self, raw_signals: RawSignals):
+        if not hasattr(self, '_fitted'):
+            raise RuntimeError("Filter not fitted. Call 'fit' with training data before using this method.")
 
         copied_signals = deepcopy(raw_signals)
         for r_signal in copied_signals:
