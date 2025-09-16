@@ -224,6 +224,20 @@ class RawSignalsTest(unittest.TestCase):
         except Exception as ex:
             self.fail("An exception has been caught: {}".format(ex))
 
+    def test_getitem_np_array(self):
+        signals = self.generate_sample_data()
+
+        sel_list = np.asanyarray([1, 3, 5, 7])
+        sel_iter = iter(sel_list)
+        it = signals[sel_iter]
+        self.assertIsNotNone(it, "Object get is None")
+        self.assertIsInstance(
+            it, RawSignals, "Object get is not an instance of RawSignals"
+        )
+        self.assertTrue(
+            len(it) == len(sel_list), "The length of new object is wrong."
+        )
+
     def test_getitem_list_bool(self):
         signals = self.generate_sample_data()
 
