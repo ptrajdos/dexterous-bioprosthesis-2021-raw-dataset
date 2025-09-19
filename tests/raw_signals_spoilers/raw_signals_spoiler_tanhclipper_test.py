@@ -1,3 +1,5 @@
+import unittest
+
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_tanhclipper import RawSignalsSpoilerTanhClipper
 from tests.raw_signals_spoilers.raw_signals_spoiler_test import RawSignalsSpoilerTest
 
@@ -21,3 +23,6 @@ class RawSignalsSpoilerTanhClipperTest(RawSignalsSpoilerTest):
     
     def get_snrs(self):
         return [0,1,2,3,4,5]
+
+if __name__ == '__main__':
+    unittest.main()

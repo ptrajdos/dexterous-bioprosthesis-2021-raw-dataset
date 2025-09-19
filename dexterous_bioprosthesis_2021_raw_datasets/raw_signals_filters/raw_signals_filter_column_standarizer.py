@@ -9,9 +9,10 @@ from copy import deepcopy
 class RawSignalsFilterColumnStandarizer(RawSignalsFilter):
 
     def _compute_means(self, raw_signals: RawSignals):
+        dtype = raw_signals[0].signal.dtype
         n_channels = raw_signals[0].signal.shape[1]
-        self._col_means = np.zeros(n_channels, dtype=raw_signals[0].signal.dtype)
-        self._n_samples = 0
+        self._col_means = np.zeros(n_channels, dtype=dtype)
+        self._n_samples = np.array(0, dtype=dtype)
         for r_sig in raw_signals:
             np_data = r_sig.to_numpy()
             self._col_means += np.sum(np_data, axis=0)
@@ -22,8 +23,9 @@ class RawSignalsFilterColumnStandarizer(RawSignalsFilter):
         return self._col_means
 
     def _compute_stds(self, raw_signals:RawSignals, eps=1e-8):
+        dtype = raw_signals[0].signal.dtype
         n_channels = raw_signals[0].signal.shape[1]
-        self._stds = np.ones(n_channels, dtype=raw_signals[0].signal.dtype)
+        self._stds = np.zeros(n_channels, dtype=dtype)
 
         for r_sig in raw_signals:
             np_data = r_sig.to_numpy()

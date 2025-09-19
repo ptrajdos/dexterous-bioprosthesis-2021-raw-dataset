@@ -16,6 +16,9 @@ COVERAGE = coverage
 UNITTEST_PARALLEL = unittest-parallel
 PDOC= pdoc3
 PYTHON=python
+SYSPYTHON=python
+#--system-site-packages
+VENV_OPTIONS=
 PIP=pip
 PYTEST=pytest
 
@@ -36,8 +39,8 @@ clean:
 	rm -rf ${VENV_SUBDIR}
 
 venv:
-	${PYTHON} -m venv ${VENV_SUBDIR}
-	${ACTIVATE}; ${PIP} install -e ${ROOTDIR} --prefer-binary --log ${INSTALL_LOG_FILE} -r ${REQ_FILE}
+	${SYSPYTHON} -m venv --upgrade-deps ${VENV_OPTIONS} ${VENV_SUBDIR}
+	${ACTIVATE}; ${PYTHON} -m ${PIP} install -e ${ROOTDIR} --prefer-binary --log ${INSTALL_LOG_FILE} -r ${REQ_FILE}
 
 test: venv
 	mkdir -p ${LOGDIR}

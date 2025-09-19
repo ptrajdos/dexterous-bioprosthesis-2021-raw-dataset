@@ -23,7 +23,7 @@ class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
 
         return self
     
-    def _find_alpha(self,np_sig, ch_idx, guesses = [0]):
+    def _find_alpha(self,np_sig, ch_idx, guesses = (0,))->int:
 
         def channel_snr(alpha):
             res = self._calculate_snrs(np_sig[:,ch_idx], clipper(np_sig[:,ch_idx],t=alpha) - np_sig[:,ch_idx] ) - self._effective_snr
@@ -33,7 +33,7 @@ class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
         snr_diff = np.inf
         for guess in guesses:
             
-            tmp_alpha = fsolve(func=channel_snr,x0=(guess))
+            tmp_alpha = fsolve(func=channel_snr,x0=(guess))[0]
             tmp_snr = channel_snr(tmp_alpha)
 
             tmp_snr_diff = np.abs(tmp_snr - self._effective_snr)

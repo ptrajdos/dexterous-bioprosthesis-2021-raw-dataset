@@ -12,8 +12,9 @@ class RawSignalsFilterAllRobustStandarizer(RawSignalsFilter):
 
     def fit(self, raw_signals: RawSignals):
         np_data_all = raw_signals.to_numpy_concat()
-        self._median = np.median(np_data_all)
-        q1, q3 = np.percentile(np_data_all, [25, 75])
+        dtype = np_data_all.dtype
+        self._median = np.median(np_data_all).astype(dtype)
+        q1, q3 = np.percentile(np_data_all, [25, 75]).astype(dtype)
         self._iqr = q3 - q1
         self._fitted = True
         return self
