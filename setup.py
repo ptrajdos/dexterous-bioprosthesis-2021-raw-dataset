@@ -51,7 +51,8 @@ setup(
                 'audiomentations', 
                 numba_version(),
                 'statsmodels>=0.13.5',
-                'PyWavelets>=1.4.1'
+                'PyWavelets>=1.4.1',
+                'antropy>=0.1.6',
                 
         ],
         test_suite='test'
