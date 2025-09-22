@@ -31,10 +31,11 @@ class NpSignalExtractorTemporalMoment(NPSignalExtractor):
 
     @staticmethod
     def _get_X_normalized_columns(X):
-        col_sums = np.sum(X, axis=0)
+        Xs = X ** 2
+        col_sums = np.sum(Xs, axis=0)
         mask = np.isclose(col_sums, 0)
         col_sums[mask] = 1.0
-        return X / col_sums
+        return Xs / col_sums
 
     @staticmethod
     def _calculate_moment(X, order, time_vector, central):
