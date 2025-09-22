@@ -19,7 +19,7 @@ class NpSignalExtractorTest(unittest.TestCase):
         extractors = self.get_extractors()
         R = 100
         C = 3
-        X = np.random.random((R, C))
+        X = np.random.random((R, C)) - 0.5
 
         for extractor in extractors:
 
@@ -43,7 +43,7 @@ class NpSignalExtractorTest(unittest.TestCase):
         R = 100
         C = 3
         for R,C in [(100,3), (100,2), (50,1), (10,1)]:
-            X = np.random.random((R, C))
+            X = np.random.random((R, C)) - 0.5
             for extractor in extractors:
                 with self.subTest(extractor=extractor, R=R, C=C):
 
@@ -67,7 +67,7 @@ class NpSignalExtractorTest(unittest.TestCase):
                 extractors = self.get_extractors()
                 R = 100
                 C = 3
-                X = np.random.random((R, C)).astype(dtype)
+                X = np.random.random((R, C)).astype(dtype) - 0.5
 
                 for extractor in extractors:
 
