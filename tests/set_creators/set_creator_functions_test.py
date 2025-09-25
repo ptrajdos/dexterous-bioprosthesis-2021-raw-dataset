@@ -24,5 +24,5 @@ class SetCreatorFunctionsTest(SetCreatorTest):
             ]
         return extractors
     
-    def generate_sample_data(self, dtype=np.double):
-        return generate_sample_data(samples_number=1000, dtype=dtype)
+    # def generate_sample_data(self, dtype=np.double):
+    #     return generate_sample_data(samples_number=1000, dtype=dtype)

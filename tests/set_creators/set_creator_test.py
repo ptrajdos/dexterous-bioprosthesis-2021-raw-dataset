@@ -26,8 +26,29 @@ class SetCreatorTest(unittest.TestCase):
     def get_creators(self) -> SetCreator:
         raise unittest.SkipTest("Skipping")
 
-    def generate_sample_data(self, dtype=np.double):
-        return generate_sample_data(dtype=dtype)
+    def generate_sample_data(
+        self,
+        signal_number=10,
+        column_number=3,
+        samples_number=12,
+        class_indices=[0, 1],
+        dtype=np.double,
+    ):
+        return generate_sample_data(
+            signal_number=signal_number,
+            column_number=column_number,
+            samples_number=samples_number,
+            class_indices=class_indices,
+            dtype=dtype,
+        )
+    
+    def get_sample_data_parameters(self):
+        return [
+            (10, 3, 10, [0, 1]),
+            (10, 1, 11, [0, 1]),
+        ]
+    def get_default_sample_number(self):
+        return 12
 
     def basic_test_check(self, raw_set, X, y, t):
 
@@ -44,15 +65,27 @@ class SetCreatorTest(unittest.TestCase):
     def test_creator_fit_transform(self):
 
         creators = self.get_creators()
+        for signal_number, column_number, samples_number, class_indices in self.get_sample_data_parameters():
+            for creator in creators:
+                with self.subTest(
+                    signal_number=signal_number,
+                    column_number=column_number,
+                    samples_number=samples_number,
+                    class_indices=class_indices,
+                    creator=creator,
+                ):
 
-        for creator in creators:
+                    raw_set = self.generate_sample_data(
+                        samples_number=samples_number,
+                        signal_number=signal_number,
+                        column_number=column_number,
+                        class_indices=class_indices,
+                    )
+                    n_samples = len(raw_set)
 
-            raw_set = self.generate_sample_data()
-            n_samples = len(raw_set)
+                    X, y, t = creator.fit_transform(raw_set)
 
-            X, y, t = creator.fit_transform(raw_set)
-
-            self.basic_test_check(raw_set, X, y, t)
+                    self.basic_test_check(raw_set, X, y, t)
 
     def test_dtype(self):
         creators = self.get_creators()
@@ -62,7 +95,7 @@ class SetCreatorTest(unittest.TestCase):
             with self.subTest(dtype=dtype):
                 for creator in creators:
 
-                    raw_set = self.generate_sample_data(dtype=dtype)
+                    raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number(), dtype=dtype)
                     n_samples = len(raw_set)
 
                     creator.fit(raw_set)
@@ -81,7 +114,7 @@ class SetCreatorTest(unittest.TestCase):
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data()
+            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
             n_samples = len(raw_set)
 
             creator.fit(raw_set)
@@ -94,7 +127,7 @@ class SetCreatorTest(unittest.TestCase):
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data()
+            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
             n_samples = len(raw_set)
             n_channels = raw_set.signal_n_cols
 
@@ -130,7 +163,7 @@ class SetCreatorTest(unittest.TestCase):
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data()
+            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
 
             pipeline = Pipeline(
                 [
@@ -149,7 +182,7 @@ class SetCreatorTest(unittest.TestCase):
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data()
+            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
 
             pipeline = Pipeline(
                 [
@@ -174,7 +207,7 @@ class SetCreatorTest(unittest.TestCase):
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data()
+            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
             n_samples = len(raw_set)
             try:
                 X, y, t = creator.transform(raw_set)

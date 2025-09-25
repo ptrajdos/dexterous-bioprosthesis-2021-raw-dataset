@@ -17,11 +17,19 @@ class SetCreatorSWT(SetCreatorWTAbstract):
 
     def _decompose_signal(self, signal):
         wavelet = pywt.Wavelet(self.wavelet_name)
-        return pywt.swt(
-            signal,
-            wavelet=wavelet,
-            axis=0,
-            level=self.num_levels,
-            trim_approx=True,
-            norm=self._norm,
-        )
+        rem = len(signal) % 2 ** self.num_levels
+        if rem > 0:
+            tmp_dat = signal[:-rem]
+        else:
+            tmp_dat = signal
+        try:
+            return pywt.swt(
+                tmp_dat,
+                wavelet=wavelet,
+                axis=0,
+                level=self.num_levels,
+                trim_approx=True,
+                norm=self._norm,
+            )
+        except Exception as e:
+            pass

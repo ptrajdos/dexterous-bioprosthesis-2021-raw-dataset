@@ -20,14 +20,20 @@ class SetCreatorDWTTest(SetCreatorTest):
             SetCreatorDWT(extractors=[
                 NpSignalExtractorMav(),
                 NpSignalExtractorSsc(),
-                NpSignalExtractorAr(),
             ])
             ]
         return extractors
     
-    def generate_sample_data(self, dtype=np.double):
-        return generate_sample_data(samples_number=1000, dtype=dtype)
+    def get_sample_data_parameters(self):
+        return [
+            (10, 3, 1200, [0, 1]),
+            (11, 2, 1003, [0, 1]),
+            (10, 1, 1000, [0, 1, 2]),
+            (10, 5, 1005, [0, 1, 2, 3]),
+        ]
 
+    def get_default_sample_number(self):
+        return 1000
 
 if __name__ == '__main__':
 
