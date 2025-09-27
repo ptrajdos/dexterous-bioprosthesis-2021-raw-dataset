@@ -22,14 +22,13 @@ class SetCreatorSWT(SetCreatorWTAbstract):
             tmp_dat = signal[:-rem]
         else:
             tmp_dat = signal
-        try:
-            return pywt.swt(
-                tmp_dat,
-                wavelet=wavelet,
-                axis=0,
-                level=self.num_levels,
-                trim_approx=True,
-                norm=self._norm,
-            )
-        except Exception as e:
-            pass
+        
+        return pywt.swt(
+            tmp_dat,
+            wavelet=wavelet,
+            axis=0,
+            level=self.num_levels,
+            trim_approx=True,
+            norm=self._norm,
+        )
+    
