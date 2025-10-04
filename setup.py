@@ -51,7 +51,8 @@ setup(
                 'audiomentations', 
                 numba_version(),
                 'statsmodels>=0.13.5',
-                'PyWavelets>=1.4.1'
+                'PyWavelets>=1.4.1',
+                'hyperopt @ git+https://github.com/hyperopt/hyperopt.git'
                 
         ],
         test_suite='test'
