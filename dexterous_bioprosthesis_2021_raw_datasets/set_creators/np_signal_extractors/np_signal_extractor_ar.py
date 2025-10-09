@@ -25,7 +25,7 @@ class NpSignalExtractorAr(NPSignalExtractor):
         self.lags = lags
         self.ar_args = ar_args
 
-    def fit(self, X):
+    def fit(self, X, fs=1000):
         return super().fit(X)
 
     def _transform(self, X):

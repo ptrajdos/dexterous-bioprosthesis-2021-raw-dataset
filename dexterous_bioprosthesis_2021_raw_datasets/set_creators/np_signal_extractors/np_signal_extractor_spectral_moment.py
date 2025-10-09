@@ -19,7 +19,7 @@ class NpSignalExtractorSpectralMoment(NpSignalExtractorSpectral):
         self.order = order
         self.centered = centered
 
-    def fit(self, X):
+    def fit(self, X, fs=1000):
         return super().fit(X)
 
     @staticmethod

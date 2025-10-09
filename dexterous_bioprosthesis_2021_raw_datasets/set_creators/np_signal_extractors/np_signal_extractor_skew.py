@@ -8,7 +8,7 @@ from scipy.stats import skew
 
 class NpSignalExtractorSkew(NPSignalExtractor):
 
-    def fit(self, X):
+    def fit(self, X, fs=1000):
         return super().fit(X)
 
     def _transform(self, X):

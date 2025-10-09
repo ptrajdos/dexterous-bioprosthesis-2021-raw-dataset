@@ -11,7 +11,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 
 class NpSignalExtractorSpectralKurtosis(NpSignalExtractorSpectral):
 
-    def fit(self, X):
+    def fit(self, X, fs=1000):
         return super().fit(X)
 
     def _transform(self, X):

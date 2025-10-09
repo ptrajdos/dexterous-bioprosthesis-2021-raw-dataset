@@ -51,9 +51,11 @@ class NPSignalExtractor(abc.ABC):
         self.check_input = check_input
         self.check_output = check_output
 
-    def fit(self, X):
+    def fit(self, X, fs=1000):
         if self.check_input:
             self._check_input(X)
+
+        self.fs = fs
 
         return self
 

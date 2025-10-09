@@ -16,7 +16,7 @@ def ssc_int(input):
 
 class NpSignalExtractorSsc(NPSignalExtractor):
 
-    def fit(self, X):
+    def fit(self, X, fs=1000):
         return super().fit(X)
 
     def _transform(self, X):
