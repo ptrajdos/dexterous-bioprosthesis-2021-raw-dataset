@@ -73,7 +73,7 @@ setup(
                 'statsmodels>=0.13.5',
                 'PyWavelets>=1.4.1',
                 'hyperopt @ git+https://github.com/hyperopt/hyperopt.git',
-                'sktime>=0.38.5',,
+                'sktime>=0.38.5',
                 'antropy>=0.1.6',
                 
         ],
