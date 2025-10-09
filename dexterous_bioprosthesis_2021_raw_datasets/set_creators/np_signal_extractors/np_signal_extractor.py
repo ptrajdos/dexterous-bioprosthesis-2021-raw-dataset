@@ -82,8 +82,8 @@ class NPSignalExtractor(abc.ABC):
 
         return X_t
 
-    def fit_transform(self, X):
-        return self.fit(X).transform(X)
+    def fit_transform(self, X, fs=1000):
+        return self.fit(X,fs=fs).transform(X)
 
     @abc.abstractmethod
     def attribs_per_column(self):
