@@ -69,7 +69,8 @@ setup(
                 'hyperopt @ git+https://github.com/hyperopt/hyperopt.git',
                 'sktime>=0.38.5',
                 'csaps<2.0.0',
-                'sktime>=0.38.5',,
+                'sktime>=0.38.5',
+                'sktime>=0.38.5',
                 'antropy>=0.1.6',
                 
         ],
