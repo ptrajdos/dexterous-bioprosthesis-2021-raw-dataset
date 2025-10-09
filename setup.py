@@ -52,7 +52,8 @@ setup(
                 numba_version(),
                 'statsmodels>=0.13.5',
                 'PyWavelets>=1.4.1',
-                'hyperopt @ git+https://github.com/hyperopt/hyperopt.git'
+                'hyperopt @ git+https://github.com/hyperopt/hyperopt.git',
+                'sktime>=0.38.5',
                 
         ],
         test_suite='test'
