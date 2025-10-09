@@ -7,6 +7,9 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor_mav import (
     NpSignalExtractorMav,
 )
+from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor_spectral_moment import (
+    NpSignalExtractorSpectralMoment,
+)
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor_ssc import (
     NpSignalExtractorSsc,
 )
@@ -30,6 +33,7 @@ class SetCreatorSWTTest(SetCreatorTest):
                 extractors=[
                     NpSignalExtractorMav(),
                     NpSignalExtractorSsc(),
+                    NpSignalExtractorSpectralMoment(),
                 ]
             ),
             SetCreatorSWT(
@@ -49,9 +53,10 @@ class SetCreatorSWTTest(SetCreatorTest):
             (10, 1, 1200, [0, 1, 2]),
             (10, 5, 1205, [0, 1, 2, 3]),
         ]
-    
+
     def get_default_sample_number(self):
         return 1000
+
 
 if __name__ == "__main__":
 

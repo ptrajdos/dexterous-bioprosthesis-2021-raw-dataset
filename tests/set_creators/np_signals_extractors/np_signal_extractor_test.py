@@ -40,25 +40,25 @@ class NpSignalExtractorTest(unittest.TestCase):
     def test_fittransform(self):
 
         extractors = self.get_extractors()
-        R = 100
-        C = 3
+        fss= [100,500,1000]
         for R,C in [(100,3), (100,2), (50,1), (10,1)]:
-            X = np.random.random((R, C)) - 0.5
-            for extractor in extractors:
-                with self.subTest(extractor=extractor, R=R, C=C):
+            for fs in fss:
+                X = np.random.random((R, C)) - 0.5
+                for extractor in extractors:
+                    with self.subTest(extractor=extractor, R=R, C=C, fs=fs):
 
-                    T = extractor.fit_transform(X)
+                        T = extractor.fit_transform(X,fs=fs)
 
-                    att_per_column = extractor.attribs_per_column()
-                    n_desired_attrs = att_per_column * C
+                        att_per_column = extractor.attribs_per_column()
+                        n_desired_attrs = att_per_column * C
 
-                    self.assertIsNotNone(T, "None type has been returned")
-                    self.assertIsInstance(T, np.ndarray, "Wrong type")
-                    self.assertTrue(
-                        len(T) == n_desired_attrs, "Wrong number of returned values"
-                    )
-                    self.assertFalse(np.any(np.isnan(T)), "NaNs in outut")
-                    self.assertTrue(np.all(np.isfinite(T)), "Infinite values in output")
+                        self.assertIsNotNone(T, "None type has been returned")
+                        self.assertIsInstance(T, np.ndarray, "Wrong type")
+                        self.assertTrue(
+                            len(T) == n_desired_attrs, "Wrong number of returned values"
+                        )
+                        self.assertFalse(np.any(np.isnan(T)), "NaNs in outut")
+                        self.assertTrue(np.all(np.isfinite(T)), "Infinite values in output")
 
     def test_dtype(self):
         dtypes = [np.float32, np.float64, np.single, np.double]

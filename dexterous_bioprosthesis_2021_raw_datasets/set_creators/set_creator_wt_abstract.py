@@ -43,7 +43,15 @@ class SetCreatorWTAbstract(SetCreator):
         return self
     
     @abc.abstractmethod
-    def _decompose_signal(self, signal):
+    def _decompose_signal(self, signal, fs=1000):
+        """
+        Generates decomposition coefficients of the signal.
+        Order is the order returned by pywt waveded.
+
+        Returns
+        list of tuples (decomposition coefficients, sampling frequency)
+        A_n first
+        """
         pass
 
     def transform(self, raw_signals: RawSignals):
@@ -60,13 +68,15 @@ class SetCreatorWTAbstract(SetCreator):
         for raw_signal_id,  raw_signal in enumerate(raw_signals):
             
             signal = raw_signal.to_numpy()
+            orig_fs = raw_signal.get_sample_rate()
             labels.append(raw_signal.get_label())
             timestamps.append(raw_signal.get_timestamp()) 
-            decomposeds = self._decompose_signal(signal= signal)
+            decomposeds = self._decompose_signal(signal=signal, fs=orig_fs)
             offset = 0
+            
             for extractor_id, extractor in enumerate(self.extractors):
-                for decomposed_level in decomposeds:
-                    extracted = extractor.fit_transform(decomposed_level)
+                for decomposed_level, fs in decomposeds:
+                    extracted = extractor.fit_transform(decomposed_level, fs=fs)
                     n_extracted = extracted.shape[0]
                     extracted_attribs[raw_signal_id, offset:(offset+n_extracted)] = extracted
                     offset += n_extracted
