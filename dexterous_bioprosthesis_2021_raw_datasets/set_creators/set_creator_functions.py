@@ -53,7 +53,7 @@ class SetCreatorFunctions(SetCreator):
             timestamps.append(raw_signal.get_timestamp()) 
             offset = 0
             for extractor_id, extractor in enumerate(self.extractors):
-                extracted = extractor.transform(signal)
+                extracted = extractor.fit_transform(signal)
                 n_extracted = extracted.shape[0]
                 extracted_attribs[raw_signal_id, offset:(offset+n_extracted)] = extracted
                 offset += n_extracted

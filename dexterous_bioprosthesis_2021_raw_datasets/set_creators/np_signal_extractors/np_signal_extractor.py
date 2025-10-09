@@ -1,7 +1,7 @@
 import abc
 
 import numpy as np
-
+import logging
 
 class NPSignalExtractor(abc.ABC):
 
@@ -55,7 +55,7 @@ class NPSignalExtractor(abc.ABC):
         if self.check_input:
             self._check_input(X)
 
-        self.fs = fs
+        self._fs = fs
 
         return self
 
@@ -69,6 +69,10 @@ class NPSignalExtractor(abc.ABC):
         if self.check_input:
             self._check_input(X)
         X_t = self._transform(X)
+
+        if not hasattr(self, "_fs"):
+            logging.warning("Transformeer is not fitted. In future releases an exception will be raised.")
+            # raise ValueError("Transformeer is not fitted")
         
         if self.check_output:
             self._check_output(X_t)

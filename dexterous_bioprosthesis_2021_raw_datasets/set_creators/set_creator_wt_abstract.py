@@ -66,7 +66,7 @@ class SetCreatorWTAbstract(SetCreator):
             offset = 0
             for extractor_id, extractor in enumerate(self.extractors):
                 for decomposed_level in decomposeds:
-                    extracted = extractor.transform(decomposed_level)
+                    extracted = extractor.fit_transform(decomposed_level)
                     n_extracted = extracted.shape[0]
                     extracted_attribs[raw_signal_id, offset:(offset+n_extracted)] = extracted
                     offset += n_extracted
