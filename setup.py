@@ -23,7 +23,7 @@ def scikit_learn_version():
 
 setup(
         name='dexterous_bioprosthesis_2021_raw_datasets',
-        version ='0.0.13',
+        version ='0.0.14',
         author='Pawel Trajdos',
         author_email='pawel.trajdos@pwr.edu.pl',
         url = 'https://github.com/ptrajdos/dexterous-bioprosthesis-2021-raw-dataset',
