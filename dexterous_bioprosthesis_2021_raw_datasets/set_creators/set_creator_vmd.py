@@ -53,10 +53,6 @@ class SetCreatorVMD(SetCreator):
 
         return self
 
-    # TODO add VMD here
-    # TODO use SWD scheme
-    # Library VMD works only with 1D data. I need to correct it here.
-
     def _decompose_signal(self, signal, fs=1000):
         """
         Generates decomposition coefficients of the signal.
@@ -65,7 +61,7 @@ class SetCreatorVMD(SetCreator):
         list of tuples (decomposition coefficients, sampling frequency)
         """
         n_rows, n_cols = signal.shape
-        # FIXME dummy data for unit testing
+
         tmp_array = np.zeros((self.K, n_rows, n_cols))
 
         for ch_idx in range(n_cols):

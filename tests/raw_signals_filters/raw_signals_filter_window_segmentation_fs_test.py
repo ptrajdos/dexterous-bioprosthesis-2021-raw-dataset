@@ -1,16 +1,16 @@
 import unittest
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter_window_segmentation import (
-    RawSignalsFilterWindowSegmentation,
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter_window_segmentation_fs import (
+    RawSignalsFilterWindowSegmentationFS,
 )
 from tests.raw_signals_filters.raw_signals_filter_test import RawSignalsFilterTest
 
 
-class RawSignalsFilterWindowSegmentationTest(RawSignalsFilterTest):
+class RawSignalsFilterWindowSegmentationFSTest(RawSignalsFilterTest):
 
     __test__ = True
 
     def get_filters(self):
-        return [RawSignalsFilterWindowSegmentation(window_length=10, overlap=5)]
+        return [RawSignalsFilterWindowSegmentationFS(window_length=10, overlap=5)]
 
     def test_windowing(self):
 
