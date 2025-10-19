@@ -32,12 +32,22 @@ def read_signals_from_archive(
     rejected = RawSignals(sample_rate=sample_rate)
     
      # --- ZIP ---
+    sample_rate_regex = r".*/sample_rate.txt"
+
     if zipfile.is_zipfile(archive_path):
         with zipfile.ZipFile(archive_path, "r", allowZip64=True) as z:
             memberlist = z.namelist()
             memberlist.sort(key=str_sort_key)
             n_members = len(memberlist)
             for member in tqdm(memberlist, total=n_members, desc="Zip file iterating archive elements", leave=True):
+                if re.match(sample_rate_regex, member):
+                    try:
+                        sample_rate = int(z.read(member).strip())
+                        accapted.set_sample_rate(sample_rate)
+                        rejected.set_sample_rate(sample_rate)
+                    except:
+                        logging.warning(f"Invalid sample rate in file: {member}")
+                    continue
                 match_regex = True if filter_regex is None else re.match(filter_regex,member)
                 if member.endswith(".csv") and match_regex:
                     base_filename = os.path.splitext(os.path.basename(member))[0]
@@ -87,6 +97,16 @@ def read_signals_from_archive(
             n_members = len(memberlist)
             members_names_list = [m.name for m in memberlist]
             for member in tqdm( memberlist, leave=True, desc= "Tar file iterating over archive members", total=n_members):
+                if re.match(sample_rate_regex, member.name):
+                    try:
+                        sample_rate = tar.extractfile(member).read().strip()
+                        sample_rate = int(sample_rate)
+
+                        accapted.set_sample_rate(sample_rate)
+                        rejected.set_sample_rate(sample_rate)
+                    except:
+                        logging.warning(f"Invalid sample rate in file: {member}")
+                    continue
                 match_regex = True if filter_regex is None else re.match(filter_regex,member.name)
                 if member.isfile() and member.name.endswith(".csv") and match_regex:
                     member_name = member.name
@@ -152,6 +172,14 @@ def read_signals_from_dirs(
     Reads raw signals from the directory structure.
     Return tuple of accepted and rejected signals
     """
+    sample_rate_file_path  = os.path.join(input_dir, "sample_rate.txt")
+    if os.path.exists(sample_rate_file_path):
+        with open(sample_rate_file_path, "r") as file:
+            try:
+                sample_rate = int(file.read().strip())
+            except:
+                logging.warning(f"Invalid sample rate in file: {sample_rate_file_path}")
+    
     accepted = _read_signals_from_dirs_internal(
         input_dir,
         sample_rate,
@@ -278,6 +306,10 @@ def save_signals_to_dirs(raw_signals: RawSignals, output_directory):
 
     signal_labels = raw_signals.get_labels()
     unique_labels = set(signal_labels)
+    fs_file_path = os.path.join(output_directory, "sample_rate.txt")
+    with open(fs_file_path, "w") as file:
+        print(raw_signals.get_sample_rate(), file=file)
+
 
     for label in unique_labels:
         label_dir_path = os.path.join(output_directory, "{}".format(label))

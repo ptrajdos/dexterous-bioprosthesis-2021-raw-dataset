@@ -100,9 +100,9 @@ class RawSignalsTest(unittest.TestCase):
             pass
 
     def generate_sample_data(
-        self, signal_number=10, column_number=3, samples_number=12, dtype=np.float32
+        self, signal_number=10, column_number=3, samples_number=12, dtype=np.float32, sample_rate=1000,
     ) -> RawSignals:
-        signals = RawSignals()
+        signals = RawSignals(sample_rate=sample_rate)
 
         for i in range(1, signal_number + 1):
             signals.append(
@@ -401,6 +401,21 @@ class RawSignalsTest(unittest.TestCase):
         self.assertTrue(signals.get_sample_rate() == sr, "Wrong global sample rate.")
         for sig in signals:
             self.assertTrue(sig.get_sample_rate() == sr, "Wrong signal sample rate.")
+
+    def test_sample_rate_creation(self):
+        n_sig = 100
+        n_samples = 111
+        n_channels = 10
+        sr = 1666
+        signals = self.generate_sample_data(
+            column_number=n_channels, samples_number=n_samples, signal_number=n_sig, sample_rate=sr
+        )
+
+        self.assertTrue(signals.get_sample_rate() == sr, "Wrong global sample rate.")
+        for sig in signals:
+            self.assertTrue(sig.get_sample_rate() == sr, "Wrong signal sample rate.")
+        
+
 
     def test_dtype(self):
         n_sig = 100

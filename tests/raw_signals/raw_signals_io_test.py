@@ -34,9 +34,11 @@ class RawSignalsIOTest(unittest.TestCase):
 
             for acc in signals["accepted"]:
                 self.assertTrue(isinstance(acc, RawSignal))
+                self.assertTrue(acc.get_sample_rate() == 1001)
 
             for rej in signals["rejected"]:
                 self.assertTrue(isinstance(rej, RawSignal))
+                self.assertTrue(acc.get_sample_rate() == 1001)
 
             for name in ["accepted", "rejected"]:
                 rsignals: RawSignals = signals[name]

@@ -82,6 +82,7 @@ class RawSignals():
         if self.signal_n_cols != other.signal.shape[1]:
             raise ValueError("Appending signal with diferent number of columns")
 
+        other.set_sample_rate(self.sample_rate)
         self.raw_signals_list.append(other)
 
     def __iadd__(self,other):
