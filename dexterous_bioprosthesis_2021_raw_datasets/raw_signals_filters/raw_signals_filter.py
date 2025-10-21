@@ -15,7 +15,7 @@ class RawSignalsFilter(abc.ABC):
         raw_signals --- An object of RawSignals class to be fitted with
         """
         
-    @abc.abstractclassmethod
+    @abc.abstractmethod
     def transform(self,raw_signals: RawSignals)->RawSignals:
         """
         Transforms the RawSignals object
