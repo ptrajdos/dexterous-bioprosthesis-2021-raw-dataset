@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 import platform
+import sys
 
 def numpy_version():
     if "armv" in platform.machine():
@@ -10,7 +11,10 @@ def numba_version():
     if "armv" in platform.machine():
         #The highest version that uses LLVM 11 or 13
         #Newer versions use LLVM 14 unavailable on Raspberry
-        return 'numba==0.56.4' 
+        if sys.version_info > (3,10) and sys.version_info < (3,12):
+            return 'numba==0.58.0' 
+        if sys.version_info >= (3,9) and sys.version_info < (3,10):
+            return 'numba==0.56.4'
 
     return 'numba'
 
