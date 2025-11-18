@@ -30,9 +30,8 @@ class RawSignalsAugumenterGainChannel(RawSignalsAugumenter):
         for _ in range(self.n_repeats):
                 new_signal = deepcopy(signal)
                 np_sig = new_signal.signal
-                for ch_id in range(np_sig.shape[1]):
-                    gain_perc = np.random.uniform(self.gain_perc_min, self.gain_perc_max,1)
-                    np_sig[:,ch_id]*= gain_perc
+                gain_perc = np.random.uniform(self.gain_perc_min, self.gain_perc_max,np_sig.shape[1])
+                np_sig = np_sig * gain_perc
                 sig_list.append(new_signal)
 
         return sig_list
