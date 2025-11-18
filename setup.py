@@ -1,3 +1,5 @@
+from pathlib import Path
+import re
 from setuptools import setup, find_packages
 import platform
 import sys
@@ -24,10 +26,24 @@ def scikit_learn_version():
 
     return "scikit-learn>=1.2.2"
 
+def get_version():
+    init_py = Path(__file__).parent / "dexterous_bioprosthesis_2021_raw_datasets" / "__init__.py"
+    text = init_py.read_text(encoding='utf-8')
+    version_pattern = '__version__\s*=\s*[\'"]([^\'"]+)[\'"]'
+    print(text)
+    version_match = re.search(
+        version_pattern,
+        text
+    )
+    if not version_match:
+        raise RuntimeError("Unable to find version string.")
+    version_found = version_match.group(1)
+    # print(f"Version found: {version_found}")
+    return version_found
 
 setup(
         name='dexterous_bioprosthesis_2021_raw_datasets',
-        version ='0.0.18',
+        version =get_version(),
         author='Pawel Trajdos',
         author_email='pawel.trajdos@pwr.edu.pl',
         url = 'https://github.com/ptrajdos/dexterous-bioprosthesis-2021-raw-dataset',
