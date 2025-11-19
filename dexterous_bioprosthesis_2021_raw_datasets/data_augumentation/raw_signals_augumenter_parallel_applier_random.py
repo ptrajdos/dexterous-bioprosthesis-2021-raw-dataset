@@ -17,10 +17,11 @@ default_augumenter_list = [
 
 class RawSignalsAugumenterParallelApplierRandom(RawSignalsAugumenter):
 
-    def __init__(self, augumenter_list = default_augumenter_list) -> None:
+    def __init__(self, augumenter_list = default_augumenter_list,append_original = True) -> None:
         super().__init__()
 
         self.augumenter_list = augumenter_list
+        self.append_original = append_original
 
     def fit(self, raw_signals: RawSignals):
         """
@@ -41,7 +42,8 @@ class RawSignalsAugumenterParallelApplierRandom(RawSignalsAugumenter):
             sig_selected = assigs==aug_idx
             new_signals += aug.transform(raw_signals[sig_selected])
 
-        new_signals += raw_signals
+        if self.append_original:
+            new_signals += raw_signals
 
         return new_signals
 

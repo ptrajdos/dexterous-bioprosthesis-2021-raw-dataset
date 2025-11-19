@@ -30,7 +30,6 @@ def get_version():
     init_py = Path(__file__).parent / "dexterous_bioprosthesis_2021_raw_datasets" / "__init__.py"
     text = init_py.read_text(encoding='utf-8')
     version_pattern = '__version__\s*=\s*[\'"]([^\'"]+)[\'"]'
-    print(text)
     version_match = re.search(
         version_pattern,
         text
@@ -38,7 +37,6 @@ def get_version():
     if not version_match:
         raise RuntimeError("Unable to find version string.")
     version_found = version_match.group(1)
-    # print(f"Version found: {version_found}")
     return version_found
 
 setup(
