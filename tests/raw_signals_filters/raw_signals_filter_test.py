@@ -38,6 +38,20 @@ class RawSignalsFilterTest(unittest.TestCase):
 
         return signals
 
+    def generate_zero_data(
+        self, signal_number=10, column_number=3, samples_number=12, dtype=np.float32
+    ) -> RawSignals:
+        signals = RawSignals()
+
+        for i in range(1, signal_number + 1):
+            signals.append(
+                RawSignal(
+                    signal=np.zeros((samples_number, column_number)).astype(dtype)
+                )
+            )
+
+        return signals
+
     def test_filter_fit_then_transform(self):
         filters = self.get_filters()
         
@@ -48,6 +62,33 @@ class RawSignalsFilterTest(unittest.TestCase):
 
                     for i in range(1, N + 1):
                         signals.append(RawSignal(signal=np.random.random((M * i, C))))
+
+                    try:
+                        filter.fit(signals)
+                        tr_signals = filter.transform(signals)
+
+                        self.assertIsNotNone(tr_signals, "Transformed object is none.")
+                        self.assertIsInstance(tr_signals, RawSignals)
+                        self.assertTrue(id(signals) != id(tr_signals), "Objects are the same")
+
+                        for sig in tr_signals:
+                            np_data = sig.to_numpy()
+                            self.assertFalse(np.any(np.isnan(np_data)), "NaN values in the data.")
+                            self.assertFalse(np.any(np.isinf(np_data)), "Inf values in the data.")
+
+                    except Exception as ex:
+                        self.fail("An exception has been caught: {}".format(ex))
+
+    def test_filter_fit_then_transform_zeros(self):
+        filters = self.get_filters()
+        
+        for N,M,C in [(10,30,6),(2,30,3),(1,30,2), (5,30,10), (3,50,1)]:
+            for filter in filters:
+                signals = RawSignals()
+                with self.subTest(filter=filter, N=N, M=M, C=C):
+
+                    for i in range(1, N + 1):
+                        signals.append(RawSignal(signal=np.zeros((M * i, C))))
 
                     try:
                         filter.fit(signals)
@@ -78,6 +119,8 @@ class RawSignalsFilterTest(unittest.TestCase):
 
             except Exception as ex:
                 self.fail("An exception has been caught: {}".format(ex))
+
+    
 
     def test_dtype(self):
         filters = self.get_filters()

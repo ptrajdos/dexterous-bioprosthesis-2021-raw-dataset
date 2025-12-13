@@ -59,7 +59,7 @@ class NpSignalExtractorTest(unittest.TestCase):
                         )
                         self.assertFalse(np.any(np.isnan(T)), "NaNs in outut")
                         self.assertTrue(np.all(np.isfinite(T)), "Infinite values in output")
-
+                        
     def test_dtype(self):
         dtypes = [np.float32, np.float64, np.single, np.double]
         for dtype in dtypes:

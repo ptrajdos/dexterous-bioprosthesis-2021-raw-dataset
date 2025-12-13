@@ -6,6 +6,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_creators.raw_signals_creator_sines import (
     RawSignalsCreatorSines,
 )
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_creators.raw_signals_creator_zeros import RawSignalsCreatorZeros
 
 
 class RawSignalsAugumenterTest(unittest.TestCase):
@@ -40,11 +41,24 @@ class RawSignalsAugumenterTest(unittest.TestCase):
                 np.isnan(a_sig.to_numpy()).any(), "Nans in transformed signals"
             )
             self.assertFalse(
-                np.isinf(a_sig.to_numpy()).any(), "Nans in transformed signals"
+                np.isinf(a_sig.to_numpy()).any(), "Infs in transformed signals"
             )
 
     def test_fit_then_transform(self):
         signal_creator = RawSignalsCreatorSines(samples_number=1000)
+        raw_signals: RawSignals = signal_creator.get_set()
+
+        aug = self.get_augumenter()
+
+        obj = aug.fit(raw_signals)
+        self.assertIsNotNone(obj, "fit should return something")
+        self.assertTrue(type(obj) == type(aug), "Fit should return self")
+        aug_signals: RawSignals = aug.transform(raw_signals)
+
+        self._check_aug_signals(raw_signals=raw_signals, aug_signals=aug_signals)
+
+    def test_fit_then_transform(self):
+        signal_creator = RawSignalsCreatorZeros(samples_number=1000)
         raw_signals: RawSignals = signal_creator.get_set()
 
         aug = self.get_augumenter()

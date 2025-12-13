@@ -26,6 +26,14 @@ class RawSignalsSpoilerInterfaceTest(unittest.TestCase):
             signals.append( RawSignal(signal=np.random.random( (samples_number,column_number)).astype(dtype)) )
 
         return signals
+
+    def generate_zero_data(self,signal_number=10, column_number=3, samples_number=12, dtype=np.double)->RawSignals:
+        signals = RawSignals()
+
+        for i in range(1,signal_number+1):
+            signals.append( RawSignal(signal=np.zeros( (samples_number,column_number)).astype(dtype)) )
+
+        return signals
     
     def _check_for_invalid_values(self,raw_signals:RawSignals):
 
@@ -51,6 +59,20 @@ class RawSignalsSpoilerInterfaceTest(unittest.TestCase):
     def test_fit_transform(self):
 
         data = self.generate_sample_data()
+
+        spoilers = self.get_spoilers()
+
+        for spoiler in spoilers:
+
+            t_data = spoiler.fit_transform(data)
+
+            self.assertIsNotNone(t_data, "Transformed data is None")
+            self.assertIsInstance(t_data, RawSignals, "Transformed data is not an instance of RawSignals")
+            self._check_for_invalid_values(t_data)
+
+    def test_fit_transform_zero(self):
+
+        data = self.generate_zero_data()
 
         spoilers = self.get_spoilers()
 

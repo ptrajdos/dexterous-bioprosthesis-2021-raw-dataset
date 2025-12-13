@@ -8,7 +8,10 @@ from copy import deepcopy
 
 class RawSignalsFilterAllRobustStandarizer(RawSignalsFilter):
 
-   
+    def __init__(self,eps=1e-30) -> None:
+        super().__init__()
+        self.eps = eps
+
 
     def fit(self, raw_signals: RawSignals):
         np_data_all = raw_signals.to_numpy_concat()
@@ -16,6 +19,8 @@ class RawSignalsFilterAllRobustStandarizer(RawSignalsFilter):
         self._median = np.median(np_data_all).astype(dtype)
         q1, q3 = np.percentile(np_data_all, [25, 75]).astype(dtype)
         self._iqr = q3 - q1
+        if self._iqr < self.eps:
+            self._iqr = self.eps
         self._fitted = True
         return self
 

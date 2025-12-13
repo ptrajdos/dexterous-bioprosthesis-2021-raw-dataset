@@ -50,7 +50,6 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
     
     def _desired_channel_noise_powers(self,raw_signal_np):
         channel_powers = self._channel_powers(raw_signal_np)
-
         desired_powers = np.power( 10.0, np.log10(channel_powers) - self.snr/10.0 )
         
         return desired_powers

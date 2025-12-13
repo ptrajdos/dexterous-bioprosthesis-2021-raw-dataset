@@ -9,7 +9,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_transformer_wrapper import (
     SetCreatorTransformerWrapper,
 )
-from tests.testing_tools import generate_sample_data
+from tests.testing_tools import generate_sample_data, generate_zero_data
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 
@@ -42,6 +42,22 @@ class SetCreatorTest(unittest.TestCase):
             dtype=dtype,
         )
     
+    def generate_z(
+        self,
+        signal_number=10,
+        column_number=3,
+        samples_number=12,
+        class_indices=[0, 1],
+        dtype=np.double,
+    ):
+        return generate_zero_data(
+            signal_number=signal_number,
+            column_number=column_number,
+            samples_number=samples_number,
+            class_indices=class_indices,
+            dtype=dtype,
+        )   
+    
     def get_sample_data_parameters(self):
         return [
             (10, 3, 10, [0, 1]),
@@ -61,6 +77,13 @@ class SetCreatorTest(unittest.TestCase):
         self.assertTrue(X.shape[0] == n_samples, "X -- wrong number of objects")
         self.assertTrue(len(y) == n_samples, "y -- wrong number of objects")
         self.assertTrue(len(t) == n_samples, "t -- wrong number of objects")
+
+        self.assertFalse(np.isnan(X).any(), "Nans in X")
+        self.assertFalse(np.isinf(X).any(), "Infs in X")
+        self.assertFalse(np.isnan(y).any(), "Nans in y")
+        self.assertFalse(np.isinf(y).any(), "Infs in y")
+        self.assertFalse(np.isnan(t).any(), "Nans in t")
+        self.assertFalse(np.isinf(t).any(), "Infs in t")
 
     def test_creator_fit_transform(self):
 

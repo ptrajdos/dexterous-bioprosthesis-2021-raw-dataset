@@ -16,6 +16,16 @@ def generate_sample_data(signal_number=10, column_number=3, samples_number=12, c
 
         return signals
 
+def generate_zero_data(signal_number=10, column_number=3, samples_number=12, class_indices=[0,1], dtype=np.double)->RawSignals:
+        signals = RawSignals()
+
+        for i in range(1,signal_number+1):
+            rnd_idx = random.randint(0, len(class_indices)-1)
+            rnd_class = class_indices[rnd_idx]
+            signals.append( RawSignal(signal=np.zeros( (samples_number,column_number),dtype=dtype), object_class=rnd_class ) )
+
+        return signals
+
 import pickle
 from tempfile import mkstemp
 import unittest
