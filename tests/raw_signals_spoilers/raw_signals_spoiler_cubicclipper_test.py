@@ -12,6 +12,7 @@ class RawSignalsSpoilerCubicClipperTest(RawSignalsSpoilerTest):
         return [
             RawSignalsSpoilerCubicClipper(),
             RawSignalsSpoilerCubicClipper(channels_spoiled_frac=0),
+            RawSignalsSpoilerCubicClipper(channels_spoiled_frac=None),
         ]
 
     def get_spoiler_class(self):

@@ -12,6 +12,7 @@ class RawSignalsSpoilerSilencerTest(RawSignalsSpoilerTest):
         return [
             RawSignalsSpoilerSilencer(), RawSignalsSpoilerSilencer(channels_spoiled_frac=1.0),
             RawSignalsSpoilerSilencer(channels_spoiled_frac=0.0),
+            RawSignalsSpoilerSilencer(channels_spoiled_frac=None),
 
         ]
     def get_spoiler_class(self):

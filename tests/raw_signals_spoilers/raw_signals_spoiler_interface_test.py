@@ -46,15 +46,18 @@ class RawSignalsSpoilerInterfaceTest(unittest.TestCase):
         data = self.generate_sample_data()
 
         spoilers = self.get_spoilers()
+        rcs = ((10,1,20), (5,3,15), (8,4,12), (12,2,25))
 
-        for spoiler in spoilers:
+        for N,C,R in rcs:
+            data = self.generate_sample_data(signal_number=N, column_number=C, samples_number=R)
+            for spoiler in spoilers:
+                with self.subTest(spoiler=spoiler, N=N, C=C, R=R):
+                    spoiler.fit(data)
+                    t_data = spoiler.transform(data)
 
-            spoiler.fit(data)
-            t_data = spoiler.transform(data)
-
-            self.assertIsNotNone(t_data, "Transformed data is None")
-            self.assertIsInstance(t_data, RawSignals, "Transformed data is not an instance of RawSignals")
-            self._check_for_invalid_values(t_data)
+                    self.assertIsNotNone(t_data, "Transformed data is None")
+                    self.assertIsInstance(t_data, RawSignals, "Transformed data is not an instance of RawSignals")
+                    self._check_for_invalid_values(t_data)
 
     def test_fit_transform(self):
 

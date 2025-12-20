@@ -38,7 +38,16 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
             return []
         
         n_samples, n_channels = raw_signal.to_numpy().shape
-        n_sel_channels = int( np.min( [np.ceil(self.channels_spoiled_frac * n_channels), n_channels ]))
+        if self.channels_spoiled_frac is None:
+            if n_channels >1:
+                n_sel_channels = np.random.randint(1,n_channels)
+            else:
+                n_sel_channels = np.random.randint(n_channels)
+
+            if n_sel_channels == 0:
+                return []
+        else:    
+            n_sel_channels = int( np.min( [np.ceil(self.channels_spoiled_frac * n_channels), n_channels ]))
 
         sel_channel_indices = np.random.choice([*range(n_channels)], size=n_sel_channels, replace=False)
 

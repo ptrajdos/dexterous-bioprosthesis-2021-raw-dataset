@@ -9,6 +9,7 @@ class RawSignalsSpoilerSineTest(RawSignalsSpoilerTest):
         return [
             RawSignalsSpoilerGauss(),
             RawSignalsSpoilerGauss(channels_spoiled_frac=0),
+            RawSignalsSpoilerGauss(channels_spoiled_frac=None),
         ]
     
     def get_spoiler_class(self):

@@ -10,6 +10,7 @@ class RawSignalsSpoilerSinesHarmonicsTest(RawSignalsSpoilerTest):
         return [
             RawSignalsSpoilerSinesHarmonics(),
             RawSignalsSpoilerSinesHarmonics(channels_spoiled_frac=0),
+            RawSignalsSpoilerSinesHarmonics(channels_spoiled_frac=None),
         ]
     
     def get_spoiler_class(self):
