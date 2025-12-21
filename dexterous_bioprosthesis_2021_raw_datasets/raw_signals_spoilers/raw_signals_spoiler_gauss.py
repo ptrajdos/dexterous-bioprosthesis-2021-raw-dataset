@@ -24,7 +24,7 @@ class RawSignalsSpoilerGauss(RawSignalsSpoiler):
             n_samples, n_channels = signal.to_numpy().shape
 
             
-            noise_sig_np = np.random.random((n_samples, n_channels))
+            noise_sig_np = np.random.normal(loc=0, scale=1.0,size=(n_samples, n_channels))
             acc_noise_powers = self._channel_powers(noise_sig_np)
 
             np_sig = signal.to_numpy()
