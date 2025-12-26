@@ -38,8 +38,8 @@ class RawSignalsFilterWindowSegmentation(RawSignalsFilter):
             start_idx = 0
             end_idx = start_idx + self.window_length
             while end_idx <= s_len:
-                copied_signal = deepcopy(signal)
-                copied_signal.signal = copied_signal.signal[ start_idx:end_idx, :]
+                copied_signal = signal[start_idx:end_idx, :]
+                copied_signal.signal = copied_signal.signal.copy()
                 new_signals.append(copied_signal)
 
                 start_idx += self.window_length - self.overlap
