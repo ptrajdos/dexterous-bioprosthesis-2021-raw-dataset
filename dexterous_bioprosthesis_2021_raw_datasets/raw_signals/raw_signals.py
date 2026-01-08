@@ -1,10 +1,12 @@
 
 from copy import deepcopy
 import numpy as np
+
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.iraw_signals import IRawSignals
 from .raw_signal import RawSignal
 from collections.abc import Iterable
 from collections.abc import Collection
-class RawSignals():
+class RawSignals(IRawSignals):
     """
      Class represents a dataset of raw signals
     """
