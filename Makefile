@@ -12,6 +12,9 @@ VENV_SUBDIR=${ROOTDIR}/venv
 COVERAGERC=${ROOTDIR}/.coveragerc
 DOCS_DIR=${ROOTDIR}/docs
 DATADIR=${ROOTDIR}/data
+LINTFILE=${ROOTDIR}/lint.log
+FLAKE8FILE=${ROOTDIR}/flake8.log
+MYPYFILE=${ROOTDIR}/mypy.log
 TESTSETNAME=Andrzej_19_10_2022
 TESTDATADIR=${DATADIR}/${TESTSETNAME}
 TESTDATAZIP=${DATADIR}/${TESTSETNAME}.zip
@@ -19,6 +22,9 @@ TESTDATAZIP=${DATADIR}/${TESTSETNAME}.zip
 COVERAGE = coverage
 UNITTEST_PARALLEL = unittest-parallel
 PDOC= pdoc3
+PYLINT= pylint
+FLAKE8= flake8
+MYPY= mypy
 PYTHON=python
 SYSPYTHON=python
 #--system-site-packages
@@ -63,6 +69,16 @@ docs:
 profile: venv data_unp
 
 	${ACTIVATE}; ${PYTEST} -n auto --cov-report=html --cov=${SRCDIR} --profile ${TESTDIR}
+
+flake8: venv
+	${ACTIVATE}; ${FLAKE8} --jobs auto ${SRCDIR} > ${FLAKE8FILE} || true
+
+mypy: venv
+	${ACTIVATE}; ${MYPY} --pretty --show-error-context ${SRCDIR} > ${MYPYFILE} || true
+lint: venv
+	${ACTIVATE}; ${PYLINT} -j 0 ${SRCDIR} > ${LINTFILE} || true
+
+static_check: flake8 mypy lint
 
 ${TESTDATADIR}:
 	@echo "Unpacking ${TESTDATAZIP}"
