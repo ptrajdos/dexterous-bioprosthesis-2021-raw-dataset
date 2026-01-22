@@ -1,3 +1,4 @@
+import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
 )
@@ -26,9 +27,14 @@ class NpSignalExtractorTemporalKurtosis(NPSignalExtractor):
             time_vector=NpSignalExtractorTemporalMoment._get_time_vector(X, self.proportional_time),
             central=True,
         )
-        skew = u4 / (u2**2) - 3.0
+        kurtosis = np.divide(
+            u4,
+            u2**2,
+            out=np.zeros_like(u4),  # set kurtosis=0 where u2==0
+            where=u2 > 0
+        ) - 3.0  # subtract 3 for excess kurtosis
 
-        return skew
+        return kurtosis
 
     def attribs_per_column(self):
         return 1

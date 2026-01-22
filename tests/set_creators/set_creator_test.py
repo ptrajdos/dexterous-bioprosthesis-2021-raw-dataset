@@ -9,7 +9,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_transformer_wrapper import (
     SetCreatorTransformerWrapper,
 )
-from tests.testing_tools import generate_sample_data, generate_zero_data
+from tests.testing_tools import generate_one_data, generate_sample_data, generate_zero_data
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 
@@ -51,6 +51,22 @@ class SetCreatorTest(unittest.TestCase):
         dtype=np.double,
     ):
         return generate_zero_data(
+            signal_number=signal_number,
+            column_number=column_number,
+            samples_number=samples_number,
+            class_indices=class_indices,
+            dtype=dtype,
+        )
+
+    def generate_one(
+        self,
+        signal_number=10,
+        column_number=3,
+        samples_number=12,
+        class_indices=[0, 1],
+        dtype=np.double,
+    ):
+        return generate_one_data(
             signal_number=signal_number,
             column_number=column_number,
             samples_number=samples_number,
@@ -144,6 +160,35 @@ class SetCreatorTest(unittest.TestCase):
             X, y, t = creator.transform(raw_set)
 
             self.basic_test_check(raw_set, X, y, t)
+
+    def test_creator_zeros(self):
+
+        creators = self.get_creators()
+
+        for creator in creators:
+
+            raw_set = self.generate_z(samples_number=self.get_default_sample_number())
+            n_samples = len(raw_set)
+
+            creator.fit(raw_set)
+            X, y, t = creator.transform(raw_set)
+
+            self.basic_test_check(raw_set, X, y, t)
+
+    def test_creator_ones(self):
+
+        creators = self.get_creators()
+
+        for creator in creators:
+
+            raw_set = self.generate_one(samples_number=self.get_default_sample_number())
+            n_samples = len(raw_set)
+
+            creator.fit(raw_set)
+            X, y, t = creator.transform(raw_set)
+
+            self.basic_test_check(raw_set, X, y, t)
+
 
     def test_attributes_indices(self):
         creators = self.get_creators()

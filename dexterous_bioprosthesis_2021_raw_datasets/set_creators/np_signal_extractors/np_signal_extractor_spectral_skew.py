@@ -21,7 +21,12 @@ class NpSignalExtractorSpectralSkew(NpSignalExtractorSpectral):
         u3 = NpSignalExtractorSpectralMoment._spectral_moment(psd=psd,freqs=freqs, order=3, centered=True)
         u2 = NpSignalExtractorSpectralMoment._spectral_moment(psd=psd,freqs=freqs, order=2, centered=True)
 
-        skew = u3 / (u2**1.5)
+        skew = np.divide(
+            u3,
+            u2**1.5,
+            out=np.zeros_like(u3),   # set skew=0 where u2==0
+            where=u2 > 0             # only divide where u2 > 0
+        )
         skew = skew.astype(X.dtype)
         return skew
         

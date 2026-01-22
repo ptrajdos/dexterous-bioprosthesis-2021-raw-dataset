@@ -13,7 +13,12 @@ class NpSignalExtractorKurtosis(NPSignalExtractor):
 
     def _transform(self, X):
 
-        return kurtosis(X, nan_policy="propagate")
+        kurtosis_values = kurtosis(X, nan_policy="propagate")
+        #FIXME Is there a better way to handle NaN/Inf values?
+        kurtosis_values = np.nan_to_num(kurtosis_values, nan=0.0, posinf=0.0, neginf=0.0)
+
+        return kurtosis_values
+    
 
     def attribs_per_column(self):
         return 1

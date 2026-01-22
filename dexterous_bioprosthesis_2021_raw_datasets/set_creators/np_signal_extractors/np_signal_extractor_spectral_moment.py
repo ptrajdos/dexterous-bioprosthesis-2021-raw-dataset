@@ -24,9 +24,9 @@ class NpSignalExtractorSpectralMoment(NpSignalExtractorSpectral):
 
     @staticmethod
     def _spectral_centroid(psd, freqs):
-        spectral_centroid = np.sum(freqs[:, np.newaxis] * psd, axis=0) / np.sum(
-            psd, axis=0
-        )
+        psd_sum = np.sum(psd, axis=0)
+        # avoid division by zero
+        spectral_centroid = np.where(psd_sum > 0, np.sum(freqs[:, np.newaxis] * psd, axis=0) / psd_sum, 0.0)
         return spectral_centroid
 
     @staticmethod
@@ -35,7 +35,13 @@ class NpSignalExtractorSpectralMoment(NpSignalExtractorSpectral):
         if centered:
             spectral_centroid = NpSignalExtractorSpectralMoment._spectral_centroid(psd=psd, freqs=freqs)
 
-        moment = np.sum( psd*(freqs[:,np.newaxis] - spectral_centroid) ** order,axis=0 )/np.sum(psd,axis=0)
+        psd_sums = np.sum(psd, axis=0)
+        moment = np.divide(
+            np.sum(psd * (freqs[:, np.newaxis] - spectral_centroid) ** order, axis=0),
+            np.sum(psd, axis=0),
+            out=np.zeros_like(np.sum(psd, axis=0)),
+            where=psd_sums > 0,
+        )
         return moment
 
     def _transform(self, X):

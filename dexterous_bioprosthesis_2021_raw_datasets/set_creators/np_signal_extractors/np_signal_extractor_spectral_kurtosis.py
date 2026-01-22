@@ -21,7 +21,13 @@ class NpSignalExtractorSpectralKurtosis(NpSignalExtractorSpectral):
         u4 = NpSignalExtractorSpectralMoment._spectral_moment(psd=psd,freqs=freqs, order=4, centered=True)
         u2 = NpSignalExtractorSpectralMoment._spectral_moment(psd=psd,freqs=freqs, order=2, centered=True)
 
-        kurtosis = u4 / (u2**2) - 3.0
+        kurtosis = np.divide(
+            u4,
+            u2**2,
+            out=np.zeros_like(u4),  # set kurtosis=0 where u2==0
+            where=u2 > 0
+        ) - 3.0  # subtract 3 for excess kurtosis
+
         kurtosis = kurtosis.astype(X.dtype)
 
         return kurtosis

@@ -16,7 +16,9 @@ class NpSignalExtractorMobility(NPSignalExtractor):
         dx = np.diff(X, axis=0)
         dx_col_vars = np.var(dx, axis=0, ddof=1)
 
-        mobility = np.sqrt(dx_col_vars / x_col_vars)
+        mobility = np.sqrt(np.divide(dx_col_vars, x_col_vars, 
+                                 out=np.zeros_like(dx_col_vars), 
+                                 where=x_col_vars > 0))
         return mobility
 
     def attribs_per_column(self):

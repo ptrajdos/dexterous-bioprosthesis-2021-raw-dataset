@@ -11,16 +11,32 @@ class NpSignalExtractorComplexity(NPSignalExtractor):
         return super().fit(X)
 
     def _transform(self, X):
-
         x_col_vars = np.var(X, axis=0, ddof=1)
+
         dx = np.diff(X, axis=0)
         ddx = np.diff(dx, axis=0)
-        ddx_col_vars = np.var(ddx, axis=0, ddof=1)
-        dx_col_vars = np.var(dx, axis=0, ddof=1)
 
-        mobility = np.sqrt(dx_col_vars / x_col_vars)
-        complexity = np.sqrt(ddx_col_vars / dx_col_vars) / mobility
+        dx_col_vars = np.var(dx, axis=0, ddof=1)
+        ddx_col_vars = np.var(ddx, axis=0, ddof=1)
+
+        mobility = np.zeros_like(x_col_vars)
+        np.divide(
+            np.sqrt(dx_col_vars),
+            np.sqrt(x_col_vars),
+            out=mobility,
+            where=x_col_vars > 0
+        )
+
+        complexity = np.zeros_like(x_col_vars)
+        np.divide(
+            np.sqrt(ddx_col_vars / dx_col_vars),
+            mobility,
+            out=complexity,
+            where=(dx_col_vars > 0) & (mobility > 0)
+        )
+
         return complexity
+
 
     def attribs_per_column(self):
         return 1

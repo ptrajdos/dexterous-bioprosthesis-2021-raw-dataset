@@ -80,3 +80,49 @@ class NpSignalExtractorTest(unittest.TestCase):
                         np.issubdtype(T.dtype, dtype),
                         f"Wrong dtype of the output. Expected {dtype}, got {X.dtype}",
                     )
+
+    def test_zero_columns(self):
+
+        extractors = self.get_extractors()
+        R = 100
+        C = 3
+        X = np.zeros((R, C))
+
+        for extractor in extractors:
+
+            extractor.fit(X)
+            att_per_column = extractor.attribs_per_column()
+
+            n_desired_attrs = att_per_column * C
+
+            T = extractor.transform(X)
+            self.assertIsNotNone(T, "None type has been returned")
+            self.assertIsInstance(T, np.ndarray, "Wrong type")
+            self.assertTrue(
+                len(T) == n_desired_attrs, "Wrong number of returned values"
+            )
+            self.assertFalse(np.any(np.isnan(T)), "NaNs in outut")
+            self.assertTrue(np.all(np.isfinite(T)), "Infinite values in output")
+
+    def test_one_columns(self):
+
+        extractors = self.get_extractors()
+        R = 100
+        C = 3
+        X = np.ones((R, C))
+
+        for extractor in extractors:
+
+            extractor.fit(X)
+            att_per_column = extractor.attribs_per_column()
+
+            n_desired_attrs = att_per_column * C
+
+            T = extractor.transform(X)
+            self.assertIsNotNone(T, "None type has been returned")
+            self.assertIsInstance(T, np.ndarray, "Wrong type")
+            self.assertTrue(
+                len(T) == n_desired_attrs, "Wrong number of returned values"
+            )
+            self.assertFalse(np.any(np.isnan(T)), "NaNs in outut")
+            self.assertTrue(np.all(np.isfinite(T)), "Infinite values in output")

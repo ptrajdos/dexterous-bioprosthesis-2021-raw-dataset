@@ -13,7 +13,8 @@ class NpSignalExtractorEnergyEntropy(NPSignalExtractor):
     def _transform(self, X):
 
         sig_squares  =  X ** 2
-        probs = sig_squares / np.sum(sig_squares, axis=0, keepdims=True)
+        e_tot = np.sum(sig_squares, axis=0, keepdims=True)
+        probs = np.divide(sig_squares, e_tot, where=e_tot>0)
         entropy = -np.sum(probs * np.log2(probs + np.finfo(float).eps ), axis=0).astype(X.dtype)
         return entropy
 
