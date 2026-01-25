@@ -1,3 +1,4 @@
+from typing import Any
 class Counter:
     def __init__(self,initial_value=0) -> None:
         super().__init__()
@@ -17,6 +18,8 @@ class Counter:
         self.value-=other
         return self
     
-    def __eq__(self, __value: object) -> bool:
-        return self.value == int(__value)
-    
+    def __eq__(self, __value: Any) -> bool:
+        try:
+            return self.value == int(__value)
+        except (TypeError, ValueError):
+            return NotImplemented

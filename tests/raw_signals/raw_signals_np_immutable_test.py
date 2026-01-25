@@ -1,7 +1,6 @@
 import random
 import unittest
 import numpy as np
-from exceptiongroup import catch
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.iraw_signals import IRawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals

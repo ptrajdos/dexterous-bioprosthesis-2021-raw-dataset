@@ -12,9 +12,10 @@ VENV_SUBDIR=${ROOTDIR}/venv
 COVERAGERC=${ROOTDIR}/.coveragerc
 DOCS_DIR=${ROOTDIR}/docs
 DATADIR=${ROOTDIR}/data
-LINTFILE=${ROOTDIR}/lint.log
-FLAKE8FILE=${ROOTDIR}/flake8.log
-MYPYFILE=${ROOTDIR}/mypy.log
+STATICDIR=${ROOTDIR}/static_analysis
+LINTFILE=${STATICDIR}/lint.json
+FLAKE8FILE=${STATICDIR}/flake8.log
+MYPYFILE=${STATICDIR}/mypy.log
 TESTSETNAME=Andrzej_19_10_2022
 TESTDATADIR=${DATADIR}/${TESTSETNAME}
 TESTDATAZIP=${DATADIR}/${TESTSETNAME}.zip
@@ -70,13 +71,15 @@ profile: venv data_unp
 
 	${ACTIVATE}; ${PYTEST} -n auto --cov-report=html --cov=${SRCDIR} --profile ${TESTDIR}
 
-flake8: venv
+${STATICDIR}:
+	mkdir -p ${STATICDIR}
+flake8: venv ${STATICDIR}
 	${ACTIVATE}; ${FLAKE8} --jobs auto ${SRCDIR} > ${FLAKE8FILE} || true
 
-mypy: venv
+mypy: venv ${STATICDIR}
 	${ACTIVATE}; ${MYPY} --pretty --show-error-context ${SRCDIR} > ${MYPYFILE} || true
-lint: venv
-	${ACTIVATE}; ${PYLINT} -j 0 ${SRCDIR} > ${LINTFILE} || true
+lint: venv ${STATICDIR}
+	${ACTIVATE}; ${PYLINT} -j 0 ${SRCDIR} --output-format=json > ${LINTFILE} || true
 
 static_check: flake8 mypy lint
 
