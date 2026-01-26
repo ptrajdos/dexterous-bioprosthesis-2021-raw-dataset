@@ -4,7 +4,10 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import Raw
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 import numpy as np
 
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_interface import RawSignalsSpoilerInterface
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_interface import (
+    RawSignalsSpoilerInterface,
+)
+
 
 class RawSignalsSpoiler(RawSignalsSpoilerInterface):
 
@@ -21,8 +24,8 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
         super().__init__()
         self.channels_spoiled_frac = channels_spoiled_frac
         self.snr = snr
- 
-    def _random_channel_selection(self,raw_signal:RawSignal):
+
+    def _random_channel_selection(self, raw_signal: RawSignal):
         """
         Return list of randomly selected channels
 
@@ -34,45 +37,51 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
         iterable of selected channel indices
         """
         if self.channels_spoiled_frac == 0:
-            #Explicit zero is passed
+            # Explicit zero is passed
             return []
-        
+
         n_samples, n_channels = raw_signal.to_numpy().shape
         if self.channels_spoiled_frac is None:
-            if n_channels >1:
-                n_sel_channels = np.random.randint(1,n_channels)
+            if n_channels > 1:
+                n_sel_channels = np.random.randint(1, n_channels)
             else:
                 n_sel_channels = np.random.randint(n_channels)
 
             if n_sel_channels == 0:
                 return []
-        else:    
-            n_sel_channels = int( np.min( [np.ceil(self.channels_spoiled_frac * n_channels), n_channels ]))
+        else:
+            n_sel_channels = int(
+                np.min([np.ceil(self.channels_spoiled_frac * n_channels), n_channels])
+            )
 
-        sel_channel_indices = np.random.choice([*range(n_channels)], size=n_sel_channels, replace=False)
+        sel_channel_indices = np.random.choice(
+            [*range(n_channels)], size=n_sel_channels, replace=False
+        )
 
         return sel_channel_indices
-    
-    def _channel_powers(self, raw_signal_np):
-        powers = np.mean( np.power(raw_signal_np,2) ,axis=0)
-        return powers
-    
-    def _desired_channel_noise_powers(self,raw_signal_np):
-        channel_powers = self._channel_powers(raw_signal_np)
-        desired_powers = np.power( 10.0, np.log10(channel_powers) - self.snr/10.0 )
-        
-        return desired_powers
-    
-    def _calculate_snrs(self, raw_signal_np, noise_signal_np):
-        signal_powers = np.mean( np.power(raw_signal_np,2) ,axis=0)
-        noise_powers = np.mean( np.power(noise_signal_np,2) ,axis=0)
 
-        snrs = 10.0* np.log10(signal_powers/noise_powers)
+    def _channel_powers(self, raw_signal_np):
+        powers = np.mean(np.power(raw_signal_np, 2), axis=0)
+        return powers
+
+    def _desired_channel_noise_powers(self, raw_signal_np):
+        channel_powers = self._channel_powers(raw_signal_np)
+        desired_powers = np.power(10.0, np.log10(channel_powers) - self.snr / 10.0)
+
+        return desired_powers
+
+    def _calculate_snrs(self, raw_signal_np, noise_signal_np):
+        signal_powers = np.mean(np.power(raw_signal_np, 2), axis=0)
+        noise_powers = np.mean(np.power(noise_signal_np, 2), axis=0)
+
+        eps_floor = 1e-20
+        eps = np.finfo(signal_powers.dtype).eps * np.max((
+            np.max(signal_powers),
+            np.max(noise_powers),
+            eps_floor,
+        )
+        )
+
+        snrs = 10.0 * np.log10((signal_powers + eps) / (noise_powers + eps))
 
         return snrs
-
-
-
-
-
-

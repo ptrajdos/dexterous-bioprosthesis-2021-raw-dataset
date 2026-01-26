@@ -71,3 +71,22 @@ class RawSignalsSpoilerTest(RawSignalsSpoilerInterfaceTest):
                         np.issubdtype(np_sig.dtype, dtype),
                         f"Wrong dtype. Expected: {dtype}, got: {np_sig.dtype}"
                     )
+
+    def test_zero_signal(self):
+        
+        for spoiler in self.get_spoilers():
+            with self.subTest(spoiler=spoiler):
+                zeros = np.zeros((100, 3), dtype=np.float32)
+                ones = np.ones((100, 3), dtype=np.float32)
+
+                snrs = spoiler._calculate_snrs(zeros, ones)
+                self.assertFalse(np.any(np.isinf(snrs)), "SNR contains inf values (zeros ones)")
+                self.assertFalse(np.any(np.isnan(snrs)), "SNR contains NaN values (zeros ones)")
+
+                snrs = spoiler._calculate_snrs(ones, zeros)
+                self.assertFalse(np.any(np.isinf(snrs)), "SNR contains inf values (ones zeros)")
+                self.assertFalse(np.any(np.isnan(snrs)), "SNR contains NaN values (ones zeros)")
+
+                snrs = spoiler._calculate_snrs(zeros, zeros)
+                self.assertFalse(np.any(np.isinf(snrs)), "SNR contains inf values (zeros zeros)")
+                self.assertFalse(np.any(np.isnan(snrs)), "SNR contains NaN values (zeros zeros)")
