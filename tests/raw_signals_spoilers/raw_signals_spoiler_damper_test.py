@@ -13,6 +13,7 @@ class RawSignalsSpoilerDamperTest(RawSignalsSpoilerTest):
         return [
             RawSignalsSpoilerDamper(),
             RawSignalsSpoilerDamper(channels_spoiled_frac=0),
+            RawSignalsSpoilerDamper(channels_spoiled_frac=1.0),
             RawSignalsSpoilerDamper(channels_spoiled_frac=None),
 
         ]

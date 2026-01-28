@@ -75,14 +75,17 @@ class RawSignalsSpoilerInterfaceTest(unittest.TestCase):
 
     def test_fit_transform_zero(self):
 
-        data = self.generate_zero_data()
+        dtypes = [np.float32, np.float64, np.single, np.double]
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                data = self.generate_zero_data(dtype=dtype)
 
-        spoilers = self.get_spoilers()
+                spoilers = self.get_spoilers()
 
-        for spoiler in spoilers:
+                for spoiler in spoilers:
 
-            t_data = spoiler.fit_transform(data)
+                    t_data = spoiler.fit_transform(data)
 
-            self.assertIsNotNone(t_data, "Transformed data is None")
-            self.assertIsInstance(t_data, RawSignals, "Transformed data is not an instance of RawSignals")
-            self._check_for_invalid_values(t_data)
+                    self.assertIsNotNone(t_data, "Transformed data is None")
+                    self.assertIsInstance(t_data, RawSignals, "Transformed data is not an instance of RawSignals")
+                    self._check_for_invalid_values(t_data)

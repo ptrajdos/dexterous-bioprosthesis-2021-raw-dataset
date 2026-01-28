@@ -13,6 +13,7 @@ class RawSignalsSpoilerCubicClipperTest(RawSignalsSpoilerTest):
         return [
             RawSignalsSpoilerRappAM(),
             RawSignalsSpoilerRappAM(channels_spoiled_frac=0),
+            RawSignalsSpoilerRappAM(channels_spoiled_frac=1.0),
             RawSignalsSpoilerRappAM(channels_spoiled_frac=None),
         ]
 

@@ -23,8 +23,8 @@ class RawSignalsSpoilerDamper(RawSignalsSpoiler):
             channel_powers = self._channel_powers(signal.to_numpy())
             desired_channel_noise_powers = self._desired_channel_noise_powers(signal.to_numpy())
 
-            #FIXME Nans when channel power is zero
-            alphas = np.sqrt(desired_channel_noise_powers/(channel_powers+1e-100)) #channel power is also noise power
+            eps = np.finfo(channel_powers.dtype).eps
+            alphas = np.sqrt(desired_channel_noise_powers/(channel_powers+eps))
 
             np_sig = signal.to_numpy()
             np_sig[:,selected_channels_idxs] *= 1 - alphas[selected_channels_idxs]

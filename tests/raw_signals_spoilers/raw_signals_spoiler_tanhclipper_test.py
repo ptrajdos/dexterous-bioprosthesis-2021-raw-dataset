@@ -13,6 +13,7 @@ class RawSignalsSpoilerTanhClipperTest(RawSignalsSpoilerTest):
         return [
             RawSignalsSpoilerTanhClipper(),
             RawSignalsSpoilerTanhClipper(channels_spoiled_frac=0),
+            RawSignalsSpoilerTanhClipper(channels_spoiled_frac=1.0),
             RawSignalsSpoilerTanhClipper(channels_spoiled_frac=None),
         ]
 

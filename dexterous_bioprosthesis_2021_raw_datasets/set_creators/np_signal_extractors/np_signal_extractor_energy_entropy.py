@@ -15,7 +15,11 @@ class NpSignalExtractorEnergyEntropy(NPSignalExtractor):
         sig_squares  =  X ** 2
         e_tot = np.sum(sig_squares, axis=0, keepdims=True)
         probs = np.divide(sig_squares, e_tot, where=e_tot>0)
-        entropy = -np.sum(probs * np.log2(probs + np.finfo(float).eps ), axis=0).astype(X.dtype)
+        assert np.all(np.isnan(probs)) == False, "NaNs in probabilities calculation"
+        logs = np.log2(probs + np.finfo(X.dtype).eps )
+        assert np.all(np.isnan(logs)) == False, "NaNs in log calculation"
+        entropy = -np.sum(probs * logs, axis=0).astype(X.dtype)
+        assert np.all(np.isnan(entropy)) == False, "NaNs in entropy calculation"
         return entropy
 
     def attribs_per_column(self):

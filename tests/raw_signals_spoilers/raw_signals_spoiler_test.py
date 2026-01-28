@@ -71,8 +71,14 @@ class RawSignalsSpoilerTest(RawSignalsSpoilerInterfaceTest):
                         np.issubdtype(np_sig.dtype, dtype),
                         f"Wrong dtype. Expected: {dtype}, got: {np_sig.dtype}"
                     )
+                    self.assertFalse(
+                        np.any(np.isnan(np_sig)), "NaNs in transformed data"
+                    )
+                    self.assertFalse(
+                        np.any(np.isinf(np_sig)), "Infs in transformed data"
+                    )
 
-    def test_zero_signal(self):
+    def test_zero_signal_snrs(self):
         
         for spoiler in self.get_spoilers():
             with self.subTest(spoiler=spoiler):

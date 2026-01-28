@@ -88,21 +88,24 @@ class NpSignalExtractorTest(unittest.TestCase):
         C = 3
         X = np.zeros((R, C))
 
-        for extractor in extractors:
+        dtypes = [np.float32, np.float64, np.single, np.double]
+        for dtype in dtypes:
+            X = X.astype(dtype)
+            for extractor in extractors:
 
-            extractor.fit(X)
-            att_per_column = extractor.attribs_per_column()
+                extractor.fit(X)
+                att_per_column = extractor.attribs_per_column()
 
-            n_desired_attrs = att_per_column * C
+                n_desired_attrs = att_per_column * C
 
-            T = extractor.transform(X)
-            self.assertIsNotNone(T, "None type has been returned")
-            self.assertIsInstance(T, np.ndarray, "Wrong type")
-            self.assertTrue(
-                len(T) == n_desired_attrs, "Wrong number of returned values"
-            )
-            self.assertFalse(np.any(np.isnan(T)), "NaNs in outut")
-            self.assertTrue(np.all(np.isfinite(T)), "Infinite values in output")
+                T = extractor.transform(X)
+                self.assertIsNotNone(T, "None type has been returned")
+                self.assertIsInstance(T, np.ndarray, "Wrong type")
+                self.assertTrue(
+                    len(T) == n_desired_attrs, "Wrong number of returned values"
+                )
+                self.assertFalse(np.any(np.isnan(T)), "NaNs in outut")
+                self.assertTrue(np.all(np.isfinite(T)), "Infinite values in output")
 
     def test_one_columns(self):
 

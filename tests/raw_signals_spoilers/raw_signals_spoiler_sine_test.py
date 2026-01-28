@@ -10,6 +10,7 @@ class RawSignalsSpoilerSineTest(RawSignalsSpoilerTest):
         return [
             RawSignalsSpoilerSine(),
             RawSignalsSpoilerSine(channels_spoiled_frac=0),
+            RawSignalsSpoilerSine(channels_spoiled_frac=1.0),
             RawSignalsSpoilerSine(channels_spoiled_frac=None),
         ]
     
