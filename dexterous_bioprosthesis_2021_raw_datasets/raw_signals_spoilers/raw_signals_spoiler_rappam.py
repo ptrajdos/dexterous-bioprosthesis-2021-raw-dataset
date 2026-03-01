@@ -6,7 +6,6 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 from copy import deepcopy
 import numpy as np
 from scipy.optimize import bisect, broyden1, fsolve
-import numba as nb
 
 
 class RawSignalsSpoilerRappAM(RawSignalsSpoiler):

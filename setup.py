@@ -59,20 +59,24 @@ setup(
                 'joblib',
                 scikit_learn_version(),
                 'tqdm',
-                'joblib',
                 'dtw-python',
                 'Cython',
                 'fastdtw',
                 'pygad>=2.18.3, <3.0.0',
                 'kneed',
-                'librosa',
-                'audiomentations', 
-                numba_version(),
                 'statsmodels>=0.13.5',
                 'PyWavelets>=1.4.1',
                 'hyperopt @ git+https://github.com/hyperopt/hyperopt.git',
                 'sktime>=0.38.5',
                 
         ],
+        extras_require={
+                "augmentation": [
+                        'librosa',
+                        'audiomentations',
+                        numba_version(),
+                ],
+                 
+        },
         test_suite='test'
         )

@@ -6,7 +6,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 from copy import deepcopy
 import numpy as np
 from scipy.optimize import bisect, broyden1, fsolve
-import numba as nb
+from dexterous_bioprosthesis_2021_raw_datasets.tools.numba_compat import jit
 
 class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
 
@@ -62,7 +62,7 @@ class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
 
         return copied_signals
 
-@nb.jit(nopython=True)
+@jit(nopython=True)
 def clipper(s,t=0.666666,tol=1E-10):
     s_a = np.abs(s)
     max_val = np.max( s_a )

@@ -1,3 +1,4 @@
+import logging
 from joblib import delayed
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
     RawSignalsAugumenter,
@@ -6,7 +7,10 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import Raw
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from copy import deepcopy
 import numpy as np
-from audiomentations import TimeStretch
+try:
+    from audiomentations import TimeStretch
+except ImportError:
+    logging.warning("audiomentations is not installed. RawSignalsAugumenterTimeStretch will not work.")
 
 from dexterous_bioprosthesis_2021_raw_datasets.tools.progressparallel import (
     ProgressParallel,

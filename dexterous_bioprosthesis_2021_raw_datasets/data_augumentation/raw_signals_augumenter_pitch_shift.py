@@ -4,7 +4,11 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import Raw
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from copy import deepcopy
 import numpy as np
-from audiomentations import PitchShift
+import logging
+try:
+    from audiomentations import PitchShift
+except ImportError:
+    logging.warning("audiomentations is not installed. RawSignalsAugumenterPitchShift will not work.")
 
 from dexterous_bioprosthesis_2021_raw_datasets.tools.progressparallel import ProgressParallel
 
