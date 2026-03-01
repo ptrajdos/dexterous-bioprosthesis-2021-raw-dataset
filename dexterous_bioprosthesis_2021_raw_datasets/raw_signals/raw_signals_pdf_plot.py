@@ -2,6 +2,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 
 from matplotlib.backends.backend_pdf import PdfPages
+import matplotlib 
+matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
