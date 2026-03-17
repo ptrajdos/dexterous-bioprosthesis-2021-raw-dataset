@@ -19,7 +19,7 @@ class NPSignalExtractor(abc.ABC):
 
     def _sanitize_output(self, X):
         if self.sanitize_output:
-            return np.nan_to_num(X, nan=0.0)
+            return np.nan_to_num(X, nan=0.0).astype(X.dtype)
 
         return X
 
