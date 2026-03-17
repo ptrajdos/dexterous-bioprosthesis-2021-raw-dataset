@@ -11,6 +11,7 @@ INSTALL_LOG_FILE=${ROOTDIR}/install.log
 VENV_SUBDIR=${ROOTDIR}/venv
 COVERAGERC=${ROOTDIR}/.coveragerc
 DOCS_DIR=${ROOTDIR}/docs
+TOXDIR=${ROOTDIR}/.tox
 DATADIR=${ROOTDIR}/data
 STATICDIR=${ROOTDIR}/static_analysis
 LINTFILE=${STATICDIR}/lint.json
@@ -32,7 +33,9 @@ SYSPYTHON=python
 VENV_OPTIONS=
 PIP=pip
 PYTEST=pytest
+TOX=tox
 
+TOX_CORES=auto
 LOGDIR=${ROOTDIR}/testlogs
 LOGFILE=${LOGDIR}/`date +'%y-%m-%d_%H-%M-%S'`.log
 
@@ -46,39 +49,54 @@ endif
 
 .PHONY: all clean test docs
 
-clean:
+all:profile 
+
+clean: clean_pypackages clean_venv clean_tox
+	@echo "Cleaning up build artifacts, virtual environments, and test logs..."
+
+clean_pypackages:
+	rm -rf pypackages
+
+clean_venv:
 	rm -rf ${VENV_SUBDIR}
+
+clean_tox:
+	rm -rf ${TOXDIR}
 
 venv:
 	${SYSPYTHON} -m venv --upgrade-deps ${VENV_OPTIONS} ${VENV_SUBDIR}
-	${ACTIVATE}; ${PYTHON} -m ${PIP} install -e ${ROOTDIR} --prefer-binary --log ${INSTALL_LOG_FILE} -r ${REQ_FILE}
+	${ACTIVATE}; ${PYTHON} -m ${PIP} install wheel setuptools pypackages
 
-test: venv data_unp
+pypackages: venv
+	${ACTIVATE}; ${PYTHON} -m ${PIP} install -e ${ROOTDIR} --prefer-binary --log ${INSTALL_LOG_FILE} -r ${REQ_FILE}
+	touch $@
+
+test: pypackages data_unp
 
 	mkdir -p ${LOGDIR}
 	${ACTIVATE}; ${COVERAGE} run --branch  --source=${SRCDIR} -m unittest discover -p '*_test.py' -v -s ${TESTDIR} 2>&1 |tee -a ${LOGFILE}
 	${ACTIVATE}; ${COVERAGE} html --show-contexts
 
-test_parallel: venv data_unp
+test_parallel: pypackages data_unp
 
 	mkdir -p ${COVDIR}  ${LOGDIR}
 	${ACTIVATE}; ${UNITTEST_PARALLEL} --class-fixtures -v -t ${ROOTDIR} -s ${TESTDIR} -p '*_test.py' --coverage --coverage-rcfile ./.coveragerc --coverage-source ${SRCDIR} --coverage-html ${COVDIR} 2>&1 |tee -a ${LOGFILE}
 
-docs:
+docs: pypackages
 	${ACTIVATE}; $(PDOC) --force --html ${SRCDIR} --output-dir ${DOCS_DIR}
 
-profile: venv data_unp
+profile: pypackages data_unp
 
 	${ACTIVATE}; ${PYTEST} -n auto --cov-report=html --cov=${SRCDIR} --profile ${TESTDIR}
 
 ${STATICDIR}:
 	mkdir -p ${STATICDIR}
-flake8: venv ${STATICDIR}
+flake8: pypackages ${STATICDIR}
 	${ACTIVATE}; ${FLAKE8} --jobs auto ${SRCDIR} > ${FLAKE8FILE} || true
 
-mypy: venv ${STATICDIR}
+mypy: pypackages ${STATICDIR}
 	${ACTIVATE}; ${MYPY} --pretty --show-error-context ${SRCDIR} > ${MYPYFILE} || true
-lint: venv ${STATICDIR}
+lint: pypackages ${STATICDIR}
 	${ACTIVATE}; ${PYLINT} -j 0 ${SRCDIR} --output-format=json > ${LINTFILE} || true
 
 static_check: flake8 mypy lint
@@ -89,3 +107,6 @@ ${TESTDATADIR}:
 
 data_unp: ${TESTDATADIR}
 	@echo "Creating data"
+
+tox_check: pypackages
+	${ACTIVATE}; ${TOX} -p ${TOX_CORES} 
