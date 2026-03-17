@@ -15,7 +15,7 @@ class NpSignalExtractorSkew(NPSignalExtractor):
 
         #FIXME Is there a better way to handle NaN/Inf values?
         skew_values = skew(X, nan_policy="propagate")
-        skew_values = np.nan_to_num(skew_values, nan=0.0, posinf=0.0, neginf=0.0)
+        skew_values = np.nan_to_num(skew_values, nan=0.0, posinf=0.0, neginf=0.0).astype(X.dtype)
         return skew_values
         
 
