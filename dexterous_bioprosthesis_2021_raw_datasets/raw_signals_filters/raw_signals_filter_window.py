@@ -15,7 +15,7 @@ class RawSignalsFilterWindowFilter(RawSignalsFilter):
         super().__init__()
         self.window_length = window_length
 
-    def fit(self, raw_signals: RawSignals) -> None:
+    def fit(self, raw_signals: RawSignals):
         """
         Does nothing
         """

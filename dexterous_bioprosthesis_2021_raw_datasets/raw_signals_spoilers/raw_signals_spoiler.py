@@ -23,7 +23,7 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
         self.channels_spoiled_frac = channels_spoiled_frac
         self.snr = snr
 
-    def _random_channel_selection(self, raw_signal: RawSignal):
+    def _random_channel_selection(self, raw_signal: RawSignal)-> list[int]:
         """
         Return list of randomly selected channels
 
@@ -56,19 +56,19 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
             [*range(n_channels)], size=n_sel_channels, replace=False
         )
 
-        return sel_channel_indices
+        return list(sel_channel_indices)
 
-    def _channel_powers(self, raw_signal_np):
+    def _channel_powers(self, raw_signal_np)-> np.ndarray:
         powers = np.mean(np.power(raw_signal_np, 2), axis=0)
         return powers
 
-    def _desired_channel_noise_powers(self, raw_signal_np):
+    def _desired_channel_noise_powers(self, raw_signal_np)-> np.ndarray:
         channel_powers = self._channel_powers(raw_signal_np)
         desired_powers = np.power(10.0, np.log10(channel_powers) - self.snr / 10.0)
 
         return desired_powers
 
-    def _calculate_snrs(self, raw_signal_np, noise_signal_np):
+    def _calculate_snrs(self, raw_signal_np, noise_signal_np)-> np.ndarray:
         signal_powers = np.mean(np.power(raw_signal_np, 2), axis=0)
         noise_powers = np.mean(np.power(noise_signal_np, 2), axis=0)
 
