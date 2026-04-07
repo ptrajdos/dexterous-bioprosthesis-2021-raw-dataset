@@ -26,9 +26,9 @@ class RawSignal():
         self.sample_rate = sample_rate
 
         if channel_names is None:
-            self.channel_names = ["C{}".format(i) for i in range(signal.shape[1])]
+            self.channel_names = tuple("C{}".format(i) for i in range(signal.shape[1]))
         else:
-            self.channel_names = channel_names
+            self.channel_names = tuple(channel_names)
 
     def __eq__(self, __o: object) -> bool:
 

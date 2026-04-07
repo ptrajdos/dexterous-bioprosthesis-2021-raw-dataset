@@ -1,12 +1,13 @@
-from joblib import delayed
-from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
-    RawSignalsAugumenter,
+import logging
+from copy import deepcopy
+
+import numpy as np
+
+from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signal_augumenter_base import (
+    RawSignalsAugumenterBase,
 )
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-from copy import deepcopy
-import numpy as np
-import logging
 
 try:
     from audiomentations import PitchShift
@@ -15,12 +16,8 @@ except ImportError:
         "audiomentations is not installed. RawSignalsAugumenterPitchShift will not work."
     )
 
-from dexterous_bioprosthesis_2021_raw_datasets.tools.progressparallel import (
-    ProgressParallel,
-)
 
-
-class RawSignalsAugumenterPitchShift(RawSignalsAugumenter):
+class RawSignalsAugumenterPitchShift(RawSignalsAugumenterBase):
 
     def __init__(
         self,
@@ -30,13 +27,11 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenter):
         append_original=True,
         n_jobs=None,
     ) -> None:
-        super().__init__()
+        super().__init__(n_jobs=n_jobs, append_original=append_original)
 
         self.min_semitones = min_semitones
         self.max_semitones = max_semitones
         self.n_repeats = n_repeats
-        self.n_jobs = n_jobs
-        self.append_original = append_original
 
     def fit(self, raw_signals: RawSignals):
         """
@@ -44,14 +39,15 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenter):
         """
         return self
 
-    def _sig_augument(self, signal: RawSignal, sample_rate):
+    def _sig_augument(self, raw_signal: RawSignal):
+        sample_rate = raw_signal.sample_rate
         sig_list = []
         transformer = PitchShift(
             p=1.0, min_semitones=self.min_semitones, max_semitones=self.max_semitones
         )
 
         for _ in range(self.n_repeats):
-            new_signal = deepcopy(signal)
+            new_signal = deepcopy(raw_signal)
             np_sig = new_signal.signal
 
             for ch_id in range(np_sig.shape[1]):
@@ -65,23 +61,3 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenter):
             sig_list.append(new_signal)
 
         return sig_list
-
-    def transform(self, raw_signals: RawSignals) -> RawSignals:
-        new_signals = raw_signals.initialize_empty()
-
-        sample_rate = raw_signals.sample_rate
-
-        aug_sig_list = ProgressParallel(
-            n_jobs=self.n_jobs, use_tqdm=True, total=len(raw_signals)
-        )(delayed(self._sig_augument)(sig, sample_rate) for sig in raw_signals)
-
-        for aug_sigs in aug_sig_list:
-            new_signals += aug_sigs
-
-        if self.append_original:
-            new_signals += raw_signals
-        return new_signals
-
-    def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
-        self.fit(raw_signals)
-        return self.transform(raw_signals)

@@ -109,8 +109,9 @@ class RawSignalTest(unittest.TestCase):
             s_obj.signal.shape == (S, len(SC)),
             "Two indices, collection. Shapes after selection",
         )
+        #TODO this fail if channel names are not tuple. Should we force channel names to be tuple?
         self.assertTrue(
-            s_obj.channel_names == [obj.channel_names[i] for i in SC],
+            s_obj.channel_names == tuple([obj.channel_names[i] for i in SC]),
             "Two indices, collection. Colum names",
         )
 

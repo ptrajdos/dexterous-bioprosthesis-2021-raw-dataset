@@ -1,6 +1,10 @@
-from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import RawSignalsAugumenter
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from copy import deepcopy
+
+from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
+    RawSignalsAugumenter,
+)
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
+
 
 class RawSignalsAugumenterDummy(RawSignalsAugumenter):
 
@@ -19,4 +23,3 @@ class RawSignalsAugumenterDummy(RawSignalsAugumenter):
     def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
         self.fit(raw_signals)
         return self.transform(raw_signals)
-        

@@ -1,20 +1,19 @@
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
     RawSignalsAugumenter,
 )
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-
+from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter_clipping_distortion import (
+    RawSignalsAugumenterClippingDistortion,
+)
+from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter_gain_channel import (
+    RawSignalsAugumenterGainChannel,
+)
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter_invert_polarity import (
     RawSignalsAugumenterInvertPolarity,
 )
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter_white_noise import (
     RawSignalsAugumenterWhiteNoise,
 )
-from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter_gain_channel import (
-    RawSignalsAugumenterGainChannel,
-)
-from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter_clipping_distortion import (
-    RawSignalsAugumenterClippingDistortion,
-)
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 
 default_augumenter_list = [
     RawSignalsAugumenterInvertPolarity(append_original=False),
