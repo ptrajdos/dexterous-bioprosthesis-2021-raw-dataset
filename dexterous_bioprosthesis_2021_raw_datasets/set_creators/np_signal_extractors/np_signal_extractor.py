@@ -1,11 +1,13 @@
+from __future__ import annotations
 import abc
 
 import numpy as np
 import logging
 
+
 class NPSignalExtractor(abc.ABC):
 
-    def _check_input(self, X):
+    def _check_input(self, X) -> bool:
         """
         Check the input data.
         """
@@ -17,13 +19,13 @@ class NPSignalExtractor(abc.ABC):
         ).any(), "Input data contains infinite values. Please clean the data before processing."
         return True
 
-    def _sanitize_output(self, X):
+    def _sanitize_output(self, X) -> np.ndarray:
         if self.sanitize_output:
             return np.nan_to_num(X, nan=0.0).astype(X.dtype)
 
         return X
 
-    def _check_output(self, X):
+    def _check_output(self, X) -> bool:
         """
         Check the output data.
         """
@@ -51,7 +53,7 @@ class NPSignalExtractor(abc.ABC):
         self.check_input = check_input
         self.check_output = check_output
 
-    def fit(self, X, fs=1000):
+    def fit(self, X, fs=1000) -> NPSignalExtractor:
         if self.check_input:
             self._check_input(X)
 
@@ -60,20 +62,22 @@ class NPSignalExtractor(abc.ABC):
         return self
 
     @abc.abstractmethod
-    def _transform(self, X):
+    def _transform(self, X) -> np.ndarray:
         """
         Transform the input data.
         """
 
-    def transform(self, X):
+    def transform(self, X) -> np.ndarray:
         if self.check_input:
             self._check_input(X)
         X_t = self._transform(X)
 
         if not hasattr(self, "_fs"):
-            logging.warning("Transformeer is not fitted. In future releases an exception will be raised.")
+            logging.warning(
+                "Transformeer is not fitted. In future releases an exception will be raised."
+            )
             # raise ValueError("Transformeer is not fitted")
-        
+
         if self.check_output:
             self._check_output(X_t)
 
@@ -82,9 +86,9 @@ class NPSignalExtractor(abc.ABC):
 
         return X_t
 
-    def fit_transform(self, X, fs=1000):
-        return self.fit(X,fs=fs).transform(X)
+    def fit_transform(self, X, fs=1000) -> np.ndarray:
+        return self.fit(X, fs=fs).transform(X)
 
     @abc.abstractmethod
-    def attribs_per_column(self):
+    def attribs_per_column(self) -> int:
         pass

@@ -14,6 +14,7 @@ class NpSignalExtractorEnergyEntropy(NPSignalExtractor):
 
         sig_squares  =  X ** 2
         e_tot = np.sum(sig_squares, axis=0, keepdims=True)
+        probs = np.zeros_like(sig_squares)
         probs = np.divide(sig_squares, e_tot, where=e_tot>0)
         probs = np.clip(probs, a_min=0, a_max=1, out=probs).astype(X.dtype)
         assert np.all(np.isnan(probs)) == False, "NaNs in probabilities calculation"
