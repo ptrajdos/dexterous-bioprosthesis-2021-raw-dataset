@@ -1,6 +1,10 @@
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter import RawSignalsFilter
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter_all_pass import RawSignalsFilterAllPass
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter import (
+    RawSignalsFilter,
+)
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter_all_pass import (
+    RawSignalsFilterAllPass,
+)
 
 
 class RawSignalsFilterMulti2(RawSignalsFilter):
@@ -9,16 +13,15 @@ class RawSignalsFilterMulti2(RawSignalsFilter):
 
         self.filter_list = filter_list
 
-    def fit(self, raw_signals: RawSignals) -> None:
-        #Does nothing. Fit is lazy
-        return super().fit(raw_signals)
-    
-    def transform(self,raw_signals: RawSignals)->RawSignals:
-        
-        
-        post_signals = None
+    def fit(self, raw_signals: RawSignals):
+        # Does nothing. Fit is lazy
+        return self
+
+    def transform(self, raw_signals: RawSignals) -> RawSignals:
+
+        post_signals: RawSignals = None
         for filter in self.filter_list:
-            #lazy fitting. Depends on filter order
+            # lazy fitting. Depends on filter order
             tmp_signals = filter.fit_transform(raw_signals)
             if post_signals is None:
                 post_signals = tmp_signals
@@ -26,5 +29,3 @@ class RawSignalsFilterMulti2(RawSignalsFilter):
                 post_signals += tmp_signals
 
         return post_signals
-
-

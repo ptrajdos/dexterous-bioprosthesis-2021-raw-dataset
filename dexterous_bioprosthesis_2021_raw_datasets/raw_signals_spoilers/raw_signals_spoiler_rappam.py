@@ -1,11 +1,13 @@
 import warnings
+from copy import deepcopy
+
+import numpy as np
+from scipy.optimize import fsolve
+
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler import (
     RawSignalsSpoiler,
 )
-from copy import deepcopy
-import numpy as np
-from scipy.optimize import bisect, broyden1, fsolve
 
 
 class RawSignalsSpoilerRappAM(RawSignalsSpoiler):
@@ -81,5 +83,5 @@ class RawSignalsSpoilerRappAM(RawSignalsSpoiler):
         """
         x = gain * x
         d_sat = np.max(np.abs(x)) * sat
-        d_sat+=1e-10
+        d_sat += 1e-10
         return x / (1 + (np.abs(x) / d_sat) ** (2 * self.p)) ** (1 / (2 * self.p))

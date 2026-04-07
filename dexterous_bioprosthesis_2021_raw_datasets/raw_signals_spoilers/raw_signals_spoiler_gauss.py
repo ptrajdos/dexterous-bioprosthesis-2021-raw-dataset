@@ -1,38 +1,41 @@
+from copy import deepcopy
 
+import numpy as np
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler import RawSignalsSpoiler
-from copy import deepcopy
-import numpy as np
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler import (
+    RawSignalsSpoiler,
+)
+
 
 class RawSignalsSpoilerGauss(RawSignalsSpoiler):
 
     def __init__(self, channels_spoiled_frac=0.1, snr=1) -> None:
         super().__init__(channels_spoiled_frac, snr)
-        
 
-    def fit(self,raw_signals:RawSignals):
+    def fit(self, raw_signals: RawSignals):
         # Does nothing
         return self
 
-    def transform(self, raw_signals:RawSignals):
+    def transform(self, raw_signals: RawSignals):
         copied_signals = deepcopy(raw_signals)
 
-    
         for signal in copied_signals:
             selected_channels_idxs = self._random_channel_selection(signal)
             n_samples, n_channels = signal.to_numpy().shape
 
-            
-            noise_sig_np = np.random.normal(loc=0, scale=1.0,size=(n_samples, n_channels))
+            noise_sig_np = np.random.normal(
+                loc=0, scale=1.0, size=(n_samples, n_channels)
+            )
             acc_noise_powers = self._channel_powers(noise_sig_np)
 
             np_sig = signal.to_numpy()
             desired_noise_powers = self._desired_channel_noise_powers(np_sig)
 
-            alphas = np.sqrt(desired_noise_powers/acc_noise_powers)
+            alphas = np.sqrt(desired_noise_powers / acc_noise_powers)
 
-            np_sig[:,selected_channels_idxs] += alphas[selected_channels_idxs] * noise_sig_np[:,selected_channels_idxs]
+            np_sig[:, selected_channels_idxs] += (
+                alphas[selected_channels_idxs] * noise_sig_np[:, selected_channels_idxs]
+            )
 
         return copied_signals
-        

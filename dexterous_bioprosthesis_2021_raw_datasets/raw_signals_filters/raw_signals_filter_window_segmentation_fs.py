@@ -1,12 +1,12 @@
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter import RawSignalsFilter
-
-from copy import deepcopy
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter import (
+    RawSignalsFilter,
+)
 
 
 class RawSignalsFilterWindowSegmentationFS(RawSignalsFilter):
 
-    def __init__(self, window_length:float, overlap:float ) -> None:
+    def __init__(self, window_length: float, overlap: float) -> None:
         """
         Segment the signal using sliding window.
         New signals appear in the object
@@ -15,19 +15,19 @@ class RawSignalsFilterWindowSegmentationFS(RawSignalsFilter):
         ----------
         window_length:float --  window length in ms
         overlap:float -- overlap in ms
-         
+
         """
         super().__init__()
         self.window_length = window_length
         self.overlap = overlap
-    
-    def fit(self, raw_signals:RawSignals):
+
+    def fit(self, raw_signals: RawSignals):
         """
         Does nothing
         """
-        pass
+        return self
 
-    def transform(self,raw_signals:RawSignals):
+    def transform(self, raw_signals: RawSignals):
         """
         Apply windowed segmentation with overlap
         """
@@ -36,7 +36,6 @@ class RawSignalsFilterWindowSegmentationFS(RawSignalsFilter):
 
         window_length_samples = int(self.window_length * fs / 1000)
         overlap_samples = int(self.overlap * fs / 1000)
-
 
         for signal in raw_signals:
             s_len = signal.signal.shape[0]

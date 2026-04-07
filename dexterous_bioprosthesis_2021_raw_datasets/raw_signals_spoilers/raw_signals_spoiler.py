@@ -1,9 +1,7 @@
-import abc
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 import numpy as np
 
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_interface import (
     RawSignalsSpoilerInterface,
 )
@@ -75,11 +73,12 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
         noise_powers = np.mean(np.power(noise_signal_np, 2), axis=0)
 
         eps_floor = 1e-20
-        eps = np.finfo(signal_powers.dtype).eps * np.max((
-            np.max(signal_powers),
-            np.max(noise_powers),
-            eps_floor,
-        )
+        eps = np.finfo(signal_powers.dtype).eps * np.max(
+            (
+                np.max(signal_powers),
+                np.max(noise_powers),
+                eps_floor,
+            )
         )
 
         snrs = 10.0 * np.log10((signal_powers + eps) / (noise_powers + eps))

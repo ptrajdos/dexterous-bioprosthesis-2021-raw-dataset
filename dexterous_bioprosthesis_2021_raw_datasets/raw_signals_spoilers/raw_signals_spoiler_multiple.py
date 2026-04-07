@@ -1,15 +1,25 @@
-
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_dummy import RawSignalsSpoilerDummy
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_interface import RawSignalsSpoilerInterface
-
-import numpy as np
 from copy import deepcopy
 
+import numpy as np
+
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_dummy import (
+    RawSignalsSpoilerDummy,
+)
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_interface import (
+    RawSignalsSpoilerInterface,
+)
+
+
 class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
-    
-    def __init__(self, spoilers = [RawSignalsSpoilerDummy()], spoilers_weights = None,
-                   spoiled_fraction:float = 1.0, spoiler_relabalers=None ) -> None:
+
+    def __init__(
+        self,
+        spoilers=[RawSignalsSpoilerDummy()],
+        spoilers_weights=None,
+        spoiled_fraction: float = 1.0,
+        spoiler_relabalers=None,
+    ) -> None:
         super().__init__()
         """
         Apply multiple signal spoilers.
@@ -27,45 +37,53 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
         self.spoiled_fraction = spoiled_fraction
         self.spoiler_relabelers = spoiler_relabalers
 
-
     def fit(self, raw_signals: RawSignals):
-        
+
         for spoiler in self.spoilers:
             spoiler.fit(raw_signals)
 
         return self
-    
+
     def transform(self, raw_signals: RawSignals):
 
         n_orig_objects = len(raw_signals)
-        
+
         if self.spoiled_fraction == 1.0:
             sampled_data = deepcopy(raw_signals)
         elif self.spoiled_fraction < 1.0:
-            indices  = np.random.choice([*range(len(raw_signals))], 
-                                        size= int( np.ceil(self.spoiled_fraction * n_orig_objects)), replace=False )
+            indices = np.random.choice(
+                [*range(len(raw_signals))],
+                size=int(np.ceil(self.spoiled_fraction * n_orig_objects)),
+                replace=False,
+            )
             sampled_data = raw_signals[indices]
         else:
-            indices  = np.random.choice([*range(len(raw_signals))], 
-                                        size= int( np.ceil(self.spoiled_fraction * n_orig_objects)), replace=True )
+            indices = np.random.choice(
+                [*range(len(raw_signals))],
+                size=int(np.ceil(self.spoiled_fraction * n_orig_objects)),
+                replace=True,
+            )
             sampled_data = raw_signals[indices]
 
         n_spoilers = len(self.spoilers)
         n_samples = len(sampled_data)
         spoiler_indices = [*range(n_spoilers)]
 
-        sample_spoiler_assign = np.random.choice(spoiler_indices, size=n_samples, p= self.spoilers_weights)
+        sample_spoiler_assign = np.random.choice(
+            spoiler_indices, size=n_samples, p=self.spoilers_weights
+        )
 
         spoiled_signals = RawSignals(sample_rate=raw_signals.sample_rate)
-
 
         for spoiler_index in spoiler_indices:
             samples_idxs = np.argwhere(sample_spoiler_assign == spoiler_index).flatten()
 
             spoiled = self.spoilers[spoiler_index].transform(sampled_data[samples_idxs])
-            
+
             if self.spoiler_relabelers is not None:
-                new_labels = self.spoiler_relabelers[spoiler_index].fit_transform(spoiled.get_labels())
+                new_labels = self.spoiler_relabelers[spoiler_index].fit_transform(
+                    spoiled.get_labels()
+                )
                 spoiled.set_labels(new_labels)
 
             spoiled_signals += spoiled

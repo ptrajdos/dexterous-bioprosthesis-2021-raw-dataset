@@ -1,7 +1,10 @@
 
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter import RawSignalsFilter
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import \
+    RawSignal
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import \
+    RawSignals
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter import \
+    RawSignalsFilter
 
 
 class RawSignalsFilterChannelIdx(RawSignalsFilter):
@@ -14,7 +17,7 @@ class RawSignalsFilterChannelIdx(RawSignalsFilter):
         """
         Does nothing.
         """
-        pass
+        return self
 
     def transform(self,raw_signals:RawSignals):
         filtered_signals = RawSignals()
