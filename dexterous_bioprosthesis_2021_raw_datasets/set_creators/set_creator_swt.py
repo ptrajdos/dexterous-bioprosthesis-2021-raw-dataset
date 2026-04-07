@@ -5,6 +5,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_wt_abstr
 )
 import itertools
 
+
 class SetCreatorSWT(SetCreatorWTAbstract):
 
     def __init__(
@@ -17,13 +18,13 @@ class SetCreatorSWT(SetCreatorWTAbstract):
 
     def _decompose_signal(self, signal, fs=1000):
         wavelet = pywt.Wavelet(self.wavelet_name)
-        rem = len(signal) % 2 ** self.num_levels
+        rem = len(signal) % 2**self.num_levels
         if rem > 0:
             tmp_dat = signal[:-rem]
         else:
             tmp_dat = signal
-        
-        coeffs =  pywt.swt(
+
+        coeffs = pywt.swt(
             tmp_dat,
             wavelet=wavelet,
             axis=0,
@@ -36,5 +37,3 @@ class SetCreatorSWT(SetCreatorWTAbstract):
         coeffs_with_fs = list(zip(coeffs, freqs))
 
         return coeffs_with_fs
-
-    

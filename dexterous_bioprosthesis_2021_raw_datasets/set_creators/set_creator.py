@@ -1,14 +1,16 @@
+from __future__ import annotations
 import abc
-
+from typing import Any, Optional
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
+
 
 class SetCreator(abc.ABC):
     """
     An interface for creating ordinary datasets from raw signal datasets
     """
-    
+
     @abc.abstractmethod
-    def fit_transform(self, raw_signals:RawSignals, y=None):
+    def fit_transform(self, raw_signals: RawSignals, y=None) -> tuple:
         """
         Create dataset from raw signals.
         Fits model if necesary and then transforms the raw_signals.
@@ -29,7 +31,7 @@ class SetCreator(abc.ABC):
         """
 
     @abc.abstractmethod
-    def fit(self, raw_signals:RawSignals, y=None):
+    def fit(self, raw_signals: RawSignals, y=None) -> SetCreator:
         """
         Only fit the transformation model.
 
@@ -45,7 +47,7 @@ class SetCreator(abc.ABC):
         """
 
     @abc.abstractmethod
-    def transform(self,raw_signals:RawSignals):
+    def transform(self, raw_signals: RawSignals) -> tuple:
         """
         Create dataset from raw signals.
         Transform the raw_signals using previously fitted model.
@@ -65,12 +67,12 @@ class SetCreator(abc.ABC):
         """
 
     @abc.abstractmethod
-    def get_channel_attribs_indices(self):
+    def get_channel_attribs_indices(self) -> Optional[list[Any]]:
         """
         Get indices of channel-specific attributes
 
         Returns:
-        List containing lists of channel specific attributes. 
+        List containing lists of channel specific attributes.
         Or None.
         None means that there is no simple mapping from channels to attributes in output set
         """

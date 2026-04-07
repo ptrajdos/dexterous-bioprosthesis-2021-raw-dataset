@@ -100,7 +100,7 @@ class SetCreatorMDS(SetCreator):
         self.step = step
 
         self.raw_signals_set: RawSignals = None
-        self.dataset = None
+        self.dataset: np.ndarray = None
         self.channel_selected_attribs = (
             None  # List containing number of attributes for each channel
         )
@@ -199,7 +199,7 @@ class SetCreatorMDS(SetCreator):
 
         return mds_result
 
-    def create_set_from_distance_matrix(self, raw_signals, distance_matrix):
+    def create_set_from_distance_matrix(self, raw_signals, distance_matrix)->tuple[np.ndarray, np.ndarray, np.ndarray]:
 
         X = self._calculate_mds(distance_matrix)
 
@@ -210,7 +210,7 @@ class SetCreatorMDS(SetCreator):
 
         return X, extracted_objs_classes, extracted_objs_timestamps
 
-    def fit_transform(self, raw_signals: RawSignals, y=None):
+    def fit_transform(self, raw_signals: RawSignals, y=None)->tuple[np.ndarray, np.ndarray, np.ndarray]:
 
         self.fit(raw_signals)
 

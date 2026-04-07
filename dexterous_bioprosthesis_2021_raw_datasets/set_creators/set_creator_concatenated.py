@@ -1,7 +1,6 @@
 from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
-from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_feature_extractor import SetCreatorFeatureExtractor
 
 import pandas as pd
 import numpy as np

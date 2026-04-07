@@ -7,6 +7,12 @@ import pywt
 class SetCreatorFunctions(SetCreator):
     
     def __init__(self, extractors=[]) -> None:
+        """
+        A SetCreator that applies a list of functions to the raw signals to create the dataset.
+        Arguments:
+        ----------
+        extractors -- A list of functions that take a signal as input and return a vector of attributes
+        """
         super().__init__()
         self.extractors = extractors
 
