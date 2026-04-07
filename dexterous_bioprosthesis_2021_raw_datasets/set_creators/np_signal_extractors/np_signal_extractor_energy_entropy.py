@@ -20,7 +20,7 @@ class NpSignalExtractorEnergyEntropy(NPSignalExtractor):
         assert np.all(np.isnan(probs)) == False, "NaNs in probabilities calculation"
         logs = np.log2(probs + np.finfo(X.dtype).eps )
         assert np.all(np.isnan(logs)) == False, "NaNs in log calculation"
-        entropy = -np.sum(probs * logs, axis=0).astype(X.dtype)
+        entropy = -np.sum(np.where(probs > 0, probs * logs, 0), axis=0).astype(X.dtype)
         assert np.all(np.isnan(entropy)) == False, "NaNs in entropy calculation"
         return entropy
 
