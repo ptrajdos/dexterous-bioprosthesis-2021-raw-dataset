@@ -15,7 +15,7 @@ class SetCreatorWTAbstract(SetCreator):
         self.num_levels = num_levels
         self.extractors = extractors
 
-        self._num_attribs = None
+        self._num_attribs:int = None
         self.n_channels = None
         self.channel_selected_attribs = (
             None  # List containing number of attributes for each channel

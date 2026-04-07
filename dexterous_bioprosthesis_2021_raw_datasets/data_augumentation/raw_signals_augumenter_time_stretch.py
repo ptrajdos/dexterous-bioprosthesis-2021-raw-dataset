@@ -7,10 +7,13 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import Raw
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from copy import deepcopy
 import numpy as np
+
 try:
     from audiomentations import TimeStretch
 except ImportError:
-    logging.warning("audiomentations is not installed. RawSignalsAugumenterTimeStretch will not work.")
+    logging.warning(
+        "audiomentations is not installed. RawSignalsAugumenterTimeStretch will not work."
+    )
 
 from dexterous_bioprosthesis_2021_raw_datasets.tools.progressparallel import (
     ProgressParallel,
@@ -58,7 +61,9 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenter):
                 ch_sig = np_sig[:, ch_id]
                 # FIXME  Woraround for  nummba issue with different dtypes
                 # FIXME NotImplementedError: Failed in nopython mode pipeline (step: native lowering)
-                np_sig[:, ch_id] = transformer(ch_sig.astype(np.double), sample_rate=sample_rate).astype(np_sig.dtype)
+                np_sig[:, ch_id] = transformer(
+                    ch_sig.astype(np.double), sample_rate=sample_rate
+                ).astype(np_sig.dtype)
 
             sig_list.append(new_signal)
         return sig_list

@@ -1,11 +1,13 @@
+from __future__ import annotations
 import abc
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 
+
 class RawSignalsAugumenter(abc.ABC):
-    
+
     @abc.abstractmethod
-    def fit(self, raw_signals:RawSignals):
+    def fit(self, raw_signals: RawSignals) -> RawSignalsAugumenter:
         """
         Fits the data augumenter
 
@@ -15,9 +17,10 @@ class RawSignalsAugumenter(abc.ABC):
 
         """
 
-    def transform(self, raw_signals:RawSignals)->RawSignals:
+    @abc.abstractmethod
+    def transform(self, raw_signals: RawSignals) -> RawSignals:
         """
-        Transforms the dataset. 
+        Transforms the dataset.
         New data contains changed version of each RawSignal in RawSignals
 
         Arguments:
@@ -30,9 +33,10 @@ class RawSignalsAugumenter(abc.ABC):
 
         """
 
-    def fit_transform(self, raw_signals:RawSignals)->RawSignals:
+    @abc.abstractmethod
+    def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
         """
-        Fits and then transforms the dataset. 
+        Fits and then transforms the dataset.
         New data contains changed version of each RawSignal in RawSignals
 
         Arguments:
