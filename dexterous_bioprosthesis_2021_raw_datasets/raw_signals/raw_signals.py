@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import Union
+
 from collections.abc import Collection, Iterable
+from typing import Iterator, Union
 
 import numpy as np
 
@@ -28,10 +29,10 @@ class RawSignals(IRawSignals):
                 sig.set_sample_rate(self.sample_rate)
                 self.append(sig)
 
-    def __iter__(self)-> Iterable[RawSignal]:
+    def __iter__(self) -> Iterator[RawSignal]:
         return iter(self.raw_signals_list)
 
-    def __getitem__(self, key)-> Union[RawSignal, RawSignals]:
+    def __getitem__(self, key) -> Union[RawSignal, RawSignals]:
 
         if not isinstance(key, tuple):
             if isinstance(key, slice):
@@ -96,7 +97,7 @@ class RawSignals(IRawSignals):
         other.set_sample_rate(self.sample_rate)
         self.raw_signals_list.append(other)
 
-    def __iadd__(self, other)-> RawSignals:
+    def __iadd__(self, other) -> RawSignals:
         """
         Operator for += on an another RawSignals object
         """
@@ -105,7 +106,7 @@ class RawSignals(IRawSignals):
 
         return self
 
-    def __len__(self)-> int:
+    def __len__(self) -> int:
         return len(self.raw_signals_list)
 
     def __eq__(self, __o: object) -> bool:
@@ -118,7 +119,7 @@ class RawSignals(IRawSignals):
 
         return self.raw_signals_list == __o.raw_signals_list
 
-    def get_labels(self)-> np.ndarray:
+    def get_labels(self) -> np.ndarray:
         """
         Returns:
         -------
@@ -128,7 +129,7 @@ class RawSignals(IRawSignals):
 
         return np.asanyarray([rs.get_label() for rs in self.raw_signals_list])
 
-    def get_timestamps(self)-> np.ndarray:
+    def get_timestamps(self) -> np.ndarray:
         """
         Returns:
         --------
@@ -152,7 +153,7 @@ class RawSignals(IRawSignals):
         for sig, label in zip(iter(self), labels):
             sig.set_label(label)
 
-    def initialize_empty(self)-> RawSignals:
+    def initialize_empty(self) -> RawSignals:
         """
         Initializes new, empty RawSignals object.
         Copy attributes of the original object.
@@ -162,7 +163,7 @@ class RawSignals(IRawSignals):
         """
         return RawSignals(raw_signal_list=[], sample_rate=self.sample_rate)
 
-    def get_sample_rate(self)->float:
+    def get_sample_rate(self) -> float:
         return self.sample_rate
 
     def set_sample_rate(self, sample_rate):
@@ -171,7 +172,7 @@ class RawSignals(IRawSignals):
         for sig in iter(self):
             sig.set_sample_rate(self.sample_rate)
 
-    def to_numpy(self)-> np.ndarray:
+    def to_numpy(self) -> np.ndarray:
         """
         Returns the raw_signals object as a numpy array.
         Assuming that all raw_signal object have the same dimension
@@ -184,7 +185,7 @@ class RawSignals(IRawSignals):
         np_array = np.asanyarray([rs.to_numpy() for rs in self.raw_signals_list])
         return np_array
 
-    def to_numpy_concat(self)-> np.ndarray:
+    def to_numpy_concat(self) -> np.ndarray:
         """
         Returns the raw_signals object as a concatenated numpy array.
         Assuming that all raw_signal object have the same number of channels

@@ -17,11 +17,8 @@ class RawSignalsSpoilerSine(RawSignalsSpoiler):
         self.frequency = frequency
         self.frequency_deviation = freq_deviation
 
-    def fit(self, raw_signals: RawSignals):
-        # Does nothing
-        return self
-
     def transform(self, raw_signals: RawSignals):
+        self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 
         used_frequency = (

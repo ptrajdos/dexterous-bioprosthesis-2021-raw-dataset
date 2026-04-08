@@ -2,6 +2,7 @@
 import numpy as np
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_interface import (
     RawSignalsSpoilerInterface,
 )
@@ -84,3 +85,7 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
         snrs = 10.0 * np.log10((signal_powers + eps) / (noise_powers + eps))
 
         return snrs
+
+    def fit(self, raw_signals: RawSignals):
+        # Does nothing
+        return super().fit(raw_signals)

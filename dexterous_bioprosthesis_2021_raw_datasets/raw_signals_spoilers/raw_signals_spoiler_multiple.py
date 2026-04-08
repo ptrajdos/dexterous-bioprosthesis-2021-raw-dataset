@@ -15,7 +15,7 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
 
     def __init__(
         self,
-        spoilers=[RawSignalsSpoilerDummy()],
+        spoilers=[RawSignalsSpoilerDummy()], #TODO need fixing!
         spoilers_weights=None,
         spoiled_fraction: float = 1.0,
         spoiler_relabalers=None,
@@ -42,9 +42,10 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
         for spoiler in self.spoilers:
             spoiler.fit(raw_signals)
 
-        return self
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals):
+        self._check_is_fitted()
 
         n_orig_objects = len(raw_signals)
 

@@ -24,7 +24,7 @@ class RawSignalsSpoilerRappAM(RawSignalsSpoiler):
         else:
             self._effective_snr = self.snr
 
-        return self
+        return super().fit(raw_signals)
 
     def _find_alpha(self, np_sig, ch_idx, guesses=(1.0,)) -> int:
 
@@ -54,6 +54,7 @@ class RawSignalsSpoilerRappAM(RawSignalsSpoiler):
         return best_alpha
 
     def transform(self, raw_signals: RawSignals):
+        self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 
         for signal in copied_signals:

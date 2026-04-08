@@ -32,9 +32,10 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
                 "The number of harmonics is inconsistent with harmonic weights."
             )
 
-        return self
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals):
+        self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 
         used_frequency = (

@@ -11,11 +11,9 @@ class RawSignalsSpoilerSilencer(RawSignalsSpoiler):
     def __init__(self, channels_spoiled_frac=0.1, snr=1) -> None:
         super().__init__(channels_spoiled_frac, snr)
 
-    def fit(self, raw_signals: RawSignals):
-        # Does nothing
-        return self
 
     def transform(self, raw_signals: RawSignals):
+        self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 
         for signal in copied_signals:
