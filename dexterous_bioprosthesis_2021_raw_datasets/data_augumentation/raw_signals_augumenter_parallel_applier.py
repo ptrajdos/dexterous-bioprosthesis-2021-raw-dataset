@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
     RawSignalsAugumenter,
@@ -46,13 +47,18 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
             aug.fit(raw_signals)
         return self
 
-    def transform(self, raw_signals: RawSignals) -> RawSignals:
-        self._check_fitted()
-
+    def _inner_transform(self, raw_signals: RawSignals) -> RawSignals:
         new_signals = raw_signals.initialize_empty()
 
         for aug in self._augumenter_list:
             new_signals += aug.transform(raw_signals)
+
+        return new_signals
+
+    def transform(self, raw_signals: RawSignals) -> RawSignals:
+        self._check_fitted()
+
+        new_signals = self._inner_transform(raw_signals)
 
         if self.append_original:
             new_signals += raw_signals
@@ -62,3 +68,16 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
     def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
         self.fit(raw_signals)
         return self.transform(raw_signals)
+
+    def sample(self, raw_signals: RawSignals, n_samples: int = 1) -> RawSignals:
+        self._check_fitted()
+        
+        new_sigsnals_pre = self._inner_transform(raw_signals)
+        n_new_signals = len(new_sigsnals_pre)
+        replace = n_samples > n_new_signals
+        indices = np.random.choice(n_new_signals, size=n_samples, replace=replace)
+        new_signals = new_sigsnals_pre.initialize_empty()
+        for idx in indices:
+            new_signals += [new_sigsnals_pre[idx]]
+            
+        return new_signals

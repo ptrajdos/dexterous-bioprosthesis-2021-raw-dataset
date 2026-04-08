@@ -67,6 +67,15 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
         self._is_fitted = True
         return self
     
-    # def sample(self, n_samples: int) -> RawSignals:
-    #     indices = np.random.choice(len(raw_signals), size=n_samples, replace=False)
-    #     return super().sample(n_samples)
+    def sample(self, raw_signals: RawSignals, n_samples: int=1) -> RawSignals:
+        self._check_if_fitted()
+        n_signals = len(raw_signals)
+        replace = n_samples > n_signals
+        indices = np.random.choice(len(raw_signals), size=n_samples, replace=replace)
+        new_signals = raw_signals.initialize_empty()
+        sel_signals = raw_signals[indices]
+
+        for sig in sel_signals:
+            new_signals += self._sig_augument(sig, n_repeats=1)
+            
+        return new_signals

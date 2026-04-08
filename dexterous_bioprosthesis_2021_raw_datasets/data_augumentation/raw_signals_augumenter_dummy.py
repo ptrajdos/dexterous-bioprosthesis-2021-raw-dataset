@@ -1,5 +1,6 @@
 from copy import deepcopy
 
+import numpy as np
 from sklearn.exceptions import NotFittedError
 
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
@@ -30,3 +31,15 @@ class RawSignalsAugumenterDummy(RawSignalsAugumenter):
     def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
         self.fit(raw_signals)
         return self.transform(raw_signals)
+
+    def sample(self, raw_signals: RawSignals, n_samples: int=1) -> RawSignals:
+        self._check_fittesness()
+        n_signals = len(raw_signals)
+
+        replace = n_samples > n_signals
+        indices = np.random.choice(n_signals, size=n_samples, replace=replace)
+        new_signals = raw_signals.initialize_empty()
+        for idx in indices:
+            new_signals += [deepcopy(raw_signals[idx])]
+
+        return new_signals

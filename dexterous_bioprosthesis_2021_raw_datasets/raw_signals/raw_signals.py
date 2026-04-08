@@ -1,17 +1,22 @@
+from __future__ import annotations
+from typing import Union
+from collections.abc import Collection, Iterable
 
-from copy import deepcopy
 import numpy as np
 
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.iraw_signals import IRawSignals
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.iraw_signals import (
+    IRawSignals,
+)
+
 from .raw_signal import RawSignal
-from collections.abc import Iterable
-from collections.abc import Collection
+
+
 class RawSignals(IRawSignals):
     """
-     Class represents a dataset of raw signals
+    Class represents a dataset of raw signals
     """
 
-    def __init__(self, raw_signal_list= None, sample_rate=1000) -> None:
+    def __init__(self, raw_signal_list=None, sample_rate=1000) -> None:
         """
         Creates a new instance of the class
         """
@@ -23,46 +28,50 @@ class RawSignals(IRawSignals):
                 sig.set_sample_rate(self.sample_rate)
                 self.append(sig)
 
-    def __iter__(self):
+    def __iter__(self)-> Iterable[RawSignal]:
         return iter(self.raw_signals_list)
 
-    def __getitem__(self,key):
+    def __getitem__(self, key)-> Union[RawSignal, RawSignals]:
 
         if not isinstance(key, tuple):
             if isinstance(key, slice):
-                return RawSignals(self.raw_signals_list[key], sample_rate=self.sample_rate)
+                return RawSignals(
+                    self.raw_signals_list[key], sample_rate=self.sample_rate
+                )
 
             if isinstance(key, Collection):
-                if len(key) == len(self.raw_signals_list) and all( isinstance(item, bool) or isinstance(item, np.bool_) for item in key):
-                    sel_list = [self.raw_signals_list[i_idx] for i_idx,i in enumerate( key ) if i ]
+                if len(key) == len(self.raw_signals_list) and all(
+                    isinstance(item, bool) or isinstance(item, np.bool_) for item in key
+                ):
+                    sel_list = [
+                        self.raw_signals_list[i_idx] for i_idx, i in enumerate(key) if i
+                    ]
                 else:
-                    sel_list = [ self.raw_signals_list[i] for i in key ]
-                    
-                return RawSignals(sel_list,sample_rate=self.sample_rate)
+                    sel_list = [self.raw_signals_list[i] for i in key]
 
-            if isinstance(key,Iterable):
-                sel_list = [ self.raw_signals_list[i] for i in key ]
-                return RawSignals(sel_list,sample_rate=self.sample_rate)
+                return RawSignals(sel_list, sample_rate=self.sample_rate)
 
-            return self.raw_signals_list[key]
-        
+            if isinstance(key, Iterable):
+                sel_list = [self.raw_signals_list[i] for i in key]
+                return RawSignals(sel_list, sample_rate=self.sample_rate)
+
+            return self.raw_signals_list[key]  # This returns a RawSignal object
+
         # Is tuple here
 
         if len(key) == 1:
             return self.__getitem__(key[0])
-    
+
         selected_signals = self.__getitem__(key[0])
 
         if isinstance(selected_signals, RawSignal):
             return selected_signals[key[1:]]
-        
-        return RawSignals( [i[key[1:]] for i in selected_signals],sample_rate=self.sample_rate )
 
+        return RawSignals(
+            [i[key[1:]] for i in selected_signals], sample_rate=self.sample_rate
+        )
 
-        
-
-
-    def append(self, other:RawSignal):
+    def append(self, other: RawSignal):
         """
         Appends another RawSignal object to the dataset
 
@@ -78,7 +87,7 @@ class RawSignals(IRawSignals):
         if not isinstance(other, RawSignal):
             raise ValueError("Object is not a raw signal")
 
-        if not hasattr(self,'signal_n_cols'):
+        if not hasattr(self, "signal_n_cols"):
             self.signal_n_cols = other.signal.shape[1]
 
         if self.signal_n_cols != other.signal.shape[1]:
@@ -87,7 +96,7 @@ class RawSignals(IRawSignals):
         other.set_sample_rate(self.sample_rate)
         self.raw_signals_list.append(other)
 
-    def __iadd__(self,other):
+    def __iadd__(self, other)-> RawSignals:
         """
         Operator for += on an another RawSignals object
         """
@@ -96,7 +105,7 @@ class RawSignals(IRawSignals):
 
         return self
 
-    def __len__(self):
+    def __len__(self)-> int:
         return len(self.raw_signals_list)
 
     def __eq__(self, __o: object) -> bool:
@@ -107,10 +116,9 @@ class RawSignals(IRawSignals):
         if type(self) != type(__o):
             return False
 
-        
         return self.raw_signals_list == __o.raw_signals_list
 
-    def get_labels(self):
+    def get_labels(self)-> np.ndarray:
         """
         Returns:
         -------
@@ -118,9 +126,9 @@ class RawSignals(IRawSignals):
         List of labels of stored signals
         """
 
-        return np.asanyarray([ rs.get_label() for rs in self.raw_signals_list])
+        return np.asanyarray([rs.get_label() for rs in self.raw_signals_list])
 
-    def get_timestamps(self):
+    def get_timestamps(self)-> np.ndarray:
         """
         Returns:
         --------
@@ -128,23 +136,23 @@ class RawSignals(IRawSignals):
         List of timestamps of the stored signals.
 
         """
-        return np.asanyarray([ rs.get_timestamp() for rs in self.raw_signals_list])
-    
+        return np.asanyarray([rs.get_timestamp() for rs in self.raw_signals_list])
+
     def set_labels(self, labels):
         """
         Set labels for all raw_signals.
-        
+
         Arguments:
-        labels -- iterable with new labels. Must contain exact the same number of values as the number of 
+        labels -- iterable with new labels. Must contain exact the same number of values as the number of
             objects in the set.
         """
         if len(labels) != len(self):
             raise ValueError("Wrong number of labels.")
-        
+
         for sig, label in zip(iter(self), labels):
             sig.set_label(label)
 
-    def initialize_empty(self):
+    def initialize_empty(self)-> RawSignals:
         """
         Initializes new, empty RawSignals object.
         Copy attributes of the original object.
@@ -153,17 +161,17 @@ class RawSignals(IRawSignals):
         RawSignals with empty signals list
         """
         return RawSignals(raw_signal_list=[], sample_rate=self.sample_rate)
-    
-    def get_sample_rate(self):
+
+    def get_sample_rate(self)->float:
         return self.sample_rate
-    
+
     def set_sample_rate(self, sample_rate):
         self.sample_rate = sample_rate
 
-        for sig  in iter(self):
+        for sig in iter(self):
             sig.set_sample_rate(self.sample_rate)
 
-    def to_numpy(self):
+    def to_numpy(self)-> np.ndarray:
         """
         Returns the raw_signals object as a numpy array.
         Assuming that all raw_signal object have the same dimension
@@ -173,10 +181,10 @@ class RawSignals(IRawSignals):
         numpy array of shape (n_objects, n_samples, n_channels)
 
         """
-        np_array = np.asanyarray([ rs.to_numpy() for rs in self.raw_signals_list])
+        np_array = np.asanyarray([rs.to_numpy() for rs in self.raw_signals_list])
         return np_array
-    
-    def to_numpy_concat(self):
+
+    def to_numpy_concat(self)-> np.ndarray:
         """
         Returns the raw_signals object as a concatenated numpy array.
         Assuming that all raw_signal object have the same number of channels
@@ -186,5 +194,7 @@ class RawSignals(IRawSignals):
         numpy array of shape (sum(n_samples), n_channels)
 
         """
-        np_array = np.concatenate([ rs.to_numpy() for rs in self.raw_signals_list], axis=0)
+        np_array = np.concatenate(
+            [rs.to_numpy() for rs in self.raw_signals_list], axis=0
+        )
         return np_array

@@ -49,18 +49,18 @@ class RawSignalsAugumenter(abc.ABC):
 
         """
 
-    # @abc.abstractmethod
-    # def sample(self, raw_signals: RawSignals, n_samples: int=1) -> RawSignals:
-    #     """
-    #     Samples n_samples from the dataset
+    @abc.abstractmethod
+    def sample(self, raw_signals: RawSignals, n_samples: int=1) -> RawSignals:
+        """
+        Samples n_samples from the dataset
 
-    #     Arguments:
-    #     ---------
-    #     raw_signals: RawSignals -- the dataset to be sampled
-    #     n_samples: int -- how many samples to sample
+        Arguments:
+        ---------
+        raw_signals: RawSignals -- the dataset to be sampled
+        n_samples: int -- how many samples to sample
 
-    #     Returns:
-    #     --------
-    #     Sampled RawSignals
+        Returns:
+        --------
+        Sampled RawSignals
 
-    #     """
+        """
