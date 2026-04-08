@@ -22,15 +22,12 @@ class RawSignalsFilterAllRobustStandarizer(RawSignalsFilter):
         self._iqr = q3 - q1
         if self._iqr < self.eps:
             self._iqr = self.eps
-        self._fitted = True
-        return self
+        
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals):
-        if not hasattr(self, "_fitted"):
-            raise RuntimeError(
-                "Filter not fitted. Call 'fit' with training data before using this method."
-            )
-
+        self._check_fitted()
+        
         copied_signals = deepcopy(raw_signals)
         for r_signal in copied_signals:
             r_signal.signal = (r_signal.signal - self._median) / self._iqr

@@ -1,6 +1,8 @@
 from __future__ import annotations
 import abc
 
+from sklearn.exceptions import NotFittedError
+
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 
 
@@ -17,6 +19,15 @@ class RawSignalsFilter(abc.ABC):
         ---------
         raw_signals --- An object of RawSignals class to be fitted with
         """
+        self._is_fitted = True
+        return self
+
+    def _check_fitted(self):
+        if not hasattr(self, "_is_fitted") or not self._is_fitted:
+            raise NotFittedError(
+                f"This {self.__class__.__name__} instance is not fitted yet. "
+                f"Call 'fit' with appropriate arguments before using this filter."
+            )
 
     @abc.abstractmethod
     def transform(self, raw_signals: RawSignals) -> RawSignals:

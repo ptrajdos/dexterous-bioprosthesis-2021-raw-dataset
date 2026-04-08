@@ -2,6 +2,7 @@ import abc
 import unittest
 
 import numpy as np
+from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 
@@ -15,7 +16,7 @@ class RawSignalsFilterTest(unittest.TestCase):
         if not cls.__test__:
             raise unittest.SkipTest("Skipping")
 
-    @abc.abstractclassmethod
+    @abc.abstractmethod
     def get_filters(self):
         """
         gets the filter to be tested
@@ -54,8 +55,8 @@ class RawSignalsFilterTest(unittest.TestCase):
 
     def test_filter_fit_then_transform(self):
         filters = self.get_filters()
-        
-        for N,M,C in [(10,30,6),(2,30,3),(1,30,2), (5,30,10), (3,50,1)]:
+
+        for N, M, C in [(10, 30, 6), (2, 30, 3), (1, 30, 2), (5, 30, 10), (3, 50, 1)]:
             for filter in filters:
                 signals = RawSignals()
                 with self.subTest(filter=filter, N=N, M=M, C=C):
@@ -69,20 +70,26 @@ class RawSignalsFilterTest(unittest.TestCase):
 
                         self.assertIsNotNone(tr_signals, "Transformed object is none.")
                         self.assertIsInstance(tr_signals, RawSignals)
-                        self.assertTrue(id(signals) != id(tr_signals), "Objects are the same")
+                        self.assertTrue(
+                            id(signals) != id(tr_signals), "Objects are the same"
+                        )
 
                         for sig in tr_signals:
                             np_data = sig.to_numpy()
-                            self.assertFalse(np.any(np.isnan(np_data)), "NaN values in the data.")
-                            self.assertFalse(np.any(np.isinf(np_data)), "Inf values in the data.")
+                            self.assertFalse(
+                                np.any(np.isnan(np_data)), "NaN values in the data."
+                            )
+                            self.assertFalse(
+                                np.any(np.isinf(np_data)), "Inf values in the data."
+                            )
 
                     except Exception as ex:
                         self.fail("An exception has been caught: {}".format(ex))
 
     def test_filter_fit_then_transform_zeros(self):
         filters = self.get_filters()
-        
-        for N,M,C in [(10,30,6),(2,30,3),(1,30,2), (5,30,10), (3,50,1)]:
+
+        for N, M, C in [(10, 30, 6), (2, 30, 3), (1, 30, 2), (5, 30, 10), (3, 50, 1)]:
             for filter in filters:
                 signals = RawSignals()
                 with self.subTest(filter=filter, N=N, M=M, C=C):
@@ -96,12 +103,18 @@ class RawSignalsFilterTest(unittest.TestCase):
 
                         self.assertIsNotNone(tr_signals, "Transformed object is none.")
                         self.assertIsInstance(tr_signals, RawSignals)
-                        self.assertTrue(id(signals) != id(tr_signals), "Objects are the same")
+                        self.assertTrue(
+                            id(signals) != id(tr_signals), "Objects are the same"
+                        )
 
                         for sig in tr_signals:
                             np_data = sig.to_numpy()
-                            self.assertFalse(np.any(np.isnan(np_data)), "NaN values in the data.")
-                            self.assertFalse(np.any(np.isinf(np_data)), "Inf values in the data.")
+                            self.assertFalse(
+                                np.any(np.isnan(np_data)), "NaN values in the data."
+                            )
+                            self.assertFalse(
+                                np.any(np.isinf(np_data)), "Inf values in the data."
+                            )
 
                     except Exception as ex:
                         self.fail("An exception has been caught: {}".format(ex))
@@ -120,14 +133,14 @@ class RawSignalsFilterTest(unittest.TestCase):
             except Exception as ex:
                 self.fail("An exception has been caught: {}".format(ex))
 
-    
-
     def test_dtype(self):
         filters = self.get_filters()
         dtypes = [np.float32, np.float64, np.single, np.double]
         for dtype in dtypes:
             with self.subTest(dtype=dtype):
-                signals = self.generate_sample_data(samples_number=30, column_number=3, dtype=dtype)
+                signals = self.generate_sample_data(
+                    samples_number=30, column_number=3, dtype=dtype
+                )
 
                 for filter in filters:
                     try:
@@ -141,6 +154,14 @@ class RawSignalsFilterTest(unittest.TestCase):
 
                     except Exception as ex:
                         self.fail("An exception has been caught: {}".format(ex))
+
+    def test_not_fitted(self):
+        filters = self.get_filters()
+        signals = self.generate_sample_data(samples_number=30)
+        for filter in filters:
+            with self.subTest(filter=filter):
+                with self.assertRaises(NotFittedError):
+                    filter.transform(signals)
 
 
 if __name__ == "__main__":

@@ -12,10 +12,11 @@ class RawSignalsFilterAllPass(RawSignalsFilter):
         """
         Does nothing
         """
-        return self
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals):
         """
         Just make a deep copy of an object
         """
+        self._check_fitted()
         return deepcopy(raw_signals)

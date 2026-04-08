@@ -14,11 +14,10 @@ class RawSignalsFilterMulti2(RawSignalsFilter):
         self.filter_list = filter_list
 
     def fit(self, raw_signals: RawSignals):
-        # Does nothing. Fit is lazy
-        return self
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
-
+        self._check_fitted()
         post_signals: RawSignals = None
         for filter in self.filter_list:
             # lazy fitting. Depends on filter order

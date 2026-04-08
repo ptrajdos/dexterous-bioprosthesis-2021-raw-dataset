@@ -18,9 +18,11 @@ class RawSignalsFilterButter(RawSignalsFilter):
         self.btype = btype
 
     def fit(self, raw_signals: RawSignals):
-        return self
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
+        self._check_fitted()
+
         nyq = raw_signals.sample_rate * 0.5
         low = self.low_freq / nyq
         high = self.high_freq / nyq

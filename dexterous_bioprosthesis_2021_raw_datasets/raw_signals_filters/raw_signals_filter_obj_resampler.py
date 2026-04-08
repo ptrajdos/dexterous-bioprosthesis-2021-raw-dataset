@@ -24,7 +24,7 @@ class RawSignalsFilterObjResampler(RawSignalsFilter):
         Only rng
         """
         self.rng_ = check_random_state(self.random_state)
-        return self
+        return super().fit(raw_signals)
 
     def _calculate_n_resampled(self, raw_signals: RawSignals):
         n_samples = len(raw_signals)
@@ -41,6 +41,7 @@ class RawSignalsFilterObjResampler(RawSignalsFilter):
         """
         Resample
         """
+        self._check_fitted()
         if not hasattr(self, "rng_"):
             raise ValueError("The filter has not been fitted yet.")
 
@@ -50,4 +51,7 @@ class RawSignalsFilterObjResampler(RawSignalsFilter):
             len(raw_signals), size=n_resampled, replace=self.with_replacement
         )
         resampled_signals = raw_signals[resampled_indices]
-        return resampled_signals
+        new_signals = raw_signals.initialize_empty()
+        for signal in resampled_signals:
+            new_signals.append(signal)
+        return new_signals

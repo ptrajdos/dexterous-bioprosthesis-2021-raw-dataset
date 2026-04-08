@@ -17,9 +17,10 @@ class RawSignalsFilterChannelIdx(RawSignalsFilter):
         """
         Does nothing.
         """
-        return self
+        return super().fit(raw_signals)
 
     def transform(self,raw_signals:RawSignals):
+        self._check_fitted()
         filtered_signals = RawSignals()
         for raw_signal in raw_signals:
             np_signal = raw_signal.signal

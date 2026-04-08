@@ -14,10 +14,12 @@ class RawSignalsFilterFreqThreshold(RawSignalsFilter):
         self.threshold = threshold
 
     def fit(self, raw_signals: RawSignals):
-        return self
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
 
+        self._check_fitted()
+        
         copied_signals = deepcopy(raw_signals)
 
         for raw_signal in copied_signals:

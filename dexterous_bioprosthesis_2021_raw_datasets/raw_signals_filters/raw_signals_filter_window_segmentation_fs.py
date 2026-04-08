@@ -25,12 +25,13 @@ class RawSignalsFilterWindowSegmentationFS(RawSignalsFilter):
         """
         Does nothing
         """
-        return self
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals):
         """
         Apply windowed segmentation with overlap
         """
+        self._check_fitted()
         new_signals = RawSignals(sample_rate=raw_signals.sample_rate)
         fs = raw_signals.sample_rate
 

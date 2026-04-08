@@ -19,7 +19,7 @@ class RawSignalsFilterWindowFilter(RawSignalsFilter):
         """
         Does nothing
         """
-        return self
+        return super().fit(raw_signals)
 
     @abc.abstractmethod
     def channel_transform(self, data) -> np.ndarray:
@@ -34,6 +34,7 @@ class RawSignalsFilterWindowFilter(RawSignalsFilter):
         """
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
+        self._check_fitted()
 
         copied_signals = deepcopy(raw_signals)
 

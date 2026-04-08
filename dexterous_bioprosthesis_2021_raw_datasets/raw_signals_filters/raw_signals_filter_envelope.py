@@ -15,9 +15,11 @@ class RawSignalsFilterEnvelope(RawSignalsFilter):
         super().__init__()
 
     def fit(self, raw_signals: RawSignals):
-        return self
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals):
+
+        self._check_fitted()
 
         copied_signals = deepcopy(raw_signals)
 

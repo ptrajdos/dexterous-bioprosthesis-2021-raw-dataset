@@ -40,15 +40,12 @@ class RawSignalsFilterColumnStandarizer(RawSignalsFilter):
     def fit(self, raw_signals: RawSignals):
         self._compute_means(raw_signals)
         self._compute_stds(raw_signals)
-        self._fitted = True
-        return self
+        
+        return super().fit(raw_signals)
 
     def transform(self, raw_signals: RawSignals):
 
-        if not hasattr(self, "_fitted"):
-            raise RuntimeError(
-                "Filter not fitted. Call 'fit' with training data before using this method."
-            )
+        self._check_fitted()
 
         copied_signals = deepcopy(raw_signals)
         for r_signal in copied_signals:
