@@ -19,22 +19,16 @@ class RawSignalsAugumenterGainChannel(RawSignalsAugumenterBase):
         append_original=True,
         n_jobs=None,
     ) -> None:
-        super().__init__(n_jobs=n_jobs, append_original=append_original)
+        super().__init__(n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats)
 
         self.gain_perc_min = gain_perc_min
         self.gain_perc_max = gain_perc_max
-        self.n_repeats = n_repeats
 
-    def fit(self, raw_signals: RawSignals):
-        """
-        Intentionally does nothing
-        """
-        return self
 
-    def _sig_augument(self, raw_signal: RawSignal):
+    def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
         sig_list = []
 
-        for _ in range(self.n_repeats):
+        for _ in range(n_repeats):
             new_signal = deepcopy(raw_signal)
             gain_perc = np.random.uniform(
                 self.gain_perc_min, self.gain_perc_max, new_signal.signal.shape[1]

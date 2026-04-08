@@ -71,17 +71,18 @@ class RawSignalsAugumenterClippingDistortion(RawSignalsAugumenterBase):
         append_original=True,
         n_jobs=None,
     ) -> None:
-        super().__init__(n_jobs=n_jobs, append_original=append_original)
+        super().__init__(
+            n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats
+        )
 
         self.min_percentile_threshold = min_percentile_threshold
         self.max_percentile_threshold = max_percentile_threshold
-        self.n_repeats = n_repeats
 
-    def _sig_augument(self, raw_signal: RawSignal):
+    def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
         sample_rate = raw_signal.sample_rate
         sig_list = []
 
-        for _ in range(self.n_repeats):
+        for _ in range(n_repeats):
             new_signal = deepcopy(raw_signal)
             np_sig = new_signal.signal
 
@@ -99,9 +100,3 @@ class RawSignalsAugumenterClippingDistortion(RawSignalsAugumenterBase):
             sig_list.append(new_signal)
 
         return sig_list
-
-    def fit(self, raw_signals: RawSignals):
-        """
-        Intentionally does nothing
-        """
-        return self

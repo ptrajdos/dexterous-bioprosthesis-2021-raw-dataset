@@ -19,28 +19,25 @@ class RawSignalsAugumenterWhiteNoise(RawSignalsAugumenterBase):
         append_original=True,
         n_jobs=None,
     ) -> None:
-        super().__init__(n_jobs=n_jobs, append_original=append_original)
+        super().__init__(
+            n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats
+        )
 
         self.noise_perc_min = noise_perc_min
         self.noise_perc_max = noise_perc_max
-        self.n_repeats = n_repeats
 
-    def fit(self, raw_signals: RawSignals):
-        """
-        Intentionally does nothing
-        """
-        return self
-
-    def _sig_augument(self, raw_signal: RawSignal):
+    def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1) -> list:
         sig_list = []
 
         orig_sig = raw_signal.signal
         n_samples, n_channels = orig_sig.shape
 
-        for _ in range(self.n_repeats):
+        for _ in range(n_repeats):
             new_signal = deepcopy(raw_signal)
 
-            noise_perc = np.random.uniform(self.noise_perc_min, self.noise_perc_max, (1, n_channels))
+            noise_perc = np.random.uniform(
+                self.noise_perc_min, self.noise_perc_max, (1, n_channels)
+            )
             stds = orig_sig.std(axis=0, keepdims=True)  # shape (1, n_channels)
             noise = np.random.normal(0, 1, (n_samples, n_channels)) * stds
             new_signal.signal += noise_perc * noise

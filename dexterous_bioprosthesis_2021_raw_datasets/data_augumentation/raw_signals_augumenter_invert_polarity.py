@@ -10,16 +10,11 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 
 class RawSignalsAugumenterInvertPolarity(RawSignalsAugumenterBase):
 
-    def __init__(self, append_original=True, n_jobs=None) -> None:
-        super().__init__(n_jobs=n_jobs, append_original=append_original)
+    def __init__(self, append_original=True, n_jobs=None, n_repeats: int = 1) -> None:
+        super().__init__(n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats)
 
-    def fit(self, raw_signals: RawSignals):
-        """
-        Intentionally does nothing
-        """
-        return self
 
-    def _sig_augument(self, raw_signal: RawSignal):
+    def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
         new_signal = deepcopy(raw_signal)
         np_sig = new_signal.signal
 

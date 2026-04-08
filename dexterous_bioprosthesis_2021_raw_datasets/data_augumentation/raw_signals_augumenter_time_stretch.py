@@ -27,11 +27,12 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
         append_original=True,
         n_jobs=None,
     ) -> None:
-        super().__init__(n_jobs=n_jobs, append_original=append_original)
+        super().__init__(
+            n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats
+        )
 
         self.stretch_min = stretch_min
         self.stretch_max = stretch_max
-        self.n_repeats = n_repeats
 
     def fit(self, raw_signals: RawSignals):
         """
@@ -39,7 +40,7 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
         """
         return self
 
-    def _sig_augument(self, raw_signal: RawSignal):
+    def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
         sample_rate = raw_signal.sample_rate
         sig_list = []
         transformer = TimeStretch(
@@ -48,7 +49,7 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
             min_rate=self.stretch_min,
             max_rate=self.stretch_max,
         )
-        for _ in range(self.n_repeats):
+        for _ in range(n_repeats):
             new_signal = deepcopy(raw_signal)
             np_sig = new_signal.signal
 

@@ -1,12 +1,16 @@
 import unittest
 
 import numpy as np
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
+from sklearn.exceptions import NotFittedError
 
+from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import RawSignalsAugumenter
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_creators.raw_signals_creator_sines import (
     RawSignalsCreatorSines,
 )
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_creators.raw_signals_creator_zeros import RawSignalsCreatorZeros
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_creators.raw_signals_creator_zeros import (
+    RawSignalsCreatorZeros,
+)
 
 
 class RawSignalsAugumenterTest(unittest.TestCase):
@@ -18,7 +22,7 @@ class RawSignalsAugumenterTest(unittest.TestCase):
         if not cls.__test__:
             raise unittest.SkipTest("Skipping")
 
-    def get_augumenter(self):
+    def get_augumenter(self)->RawSignalsAugumenter:
         raise unittest.SkipTest("Skipping")
 
     def _check_aug_signals(self, raw_signals: RawSignals, aug_signals: RawSignals):
@@ -57,7 +61,7 @@ class RawSignalsAugumenterTest(unittest.TestCase):
 
         self._check_aug_signals(raw_signals=raw_signals, aug_signals=aug_signals)
 
-    def test_fit_then_transform(self):
+    def test_fit_then_transform_zeros(self):
         signal_creator = RawSignalsCreatorZeros(samples_number=1000)
         raw_signals: RawSignals = signal_creator.get_set()
 
@@ -79,6 +83,15 @@ class RawSignalsAugumenterTest(unittest.TestCase):
         aug_signals = aug.fit_transform(raw_signals)
 
         self._check_aug_signals(raw_signals, aug_signals)
+
+    def test_not_fitted(self):
+        signal_creator = RawSignalsCreatorSines()
+        raw_signals = signal_creator.get_set()
+
+        aug = self.get_augumenter()
+
+        with self.assertRaises(NotFittedError):
+            aug.transform(raw_signals)
 
     def test_dtype(self):
         dtypes = [np.float32, np.float64, np.single, np.double]

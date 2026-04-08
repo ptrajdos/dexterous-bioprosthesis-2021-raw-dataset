@@ -1,7 +1,8 @@
 import abc
-from copy import deepcopy
 
 from joblib import delayed
+import numpy as np
+from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
     RawSignalsAugumenter,
 )
@@ -14,32 +15,41 @@ from dexterous_bioprosthesis_2021_raw_datasets.tools.progressparallel import (
 
 class RawSignalsAugumenterBase(RawSignalsAugumenter):
 
-    def __init__(self, n_jobs=None, append_original=True) -> None:
+    def __init__(self, n_jobs=None, append_original=True, n_repeats:int=1) -> None:
         super().__init__()
         self.n_jobs = n_jobs
-        self.append_original = append_original
+        self.append_original:bool = append_original
+        self.n_repeats:int = n_repeats
 
     @abc.abstractmethod
-    def _sig_augument(self, raw_signal: RawSignal) -> list:
+    def _sig_augument(self, raw_signal: RawSignal, n_repeats: int=1) -> list:
         """
         Auguments a single signal
 
         Arguments:
         ---------
         raw_signal: RawSignal -- the signal to be augumented
+        n_repeats: int -- how many augumented versions of signal to create
 
         Returns:
         --------
         List of augumented signals
 
         """
+    
+    def _check_if_fitted(self):
+        if not hasattr(self, "_is_fitted") or not self._is_fitted:
+            raise NotFittedError(
+                "You must fit the augumenter before calling transform. Call fit() or fit_transform() first."
+            )
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
+        self._check_if_fitted()
         new_signals = raw_signals.initialize_empty()
 
         aug_sig_list = ProgressParallel(
             n_jobs=self.n_jobs, use_tqdm=True, total=len(raw_signals)
-        )(delayed(self._sig_augument)(sig) for sig in raw_signals)
+        )(delayed(self._sig_augument)(sig, self.n_repeats) for sig in raw_signals)
 
         for aug_sigs in aug_sig_list:
             new_signals += aug_sigs
@@ -52,3 +62,11 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
     def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
         self.fit(raw_signals)
         return self.transform(raw_signals)
+    
+    def fit(self, raw_signals: RawSignals) -> RawSignalsAugumenter:
+        self._is_fitted = True
+        return self
+    
+    # def sample(self, n_samples: int) -> RawSignals:
+    #     indices = np.random.choice(len(raw_signals), size=n_samples, replace=False)
+    #     return super().sample(n_samples)

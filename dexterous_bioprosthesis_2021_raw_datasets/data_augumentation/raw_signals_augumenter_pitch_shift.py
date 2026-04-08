@@ -27,26 +27,21 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenterBase):
         append_original=True,
         n_jobs=None,
     ) -> None:
-        super().__init__(n_jobs=n_jobs, append_original=append_original)
+        super().__init__(
+            n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats
+        )
 
         self.min_semitones = min_semitones
         self.max_semitones = max_semitones
-        self.n_repeats = n_repeats
 
-    def fit(self, raw_signals: RawSignals):
-        """
-        Intentionally does nothing
-        """
-        return self
-
-    def _sig_augument(self, raw_signal: RawSignal):
+    def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
         sample_rate = raw_signal.sample_rate
         sig_list = []
         transformer = PitchShift(
             p=1.0, min_semitones=self.min_semitones, max_semitones=self.max_semitones
         )
 
-        for _ in range(self.n_repeats):
+        for _ in range(n_repeats):
             new_signal = deepcopy(raw_signal)
             np_sig = new_signal.signal
 

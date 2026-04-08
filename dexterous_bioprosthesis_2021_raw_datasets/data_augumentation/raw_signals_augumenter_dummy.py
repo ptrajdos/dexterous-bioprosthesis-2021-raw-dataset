@@ -1,5 +1,7 @@
 from copy import deepcopy
 
+from sklearn.exceptions import NotFittedError
+
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
     RawSignalsAugumenter,
 )
@@ -11,13 +13,18 @@ class RawSignalsAugumenterDummy(RawSignalsAugumenter):
     def __init__(self) -> None:
         super().__init__()
 
+    def _check_fittesness(self):
+        if not hasattr(self, "_is_fitted") or not self._is_fitted:
+            raise NotFittedError(
+                "You must fit the augumenter before calling transform. Call fit() or fit_transform() first."
+            )
+
     def fit(self, raw_signals: RawSignals):
-        """
-        Intentionally does nothing
-        """
+        self._is_fitted = True
         return self
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
+        self._check_fittesness()
         return deepcopy(raw_signals)
 
     def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
