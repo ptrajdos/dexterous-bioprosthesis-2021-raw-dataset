@@ -117,7 +117,7 @@ class RawSignals(IRawSignals):
         if type(self) != type(__o):
             return False
 
-        return self.raw_signals_list == __o.raw_signals_list
+        return self.raw_signals_list == __o.raw_signals_list # type: ignore
 
     def get_labels(self) -> np.ndarray:
         """
