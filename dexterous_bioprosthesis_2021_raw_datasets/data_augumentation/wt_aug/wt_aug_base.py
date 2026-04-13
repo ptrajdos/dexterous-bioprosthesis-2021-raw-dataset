@@ -1,8 +1,12 @@
 from __future__ import annotations
-from typing import Optional
-import numpy as np
+
 import abc
+from typing import Optional
+
+import numpy as np
 from sklearn.exceptions import NotFittedError
+from sklearn.utils import check_random_state
+
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
     RawSignalsAugumenter,
 )
@@ -20,11 +24,13 @@ class WTAugBase(RawSignalsAugumenter):
         wavelets: Optional[list] = None,
         max_decomposition_level: int = 3,
         transformations: Optional[list] = None,
+        random_state=10,
     ) -> None:
         super().__init__()
         self.wavelets = wavelets
         self.max_decomposition_level = max_decomposition_level
         self.transformations = transformations
+        self.random_state = random_state
 
     def _set_effective_wavelets(self) -> None:
         if self.wavelets is None:
@@ -38,10 +44,14 @@ class WTAugBase(RawSignalsAugumenter):
         else:
             self._effective_transformations: list = self.transformations
 
+        for r_trans in self._effective_transformations:
+            r_trans.fit()
+
     def fit(self, raw_signals: RawSignals):
         self._set_effective_wavelets()
         self._set_effective_transformations()
         self._is_fitted = True
+        self._random_state = check_random_state(self.random_state)
         return self
 
     def _check_fitted(self):
@@ -52,31 +62,31 @@ class WTAugBase(RawSignalsAugumenter):
 
     def _select_params(self, raw_signals: RawSignals) -> tuple:
         n_signals = len(raw_signals)
-        sel_wavelets = np.random.choice(
+        sel_wavelets = self._random_state.choice(
             self._effective_wavelets, size=n_signals, replace=True
         )
-        sel_levels = np.random.choice(
-            np.arange(1,self.max_decomposition_level+1), size=n_signals, replace=True
+        sel_levels = self._random_state.choice(
+            np.arange(1, self.max_decomposition_level + 1), size=n_signals, replace=True
         )
-        sel_transformations = np.random.choice(
+        sel_transformations = self._random_state.choice(
             self._effective_transformations, size=n_signals, replace=True
         )
 
         return (sel_wavelets, sel_levels, sel_transformations)
-    
+
     @abc.abstractmethod
-    def _wt_trans(self, raw_signal:RawSignal, wavelet, level:int)->list:
+    def _wt_trans(self, raw_signal: RawSignal, wavelet, level: int) -> list:
         """
         Transforms a signal using a kind of wavelet transform
         """
 
     @abc.abstractmethod
-    def _wt_itrans(self, raw_signal:RawSignal, wavelet, decomps:list)->RawSignal:
+    def _wt_itrans(self, raw_signal: RawSignal, wavelet, decomps: list) -> RawSignal:
         """
         Inverse transformation
         """
-        
-    def _apply_transformation(self,trans,decomp)->list:
+
+    def _apply_transformation(self, trans, decomp) -> list:
         return trans.transform(decomp)
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
@@ -84,10 +94,12 @@ class WTAugBase(RawSignalsAugumenter):
         sel_wavelets, sel_levels, sel_transformations = self._select_params(raw_signals)
         new_signals = raw_signals.initialize_empty()
 
-        for wav, lvl, trans, sig in zip(sel_wavelets, sel_levels, sel_transformations, raw_signals):
+        for wav, lvl, trans, sig in zip(
+            sel_wavelets, sel_levels, sel_transformations, raw_signals
+        ):
             decomp = self._wt_trans(sig, wav, lvl)
             transformed = self._apply_transformation(trans, decomp)
-            t_sig = self._wt_itrans(sig,wav,transformed)
+            t_sig = self._wt_itrans(sig, wav, transformed)
             new_signals.append(t_sig)
 
         return new_signals
@@ -96,7 +108,7 @@ class WTAugBase(RawSignalsAugumenter):
         self._check_fitted()
         n_sigs = len(raw_signals)
         replace = n_samples > n_sigs
-        indices = np.random.choice(n_sigs, n_samples, replace=replace)
+        indices = self._random_state.choice(n_sigs, n_samples, replace=replace)
         sampled_signals = raw_signals.initialize_empty()
         sampled_signals += raw_signals[indices]
         return self.transform(sampled_signals)

@@ -18,9 +18,13 @@ class RawSignalsAugumenterWhiteNoise(RawSignalsAugumenterBase):
         n_repeats: int = 2,
         append_original=True,
         n_jobs=None,
+        random_state=10,
     ) -> None:
         super().__init__(
-            n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats
+            n_jobs=n_jobs,
+            append_original=append_original,
+            n_repeats=n_repeats,
+            random_state=random_state,
         )
 
         self.noise_perc_min = noise_perc_min
@@ -35,11 +39,11 @@ class RawSignalsAugumenterWhiteNoise(RawSignalsAugumenterBase):
         for _ in range(n_repeats):
             new_signal = deepcopy(raw_signal)
 
-            noise_perc = np.random.uniform(
+            noise_perc = self._random_state.uniform(
                 self.noise_perc_min, self.noise_perc_max, (1, n_channels)
             )
             stds = orig_sig.std(axis=0, keepdims=True)  # shape (1, n_channels)
-            noise = np.random.normal(0, 1, (n_samples, n_channels)) * stds
+            noise = self._random_state.normal(0, 1, (n_samples, n_channels)) * stds
             new_signal.signal += noise_perc * noise
             sig_list.append(new_signal)
 

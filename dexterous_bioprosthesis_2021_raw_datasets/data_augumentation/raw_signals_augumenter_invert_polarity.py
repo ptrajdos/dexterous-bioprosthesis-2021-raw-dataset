@@ -5,14 +5,19 @@ from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signal_aug
     RawSignalsAugumenterBase,
 )
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 
 
 class RawSignalsAugumenterInvertPolarity(RawSignalsAugumenterBase):
 
-    def __init__(self, append_original=True, n_jobs=None, n_repeats: int = 1) -> None:
-        super().__init__(n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats)
-
+    def __init__(
+        self, append_original=True, n_jobs=None, n_repeats: int = 1, random_state=10
+    ) -> None:
+        super().__init__(
+            n_jobs=n_jobs,
+            append_original=append_original,
+            n_repeats=n_repeats,
+            random_state=random_state,
+        )
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
         new_signal = deepcopy(raw_signal)

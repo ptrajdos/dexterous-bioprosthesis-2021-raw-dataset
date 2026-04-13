@@ -13,8 +13,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.tools.numba_compat import jit
 
 class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
 
-    def __init__(self, channels_spoiled_frac=0.1, snr=1) -> None:
-        super().__init__(channels_spoiled_frac, snr)
+    def __init__(self, channels_spoiled_frac=0.1, snr=1, random_state=10,) -> None:
+        super().__init__(channels_spoiled_frac, snr, random_state)
 
     def fit(self, raw_signals: RawSignals):
 

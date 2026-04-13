@@ -1,11 +1,11 @@
-
 import numpy as np
-from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.wt_aug.decomp_transformations.idecomp_transformation import (
-    IDecompTransformation,
+
+from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.wt_aug.decomp_transformations.decomp_transformation_base import (
+    DecompTransformationBase,
 )
 
 
-class DecompTransformationGaussian(IDecompTransformation):
+class DecompTransformationGaussian(DecompTransformationBase):
 
     def __init__(
         self,
@@ -13,14 +13,16 @@ class DecompTransformationGaussian(IDecompTransformation):
         min_noise_perc=0.01,
         max_noise_perc=0.1,
         alter_approximation_coeffs=False,
+        random_state=10,
     ) -> None:
-        super().__init__()
+        super().__init__(random_state)
         self.mean = mean
         self.min_noise_perc = min_noise_perc
         self.max_noise_perc = max_noise_perc
         self.alter_approximation_coeffs = alter_approximation_coeffs
 
     def transform(self, decompositions: list):
+        self._check_if_fitted()
         new_decomps = []
 
         for coeff_idx, coeff in enumerate(decompositions):
@@ -30,11 +32,11 @@ class DecompTransformationGaussian(IDecompTransformation):
                 continue
 
             n_samples, n_channels = coeff.shape
-            noise_perc = np.random.uniform(
+            noise_perc = self._random_state.uniform(
                 self.min_noise_perc, self.max_noise_perc, (1, n_channels)
             )
             stds = coeff.std(axis=0, keepdims=True)  # shape (1, n_channels)
-            noise = np.random.normal(0, 1, (n_samples, n_channels)) * stds
+            noise = self._random_state.normal(0, 1, (n_samples, n_channels)) * stds
             new_coeffs += noise_perc * noise
             new_decomps.append(new_coeffs)
 

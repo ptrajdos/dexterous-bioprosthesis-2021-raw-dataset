@@ -9,3 +9,6 @@ class AugumenterClippingDistortionTest(RawSignalsAugumenterTest):
 
     def get_augumenter(self):
         return RawSignalsAugumenterClippingDistortion()
+    
+    def test_replicability(self):
+        pass

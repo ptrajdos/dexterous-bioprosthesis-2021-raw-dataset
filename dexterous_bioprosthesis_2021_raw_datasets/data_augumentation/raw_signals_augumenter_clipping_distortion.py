@@ -2,16 +2,11 @@ import random
 from copy import deepcopy
 
 import numpy as np
-from joblib import delayed
 
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signal_augumenter_base import (
     RawSignalsAugumenterBase,
 )
-from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
-    RawSignalsAugumenter,
-)
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
-from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 
 try:
     # Attempt to use the official library first
@@ -56,9 +51,6 @@ except ImportError:
             return clipped_samples
 
 
-from dexterous_bioprosthesis_2021_raw_datasets.tools.progressparallel import (
-    ProgressParallel,
-)
 
 
 class RawSignalsAugumenterClippingDistortion(RawSignalsAugumenterBase):
@@ -70,9 +62,13 @@ class RawSignalsAugumenterClippingDistortion(RawSignalsAugumenterBase):
         n_repeats: int = 2,
         append_original=True,
         n_jobs=None,
+        random_state=10,
     ) -> None:
         super().__init__(
-            n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats
+            n_jobs=n_jobs,
+            append_original=append_original,
+            n_repeats=n_repeats,
+            random_state=random_state,
         )
 
         self.min_percentile_threshold = min_percentile_threshold

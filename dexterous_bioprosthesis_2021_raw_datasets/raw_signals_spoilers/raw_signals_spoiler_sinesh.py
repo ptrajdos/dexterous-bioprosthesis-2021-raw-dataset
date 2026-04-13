@@ -14,12 +14,13 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
         self,
         channels_spoiled_frac=0.1,
         snr=1,
+        random_state=10,
         frequency=50,
         freq_deviation=2,
         n_harmonics=2,
         harmonic_weights=[1, 1],
     ) -> None:
-        super().__init__(channels_spoiled_frac, snr)
+        super().__init__(channels_spoiled_frac, snr, random_state)
         self.frequency = frequency
         self.frequency_deviation = freq_deviation
         self.n_harmonics = n_harmonics
@@ -39,11 +40,11 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
         copied_signals = deepcopy(raw_signals)
 
         used_frequency = (
-            2 * self.frequency_deviation * np.random.random(1)
+            2 * self.frequency_deviation * self._random_state.random(1)
             + self.frequency
             - self.frequency_deviation
         )
-        phase_shift = 4 * np.pi * np.random.random(1) - 2 * np.pi
+        phase_shift = 4 * np.pi * self._random_state.random(1) - 2 * np.pi
 
         for signal in copied_signals:
             selected_channels_idxs = self._random_channel_selection(signal)

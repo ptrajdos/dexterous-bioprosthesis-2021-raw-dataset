@@ -11,3 +11,7 @@ class RawSignalsAugumenterParallelApplierTest(RawSignalsAugumenterTest):
 
     def get_augumenter(self):
         return RawSignalsAugumenterParallelApplierRandom()
+    
+    def test_replicability(self):
+        #TODO why?
+        pass

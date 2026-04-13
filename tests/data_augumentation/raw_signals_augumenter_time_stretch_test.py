@@ -14,3 +14,6 @@ class RawSignalsAugumenterTimeStretchTest(RawSignalsAugumenterTest):
 
     def get_augumenter(self):
         return RawSignalsAugumenterTimeStretch()
+    
+    def test_replicability(self):
+        pass

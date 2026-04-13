@@ -18,8 +18,9 @@ class RawSignalsAugumenterGainChannel(RawSignalsAugumenterBase):
         n_repeats: int = 2,
         append_original=True,
         n_jobs=None,
+        random_state=10,
     ) -> None:
-        super().__init__(n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats)
+        super().__init__(n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats, random_state=random_state)
 
         self.gain_perc_min = gain_perc_min
         self.gain_perc_max = gain_perc_max
@@ -30,7 +31,7 @@ class RawSignalsAugumenterGainChannel(RawSignalsAugumenterBase):
 
         for _ in range(n_repeats):
             new_signal = deepcopy(raw_signal)
-            gain_perc = np.random.uniform(
+            gain_perc = self._random_state.uniform(
                 self.gain_perc_min, self.gain_perc_max, new_signal.signal.shape[1]
             )
             new_signal.signal *= gain_perc

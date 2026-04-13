@@ -15,12 +15,11 @@ class SamplerMixin:
         raw_signals: RawSignals -- the dataset to be sampled
         n_samples: int -- how many samples to sample
         """
-        pre_sampled_signals = self.transform(raw_signals) # type: ignore
+        pre_sampled_signals = self.transform(raw_signals)  # type: ignore
         n_pre_sampled_signals = len(pre_sampled_signals)
         replace = n_samples > n_pre_sampled_signals
-        indices = np.random.choice(
-            n_pre_sampled_signals, size=n_samples, replace=replace
-        )
+        rnd = self._random_state if hasattr(self, "_random_state") else np.random
+        indices = rnd.choice(n_pre_sampled_signals, size=n_samples, replace=replace)
         new_signals = pre_sampled_signals.initialize_empty()
         for idx in indices:
             new_signals += [pre_sampled_signals[idx]]

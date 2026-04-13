@@ -2,6 +2,7 @@ import abc
 
 from joblib import delayed
 import numpy as np
+from sklearn.utils import check_random_state
 from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.raw_signals_augumenter import (
     RawSignalsAugumenter,
@@ -15,11 +16,12 @@ from dexterous_bioprosthesis_2021_raw_datasets.tools.progressparallel import (
 
 class RawSignalsAugumenterBase(RawSignalsAugumenter):
 
-    def __init__(self, n_jobs=None, append_original=True, n_repeats:int=1) -> None:
+    def __init__(self, n_jobs=None, append_original=True, n_repeats:int=1, random_state=10) -> None:
         super().__init__()
         self.n_jobs = n_jobs
         self.append_original:bool = append_original
         self.n_repeats:int = n_repeats
+        self.random_state = random_state
 
     @abc.abstractmethod
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int=1) -> list:
@@ -65,6 +67,7 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
     
     def fit(self, raw_signals: RawSignals) -> RawSignalsAugumenter:
         self._is_fitted = True
+        self._random_state = check_random_state(self.random_state)
         return self
     
     def sample(self, raw_signals: RawSignals, n_samples: int=1) -> RawSignals:

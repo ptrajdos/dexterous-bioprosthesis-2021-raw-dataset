@@ -162,5 +162,21 @@ class RawSignalsAugumenterTest(unittest.TestCase):
                         f"Wrong dtype of the signal. Expected {dtype}, got {sig.to_numpy().dtype}   ",
                     )
 
+    def _check_almost_equal(self, raw_signals1: RawSignals, raw_signals2: RawSignals):
+        for s1, s2 in zip(raw_signals1, raw_signals2):
+            self.assertTrue(np.all(np.allclose(s1.to_numpy(), s2.to_numpy())))
+
+    def test_replicability(self):
+        signal_creator = RawSignalsCreatorSines()
+        raw_signals = signal_creator.get_set()
+
+        aug = self.get_augumenter()
+
+        aug_signals1 = aug.fit_transform(raw_signals)
+        aug_signals2 = aug.fit_transform(raw_signals)
+        # self.assertTrue(aug_signals1 == aug_signals2)
+        self._check_almost_equal(aug_signals1, aug_signals2)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -15,7 +15,7 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
 
     def __init__(
         self,
-        spoilers=[RawSignalsSpoilerDummy()], #TODO need fixing!
+        spoilers=[RawSignalsSpoilerDummy()],  # TODO need fixing!
         spoilers_weights=None,
         spoiled_fraction: float = 1.0,
         spoiler_relabalers=None,

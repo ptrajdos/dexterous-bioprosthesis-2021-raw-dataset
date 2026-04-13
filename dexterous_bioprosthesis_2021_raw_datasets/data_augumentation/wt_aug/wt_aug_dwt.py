@@ -14,9 +14,15 @@ class WTAugDWT(WTAugBase):
         wavelets=None,
         max_decomposition_level: int = 3,
         transformations=None,
+        random_state=10,
         mode="symmetric",
     ) -> None:
-        super().__init__(wavelets, max_decomposition_level, transformations)
+        super().__init__(
+            wavelets,
+            max_decomposition_level,
+            transformations,
+            random_state=random_state,
+        )
         self.mode = mode
 
     def _wt_trans(self, raw_signal: RawSignal, wavelet, level: int) -> list:

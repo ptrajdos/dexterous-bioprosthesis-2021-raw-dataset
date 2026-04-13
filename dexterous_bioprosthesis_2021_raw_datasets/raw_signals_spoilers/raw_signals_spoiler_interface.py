@@ -25,7 +25,9 @@ class RawSignalsSpoilerInterface(abc.ABC):
 
     def _check_is_fitted(self):
         if not hasattr(self, "_is_fitted") or not self._is_fitted:
-            raise NotFittedError("RawSignalsSpoiler is not fitted yet. Call fit() before transform()")
+            raise NotFittedError(
+                "RawSignalsSpoiler is not fitted yet. Call fit() before transform()"
+            )
 
     @abc.abstractmethod
     def transform(self, raw_signals: RawSignals) -> RawSignals:

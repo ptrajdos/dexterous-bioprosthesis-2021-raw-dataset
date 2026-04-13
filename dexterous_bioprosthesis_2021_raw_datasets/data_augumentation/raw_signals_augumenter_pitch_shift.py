@@ -26,9 +26,10 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenterBase):
         n_repeats: int = 2,
         append_original=True,
         n_jobs=None,
+        random_state=10,
     ) -> None:
         super().__init__(
-            n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats
+            n_jobs=n_jobs, append_original=append_original, n_repeats=n_repeats, random_state=random_state
         )
 
         self.min_semitones = min_semitones

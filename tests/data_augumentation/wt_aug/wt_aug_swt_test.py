@@ -10,3 +10,4 @@ class WTAugDWTTest(RawSignalsAugumenterTest):
 
     def get_augumenter(self):
         return WTAugSWT(transformations=[DecompTransformationGaussian()])
+    
