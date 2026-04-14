@@ -74,7 +74,7 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
         self._check_if_fitted()
         n_signals = len(raw_signals)
         replace = n_samples > n_signals
-        indices = np.random.choice(len(raw_signals), size=n_samples, replace=replace)
+        indices = self._random_state.choice(len(raw_signals), size=n_samples, replace=replace)
         new_signals = raw_signals.initialize_empty()
         sel_signals = raw_signals[indices]
 
