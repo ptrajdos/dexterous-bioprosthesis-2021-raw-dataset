@@ -1,3 +1,6 @@
+from typing import Optional, Union
+
+from numpy.random import RandomState
 from sklearn.dummy import check_random_state
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
@@ -12,7 +15,7 @@ class RawSignalsFilterObjResampler(RawSignalsFilter):
         self,
         resampling_rate: float = 1.0,
         with_replacement: bool = False,
-        random_state: int = None,
+        random_state: Optional[Union[int, RandomState]] = None,
     ) -> None:
         super().__init__()
         self.resampling_rate = resampling_rate
