@@ -8,18 +8,15 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 )
 
 
-class RawSignalsFilterLengthOutlier(RawSignalsFilter):
+class RawSignalsFilterLengthMedianStandarizer(RawSignalsFilter):
     """
-    Filters out raw signals objects with outlying lengths (number of samples)
+    Forces all filtered signals to have length equal to median of signal lengths in the training data
     """
 
     def fit(self, raw_signals: RawSignals):
         super().fit(raw_signals)
         lengths = [rs.to_numpy().shape[0] for rs in raw_signals]
-        q1, q3 = np.percentile(lengths, [25,75])
-        iqr = q3 - q1
-        self._lower_bound = q1 - 1.5 * iqr
-        self._upper_bound = q3 + 1.5 * iqr
+        self._median = int( np.median(lengths))
 
         return self
 
@@ -29,7 +26,15 @@ class RawSignalsFilterLengthOutlier(RawSignalsFilter):
         new_signals = raw_signals.initialize_empty()
         for r_signal in raw_signals:
             r_sig_len = len(r_signal)
-            if r_sig_len >= self._lower_bound and r_sig_len <= self._upper_bound:
-                new_signals.append(deepcopy(r_signal))
+            r_sig_np = r_signal.to_numpy()
+
+            if r_sig_len > self._median:
+                r_signal.signal = r_sig_np[:self._median,:]
+
+            else:
+                pad =  int(self._median - r_sig_len)
+                r_signal.signal = np.pad(r_sig_np, ((0,pad),(0,0)), mode='constant')
+            
+            new_signals.append(r_signal)
 
         return new_signals
