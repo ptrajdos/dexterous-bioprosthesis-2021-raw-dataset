@@ -112,7 +112,7 @@ class RawSignal():
     def __len__(self):
         return self.signal.shape[0]
     
-    def to_numpy(self):
+    def to_numpy(self)->np.ndarray:
         """
         Returns: signal representation as an numpy ndarray
         """
