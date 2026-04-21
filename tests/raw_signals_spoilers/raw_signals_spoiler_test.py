@@ -78,6 +78,28 @@ class RawSignalsSpoilerTest(RawSignalsSpoilerInterfaceTest):
                         np.any(np.isinf(np_sig)), "Infs in transformed data"
                     )
 
+    def test_ydtype(self):
+        dtypes = [np.int64, np.int32, np.float32, np.str_]
+        classes = np.asanyarray([1,2,3])
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                # Generate sample data with the specified dtype
+                data = self.generate_sample_data(
+                    samples_number=10, column_number=3, labels=classes.astype(dtype)
+                )
+                spoiler = self.get_spoiler_class()(snr=0, channels_spoiled_frac=1.0)
+                t_data:RawSignals = spoiler.fit_transform(data)
+                labels = t_data.get_labels()
+                self.assertIsNotNone(labels, "Labels are none!")
+                self.assertIsInstance(labels, np.ndarray, "Wrong labels array type")
+                self.assertTrue(np.can_cast(labels.dtype, dtype), "Cannot cast")
+
+                if dtype != np.str_:
+                    self.assertTrue(labels.dtype == dtype, f"Wrong exact type. Got {labels.dtype} expect: {dtype} " )
+
+                
+
+
     def test_zero_signal_snrs(self):
         
         for spoiler in self.get_spoilers():

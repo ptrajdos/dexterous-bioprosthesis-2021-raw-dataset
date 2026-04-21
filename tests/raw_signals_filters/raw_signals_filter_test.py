@@ -24,16 +24,23 @@ class RawSignalsFilterTest(unittest.TestCase):
         raise unittest.SkipTest("Skipping")
 
     def generate_sample_data(
-        self, signal_number=10, column_number=3, samples_number=12, dtype=np.float32
+        self,
+        signal_number=10,
+        column_number=3,
+        samples_number=12,
+        dtype=np.float32,
+        labels=[0, 1, 2],
     ) -> RawSignals:
         signals = RawSignals()
 
         for i in range(1, signal_number + 1):
+            label = np.random.choice(labels, 1)
             signals.append(
                 RawSignal(
                     signal=np.random.random((samples_number, column_number)).astype(
                         dtype
-                    )
+                    ),
+                    object_class=label,
                 )
             )
 
@@ -154,6 +161,30 @@ class RawSignalsFilterTest(unittest.TestCase):
 
                     except Exception as ex:
                         self.fail("An exception has been caught: {}".format(ex))
+
+    def test_ydtype(self):
+        filters = self.get_filters()
+        dtypes = [np.int32, np.int64, np.float32, np.str_]
+        classes = np.asanyarray([1, 2, 3])
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                signals = self.generate_sample_data(
+                    samples_number=30, column_number=3, labels=classes.astype(dtype)
+                )
+
+                for filter in filters:
+
+                    tr_signals: RawSignals = filter.fit_transform(signals)
+                    labels = tr_signals.get_labels()
+                    self.assertIsNotNone(labels, "Labels are none!")
+                    self.assertIsInstance(labels, np.ndarray, "Wrong labels array type")
+                    self.assertTrue(np.can_cast(labels.dtype, dtype), "Cannot cast")
+
+                    if dtype != np.str_:
+                        self.assertTrue(
+                            labels.dtype == dtype,
+                            f"Wrong exact type. Got {labels.dtype} expect: {dtype} ",
+                        )
 
     def test_not_fitted(self):
         filters = self.get_filters()

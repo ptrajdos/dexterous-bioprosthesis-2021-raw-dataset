@@ -23,16 +23,18 @@ class RawSignalsSpoilerInterfaceTest(unittest.TestCase):
         raise unittest.SkipTest("Skipping")
 
     def generate_sample_data(
-        self, signal_number=10, column_number=3, samples_number=12, dtype=np.double
+        self, signal_number=10, column_number=3, samples_number=12, dtype=np.double, labels=[0,1,2]
     ) -> RawSignals:
         signals = RawSignals()
 
-        for i in range(1, signal_number + 1):
+        for _ in range(1, signal_number + 1):
+            label = np.random.choice(labels, 1)
             signals.append(
                 RawSignal(
                     signal=np.random.random((samples_number, column_number)).astype(
                         dtype
-                    )
+                    ),
+                    object_class=label,
                 )
             )
 

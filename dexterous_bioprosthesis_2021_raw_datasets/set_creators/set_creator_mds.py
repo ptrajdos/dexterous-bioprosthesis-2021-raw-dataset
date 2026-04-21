@@ -410,8 +410,8 @@ class SetCreatorMDS(SetCreator):
             self.raw_signals_set[0].to_numpy().dtype
         )
 
-        extracted_objs_classes = [x.object_class for x in raw_signals]
-        extracted_objs_timestamps = [x.timestamp for x in raw_signals]
+        extracted_objs_classes = np.asanyarray([x.object_class for x in raw_signals])
+        extracted_objs_timestamps = np.asanyarray( [x.timestamp for x in raw_signals])
 
         return tr_dataset, extracted_objs_classes, extracted_objs_timestamps
 

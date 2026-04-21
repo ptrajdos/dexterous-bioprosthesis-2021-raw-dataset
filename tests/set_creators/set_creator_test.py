@@ -9,7 +9,11 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_transformer_wrapper import (
     SetCreatorTransformerWrapper,
 )
-from tests.testing_tools import generate_one_data, generate_sample_data, generate_zero_data
+from tests.testing_tools import (
+    generate_one_data,
+    generate_sample_data,
+    generate_zero_data,
+)
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 
@@ -41,7 +45,7 @@ class SetCreatorTest(unittest.TestCase):
             class_indices=class_indices,
             dtype=dtype,
         )
-    
+
     def generate_z(
         self,
         signal_number=10,
@@ -72,13 +76,14 @@ class SetCreatorTest(unittest.TestCase):
             samples_number=samples_number,
             class_indices=class_indices,
             dtype=dtype,
-        )   
-    
+        )
+
     def get_sample_data_parameters(self):
         return [
             (10, 3, 10, [0, 1]),
             (10, 1, 11, [0, 1]),
         ]
+
     def get_default_sample_number(self):
         return 12
 
@@ -104,7 +109,12 @@ class SetCreatorTest(unittest.TestCase):
     def test_creator_fit_transform(self):
 
         creators = self.get_creators()
-        for signal_number, column_number, samples_number, class_indices in self.get_sample_data_parameters():
+        for (
+            signal_number,
+            column_number,
+            samples_number,
+            class_indices,
+        ) in self.get_sample_data_parameters():
             for creator in creators:
                 with self.subTest(
                     signal_number=signal_number,
@@ -134,7 +144,9 @@ class SetCreatorTest(unittest.TestCase):
             with self.subTest(dtype=dtype):
                 for creator in creators:
 
-                    raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number(), dtype=dtype)
+                    raw_set = self.generate_sample_data(
+                        samples_number=self.get_default_sample_number(), dtype=dtype
+                    )
                     n_samples = len(raw_set)
 
                     creator.fit(raw_set)
@@ -147,13 +159,44 @@ class SetCreatorTest(unittest.TestCase):
                         ),
                     )
 
+    def test_ydtype(self):
+        creators = self.get_creators()
+
+        dtypes = [np.int64, np.int32, np.float32, np.str_]
+        classes = np.asanyarray([1, 2, 3])
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                for creator in creators:
+
+                    raw_set = self.generate_sample_data(
+                        samples_number=self.get_default_sample_number(),
+                        class_indices=classes.astype(dtype),
+                    )
+                    n_samples = len(raw_set)
+
+                    creator.fit(raw_set)
+                    X, y, t = creator.transform(raw_set)
+                    labels = y
+                    self.assertIsNotNone(labels, "Labels are none!")
+                    self.assertIsInstance(labels, np.ndarray, "Wrong labels array type")
+                    self.assertTrue(np.can_cast(labels.dtype, dtype), "Cannot cast")
+
+                    if dtype != np.str_:
+                        self.assertTrue(
+                            labels.dtype == dtype,
+                            f"Wrong exact type. Got {labels.dtype} expect: {dtype} ",
+                        )
+                    
+
     def test_creator_fit_then_transform(self):
 
         creators = self.get_creators()
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
+            raw_set = self.generate_sample_data(
+                samples_number=self.get_default_sample_number()
+            )
             n_samples = len(raw_set)
 
             creator.fit(raw_set)
@@ -189,13 +232,14 @@ class SetCreatorTest(unittest.TestCase):
 
             self.basic_test_check(raw_set, X, y, t)
 
-
     def test_attributes_indices(self):
         creators = self.get_creators()
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
+            raw_set = self.generate_sample_data(
+                samples_number=self.get_default_sample_number()
+            )
             n_samples = len(raw_set)
             n_channels = raw_set.signal_n_cols
 
@@ -231,7 +275,9 @@ class SetCreatorTest(unittest.TestCase):
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
+            raw_set = self.generate_sample_data(
+                samples_number=self.get_default_sample_number()
+            )
 
             pipeline = Pipeline(
                 [
@@ -250,7 +296,9 @@ class SetCreatorTest(unittest.TestCase):
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
+            raw_set = self.generate_sample_data(
+                samples_number=self.get_default_sample_number()
+            )
 
             pipeline = Pipeline(
                 [
@@ -275,7 +323,9 @@ class SetCreatorTest(unittest.TestCase):
 
         for creator in creators:
 
-            raw_set = self.generate_sample_data(samples_number=self.get_default_sample_number())
+            raw_set = self.generate_sample_data(
+                samples_number=self.get_default_sample_number()
+            )
             n_samples = len(raw_set)
             try:
                 X, y, t = creator.transform(raw_set)
