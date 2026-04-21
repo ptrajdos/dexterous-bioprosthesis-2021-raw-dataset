@@ -117,7 +117,7 @@ class RawSignals(IRawSignals):
         if type(self) != type(__o):
             return False
 
-        return self.raw_signals_list == __o.raw_signals_list # type: ignore
+        return self.raw_signals_list == __o.raw_signals_list  # type: ignore
 
     def get_labels(self) -> np.ndarray:
         """
@@ -175,7 +175,8 @@ class RawSignals(IRawSignals):
     def to_numpy(self) -> np.ndarray:
         """
         Returns the raw_signals object as a numpy array.
-        Assuming that all raw_signal object have the same dimension
+        Return tslearn compatible data
+        Assuming that all raw_signal object have the same dimension.
 
         Returns:
         ---------
