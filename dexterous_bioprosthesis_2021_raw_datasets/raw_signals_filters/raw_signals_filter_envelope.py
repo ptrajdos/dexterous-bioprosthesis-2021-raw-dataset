@@ -14,8 +14,8 @@ class RawSignalsFilterEnvelope(RawSignalsFilter):
     def __init__(self) -> None:
         super().__init__()
 
-    def fit(self, raw_signals: RawSignals):
-        return super().fit(raw_signals)
+    def fit(self, raw_signals: RawSignals, y=None):
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
 

@@ -16,7 +16,7 @@ class RawSignalsFilterAllMinmaxStandarizer(RawSignalsFilter):
         self.range_max = range_max
         self.eps = eps
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         self._min = raw_signals[0].to_numpy().min()
         self._max = raw_signals[0].to_numpy().max()
 
@@ -26,7 +26,7 @@ class RawSignalsFilterAllMinmaxStandarizer(RawSignalsFilter):
             self._min = np.min([self._min, t_min])
             self._max = np.max([self._max, t_max])
 
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
         self._check_fitted()

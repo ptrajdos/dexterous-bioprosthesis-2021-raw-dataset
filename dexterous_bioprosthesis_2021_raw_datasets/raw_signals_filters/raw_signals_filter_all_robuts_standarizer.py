@@ -14,7 +14,7 @@ class RawSignalsFilterAllRobustStandarizer(RawSignalsFilter):
         super().__init__()
         self.eps = eps
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         np_data_all = raw_signals.to_numpy_concat()
         dtype = np_data_all.dtype
         self._median = np.median(np_data_all).astype(dtype)
@@ -23,7 +23,7 @@ class RawSignalsFilterAllRobustStandarizer(RawSignalsFilter):
         if self._iqr < self.eps:
             self._iqr = self.eps
         
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
         self._check_fitted()

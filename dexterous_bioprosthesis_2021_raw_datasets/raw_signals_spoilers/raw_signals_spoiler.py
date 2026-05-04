@@ -87,7 +87,7 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
 
         return snrs
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         self._random_state = check_random_state(self.random_state)
         # Does nothing
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)

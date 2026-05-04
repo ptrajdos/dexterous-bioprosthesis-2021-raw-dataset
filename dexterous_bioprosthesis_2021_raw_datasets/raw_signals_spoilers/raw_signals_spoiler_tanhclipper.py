@@ -20,7 +20,7 @@ class RawSignalsSpoilerTanhClipper(RawSignalsSpoiler):
     ) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state=random_state)
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
 
         if self.snr < 0:
             self._effective_snr = 0

@@ -13,11 +13,11 @@ class RawSignalsFilterChannelIdx(RawSignalsFilter):
         super().__init__()
         self.inidices_list = indices_list
     
-    def fit(self,raw_signals:RawSignals):
+    def fit(self,raw_signals:RawSignals,y=None):
         """
         Does nothing.
         """
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def transform(self,raw_signals:RawSignals):
         self._check_fitted()

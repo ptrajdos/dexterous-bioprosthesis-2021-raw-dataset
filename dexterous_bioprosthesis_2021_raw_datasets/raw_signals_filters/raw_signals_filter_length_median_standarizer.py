@@ -13,8 +13,8 @@ class RawSignalsFilterLengthMedianStandarizer(RawSignalsFilter):
     Forces all filtered signals to have length equal to median of signal lengths in the training data
     """
 
-    def fit(self, raw_signals: RawSignals):
-        super().fit(raw_signals)
+    def fit(self, raw_signals: RawSignals, y=None):
+        super().fit(raw_signals, y)
         lengths = [rs.to_numpy().shape[0] for rs in raw_signals]
         self._median = int( np.median(lengths))
 

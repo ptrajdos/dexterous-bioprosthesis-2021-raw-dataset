@@ -26,14 +26,14 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
         self.n_harmonics = n_harmonics
         self.harmonic_weights = harmonic_weights
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
 
         if self.n_harmonics != len(self.harmonic_weights):
             raise ValueError(
                 "The number of harmonics is inconsistent with harmonic weights."
             )
 
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
         self._check_is_fitted()

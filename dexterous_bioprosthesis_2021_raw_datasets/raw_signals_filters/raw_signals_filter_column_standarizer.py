@@ -37,11 +37,11 @@ class RawSignalsFilterColumnStandarizer(RawSignalsFilter):
         self._stds = np.where(self._stds < eps, 1, self._stds)
         return self._stds
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         self._compute_means(raw_signals)
         self._compute_stds(raw_signals)
-        
-        return super().fit(raw_signals)
+
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
 

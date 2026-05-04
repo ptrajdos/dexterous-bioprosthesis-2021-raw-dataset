@@ -37,14 +37,14 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
                 "You must fit the augumenter before calling transform. Call fit() or fit_transform() first."
             )
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         """
         Intentionally does nothing
         """
         self._prepare_effective_augumenter_list()
 
         for aug in self._augumenter_list:
-            aug.fit(raw_signals)
+            aug.fit(raw_signals, y)
         return self
 
     def _inner_transform(self, raw_signals: RawSignals) -> RawSignals:
@@ -65,8 +65,8 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
 
         return new_signals
 
-    def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
-        self.fit(raw_signals)
+    def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
+        self.fit(raw_signals, y)
         return self.transform(raw_signals)
 
     def sample(self, raw_signals: RawSignals, n_samples: int = 1) -> RawSignals:

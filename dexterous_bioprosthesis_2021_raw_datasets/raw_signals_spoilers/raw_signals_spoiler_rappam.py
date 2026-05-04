@@ -16,7 +16,7 @@ class RawSignalsSpoilerRappAM(RawSignalsSpoiler):
         super().__init__(channels_spoiled_frac, snr, random_state)
         self.p = p
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
 
         if self.snr < 0:
             self._effective_snr = 0
@@ -24,7 +24,7 @@ class RawSignalsSpoilerRappAM(RawSignalsSpoiler):
         else:
             self._effective_snr = self.snr
 
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def _find_alpha(self, np_sig, ch_idx, guesses=(1.0,)) -> int:
 

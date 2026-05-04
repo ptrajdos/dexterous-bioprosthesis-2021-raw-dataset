@@ -14,12 +14,12 @@ class RawSignalsFilterColumnRobustStandarizer(RawSignalsFilter):
         super().__init__()
         self.eps = eps
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         np_data = raw_signals.to_numpy_concat()
         q1, self._median, q3 = np.percentile(np_data, [25, 50, 75], axis=(0, 1))
         self._iqr = q3 - q1
 
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
 

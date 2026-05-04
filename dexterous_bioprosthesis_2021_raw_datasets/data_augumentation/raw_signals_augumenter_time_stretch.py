@@ -35,7 +35,7 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
         self.stretch_min = stretch_min
         self.stretch_max = stretch_max
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         """
         Intentionally does nothing
         """

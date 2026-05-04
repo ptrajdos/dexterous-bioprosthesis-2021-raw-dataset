@@ -20,7 +20,7 @@ class RawSignalsAugumenterDummy(RawSignalsAugumenter):
                 "You must fit the augumenter before calling transform. Call fit() or fit_transform() first."
             )
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         self._is_fitted = True
         return self
 
@@ -28,8 +28,8 @@ class RawSignalsAugumenterDummy(RawSignalsAugumenter):
         self._check_fittesness()
         return deepcopy(raw_signals)
 
-    def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
-        self.fit(raw_signals)
+    def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
+        self.fit(raw_signals, y)
         return self.transform(raw_signals)
 
     def sample(self, raw_signals: RawSignals, n_samples: int=1) -> RawSignals:

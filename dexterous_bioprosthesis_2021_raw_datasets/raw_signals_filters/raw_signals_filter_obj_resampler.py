@@ -22,12 +22,12 @@ class RawSignalsFilterObjResampler(RawSignalsFilter):
         self.with_replacement = with_replacement
         self.random_state = random_state
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         """
         Only rng
         """
         self._random_state = check_random_state(self.random_state)
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def _calculate_n_resampled(self, raw_signals: RawSignals):
         n_samples = len(raw_signals)

@@ -16,13 +16,13 @@ class RawSignalsFilterColumnMinMaxStandarizer(RawSignalsFilter):
         self.range_min = range_min
         self.range_max = range_max
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
 
         np_data = raw_signals.to_numpy_concat()
         self._min = np.min(np_data, axis=(0, 1))
         self._max = np.max(np_data, axis=(0, 1))
 
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
 

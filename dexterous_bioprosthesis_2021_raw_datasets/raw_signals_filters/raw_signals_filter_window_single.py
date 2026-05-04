@@ -24,11 +24,11 @@ class RawSignalsFilterWindowSingle(RawSignalsFilter):
         self.start_sample = start_sample
         self.end_sample = end_sample
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         """
         Does nothing
         """
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
         """

@@ -13,8 +13,8 @@ class RawSignalsFilterFreqThreshold(RawSignalsFilter):
         super().__init__()
         self.threshold = threshold
 
-    def fit(self, raw_signals: RawSignals):
-        return super().fit(raw_signals)
+    def fit(self, raw_signals: RawSignals, y=None):
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
 

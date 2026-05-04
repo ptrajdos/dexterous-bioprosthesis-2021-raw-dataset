@@ -35,10 +35,10 @@ class RawSignalsFilterAllStandarizer(RawSignalsFilter):
         self._std = np.where(self._std < eps, 1, self._std)
         return self._std
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         self._compute_mean(raw_signals)
         self._compute_std(raw_signals)
-        return super().fit(raw_signals) 
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
         self._check_fitted()

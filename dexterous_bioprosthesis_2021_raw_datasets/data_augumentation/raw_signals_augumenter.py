@@ -7,13 +7,14 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 class RawSignalsAugumenter(abc.ABC):
 
     @abc.abstractmethod
-    def fit(self, raw_signals: RawSignals) -> RawSignalsAugumenter:
+    def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsAugumenter:
         """
         Fits the data augumenter
 
         Arguments:
         ---------
         raw_signals: RawSignals -- the dataset to be augumented
+        y: not used, only for compatibility with sklearn pipeline
 
         """
 
@@ -34,7 +35,7 @@ class RawSignalsAugumenter(abc.ABC):
         """
 
     @abc.abstractmethod
-    def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
+    def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
         """
         Fits and then transforms the dataset.
         New data contains changed version of each RawSignal in RawSignals
@@ -42,6 +43,7 @@ class RawSignalsAugumenter(abc.ABC):
         Arguments:
         ---------
         raw_signals: RawSignals -- the dataset to be augumented
+        y: not used, only for compatibility with sklearn pipeline
 
         Returns:
         --------

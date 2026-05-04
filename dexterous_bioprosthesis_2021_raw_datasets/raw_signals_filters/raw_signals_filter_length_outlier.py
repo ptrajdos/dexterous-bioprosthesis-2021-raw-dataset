@@ -13,8 +13,8 @@ class RawSignalsFilterLengthOutlier(RawSignalsFilter):
     Filters out raw signals objects with outlying lengths (number of samples)
     """
 
-    def fit(self, raw_signals: RawSignals):
-        super().fit(raw_signals)
+    def fit(self, raw_signals: RawSignals, y=None):
+        super().fit(raw_signals, y)
         lengths = [rs.to_numpy().shape[0] for rs in raw_signals]
         q1, q3 = np.percentile(lengths, [25,75])
         iqr = q3 - q1

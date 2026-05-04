@@ -61,11 +61,11 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
 
         return new_signals
 
-    def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
-        self.fit(raw_signals)
+    def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
+        self.fit(raw_signals, y)
         return self.transform(raw_signals)
-    
-    def fit(self, raw_signals: RawSignals) -> RawSignalsAugumenter:
+
+    def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsAugumenter:
         self._is_fitted = True
         self._random_state = check_random_state(self.random_state)
         return self

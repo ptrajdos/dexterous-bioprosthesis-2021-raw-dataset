@@ -12,12 +12,13 @@ class RawSignalsFilter(abc.ABC):
     """
 
     @abc.abstractmethod
-    def fit(self, raw_signals: RawSignals) -> RawSignalsFilter:
+    def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsFilter:
         """
         Fits the filter.
         Arguments:
         ---------
         raw_signals --- An object of RawSignals class to be fitted with
+        y --- not used, only for compatibility with sklearn pipeline
         """
         self._is_fitted = True
         return self
@@ -42,17 +43,18 @@ class RawSignalsFilter(abc.ABC):
         RawSignals object
         """
 
-    def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
+    def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
         """
         Fits and then transforms the given RawSignals object
 
         Arguments:
         ---------
         raw_signals --- RawSignals object to be filtered
+        y --- not used, only for compatibility with sklearn pipeline
 
         Returns:
         --------
         RawSignals object
         """
-        self.fit(raw_signals)
+        self.fit(raw_signals, y)
         return self.transform(raw_signals)

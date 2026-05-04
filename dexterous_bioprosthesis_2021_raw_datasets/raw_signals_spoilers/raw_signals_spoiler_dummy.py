@@ -16,10 +16,6 @@ class RawSignalsSpoilerDummy(RawSignalsSpoiler):
     ) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state)
 
-    def fit(self, raw_signals: RawSignals):
-        # Does nothing
-        return super().fit(raw_signals)
-
     def transform(self, raw_signals: RawSignals):
         self._check_is_fitted()
         return deepcopy(raw_signals)

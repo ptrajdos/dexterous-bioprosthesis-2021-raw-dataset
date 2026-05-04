@@ -16,7 +16,7 @@ class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
     def __init__(self, channels_spoiled_frac=0.1, snr=1, random_state=10,) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state)
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
 
         if self.snr < 0:
             self._effective_snr = 0
@@ -24,7 +24,7 @@ class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
         else:
             self._effective_snr = self.snr
 
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def _find_alpha(self, np_sig, ch_idx, guesses=(0,)) -> int:
 

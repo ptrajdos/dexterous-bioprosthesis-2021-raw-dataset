@@ -37,12 +37,12 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
         self.spoiled_fraction = spoiled_fraction
         self.spoiler_relabelers = spoiler_relabalers
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
 
         for spoiler in self.spoilers:
-            spoiler.fit(raw_signals)
+            spoiler.fit(raw_signals, y)
 
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
         self._check_is_fitted()

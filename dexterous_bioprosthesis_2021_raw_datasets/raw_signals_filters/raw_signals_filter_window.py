@@ -15,11 +15,11 @@ class RawSignalsFilterWindowFilter(RawSignalsFilter):
         super().__init__()
         self.window_length = window_length
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         """
         Does nothing
         """
-        return super().fit(raw_signals)
+        return super().fit(raw_signals, y)
 
     @abc.abstractmethod
     def channel_transform(self, data) -> np.ndarray:
