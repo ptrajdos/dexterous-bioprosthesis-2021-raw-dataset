@@ -35,11 +35,15 @@ PIP=pip
 PYTEST=pytest
 TOX=tox
 
+VENV_BACKEND ?= ${SYSPYTHON} -m venv
+VENV_FLAGS ?= --upgrade-deps
+PIP_CMD ?= ${PYTHON} -m ${PIP}
+PIP_INSTALL_FLAGS ?= --prefer-binary --log ${INSTALL_LOG_FILE}
+
 TOX_CORES=auto
 LOGDIR=${ROOTDIR}/testlogs
 LOGFILE=${LOGDIR}/`date +'%y-%m-%d_%H-%M-%S'`.log
 
-PYTHON_VERSION=3.9
 
 ifeq ($(OS),Windows_NT)
 	ACTIVATE:=. ${VENV_SUBDIR}/Scripts/activate
@@ -58,17 +62,17 @@ clean_pypackages:
 	rm -rf pypackages
 
 clean_venv:
-	rm -rf ${VENV_SUBDIR}
+	rm -rf ${VENV_SUBDIR} ${INSTALL_LOG_FILE} ${LOGDIR}
 
 clean_tox:
 	rm -rf ${TOXDIR}
 
 venv:
-	${SYSPYTHON} -m venv --upgrade-deps ${VENV_OPTIONS} ${VENV_SUBDIR}
-	${ACTIVATE}; ${PYTHON} -m ${PIP} install wheel setuptools pypackages
+	${VENV_BACKEND} ${VENV_FLAGS} ${VENV_OPTIONS} ${VENV_SUBDIR}
+	${ACTIVATE}; ${PIP_CMD} install wheel setuptools pypackages
 
 pypackages: venv
-	${ACTIVATE}; ${PYTHON} -m ${PIP} install -e ${ROOTDIR} --prefer-binary --log ${INSTALL_LOG_FILE} -r ${REQ_FILE}
+	${ACTIVATE}; ${PIP_CMD} install -e ${ROOTDIR} ${PIP_INSTALL_FLAGS} -r ${REQ_FILE}
 	touch $@
 
 test: pypackages data_unp
