@@ -20,10 +20,15 @@ class RawSignalTest(unittest.TestCase):
             channel_names=["X{}".format(i) for i in range(C)],
         )
 
+        obj3 = RawSignal(signal=sig, timestamp=10, object_class=1.1 )
+
     def test_equaity(self):
         R, C = 50, 10
         sig = np.zeros((R, C))
         sig2 = np.ones((R, C))
+
+        obj = RawSignal(signal=sig, timestamp=10, object_class=np.sqrt(2))
+        self.assertTrue(obj == obj, "Object should have been equal. Continous label")
 
         obj = RawSignal(signal=sig, timestamp=10, object_class=0)
         self.assertTrue(obj == obj, "Object should have been equal")
@@ -49,6 +54,23 @@ class RawSignalTest(unittest.TestCase):
             channel_names=["X{}".format(i) for i in range(C)],
         )
         self.assertTrue(obj != obj2, "Object should not have been equal")
+
+    def test_more_equality(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        sig2 = np.ones((R, C))
+        dtypes = [np.float32, np.float64, np.single, np.double,str, object]
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                c1 = np.int32(1)
+                c2 = np.int32(2)
+                obj = RawSignal(signal=sig, timestamp=10, object_class=c1.astype(dtype))
+                obj2 = RawSignal(signal=sig, timestamp=10, object_class=c1.astype(dtype))
+                obj3 = RawSignal(signal=sig, timestamp=10, object_class=c2.astype(dtype))
+
+                self.assertTrue(obj == obj2, "Objects should have been equal")
+                self.assertTrue(obj != obj3, "Objects should not have been equal")
+
 
     def test_getitem(self):
 

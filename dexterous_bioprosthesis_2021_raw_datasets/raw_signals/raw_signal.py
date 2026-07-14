@@ -3,7 +3,7 @@ from copy import deepcopy
 
 from collections.abc import Iterable
 from collections.abc import Collection
-
+import numbers
 class RawSignal():
     """
     Class represents raw signal (in the time domain).
@@ -40,6 +40,10 @@ class RawSignal():
 
         if not np.allclose(self.signal, __o.signal, rtol=1E-6, atol=1E-6):
             return False
+
+        if  isinstance(self.object_class, numbers.Number) and isinstance(__o.object_class, numbers.Number):
+            if not np.isclose(self.object_class, __o.object_class):
+                return False
 
         if self.object_class != __o.object_class:
             return False
