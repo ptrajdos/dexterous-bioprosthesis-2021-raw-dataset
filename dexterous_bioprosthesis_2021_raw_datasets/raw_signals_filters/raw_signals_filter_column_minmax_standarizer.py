@@ -19,8 +19,8 @@ class RawSignalsFilterColumnMinMaxStandarizer(RawSignalsFilter):
     def fit(self, raw_signals: RawSignals, y=None):
 
         np_data = raw_signals.to_numpy_concat()
-        self._min = np.min(np_data, axis=(0, 1))
-        self._max = np.max(np_data, axis=(0, 1))
+        self._min = np.min(np_data, axis=(0,))
+        self._max = np.max(np_data, axis=(0,))
 
         return super().fit(raw_signals, y)
 

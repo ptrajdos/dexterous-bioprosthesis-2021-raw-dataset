@@ -16,7 +16,7 @@ class RawSignalsFilterColumnRobustStandarizer(RawSignalsFilter):
 
     def fit(self, raw_signals: RawSignals, y=None):
         np_data = raw_signals.to_numpy_concat()
-        q1, self._median, q3 = np.percentile(np_data, [25, 50, 75], axis=(0, 1))
+        q1, self._median, q3 = np.percentile(np_data, [25, 50, 75], axis=(0,))
         self._iqr = q3 - q1
 
         return super().fit(raw_signals, y)
