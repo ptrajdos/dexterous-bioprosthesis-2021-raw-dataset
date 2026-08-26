@@ -11,6 +11,7 @@ INSTALL_LOG_FILE=${ROOTDIR}/install.log
 VENV_SUBDIR=${ROOTDIR}/venv
 COVERAGERC=${ROOTDIR}/.coveragerc
 DOCS_DIR=${ROOTDIR}/docs
+UML_DIR=${ROOTDIR}/docs/uml
 TOXDIR=${ROOTDIR}/.tox
 DATADIR=${ROOTDIR}/data
 STATICDIR=${ROOTDIR}/static_analysis
@@ -21,9 +22,12 @@ TESTSETNAME=Andrzej_19_10_2022
 TESTDATADIR=${DATADIR}/${TESTSETNAME}
 TESTDATAZIP=${DATADIR}/${TESTSETNAME}.zip
 
+UML_FORMAT ?= html
 COVERAGE = coverage
 UNITTEST_PARALLEL = unittest-parallel
 PDOC= pdoc3
+PYREVERSE= pyreverse
+DOT=dot
 PYLINT= pylint
 FLAKE8= flake8
 MYPY= mypy
@@ -86,8 +90,48 @@ test_parallel: pypackages data_unp
 	mkdir -p ${COVDIR}  ${LOGDIR}
 	${ACTIVATE}; ${UNITTEST_PARALLEL} -v -t ${ROOTDIR} -s ${TESTDIR} -p '*_test.py' --coverage --coverage-rcfile ./.coveragerc --coverage-source ${SRCDIR} --coverage-html ${COVDIR} 2>&1 |tee -a ${LOGFILE}
 
-docs: pypackages
+docs: pypackages uml
 	${ACTIVATE}; $(PDOC) --force --html ${SRCDIR} --output-dir ${DOCS_DIR}
+
+uml:
+	@echo "Generating UML diagrams..."
+	@rm -rf "$(UML_DIR)"
+	@mkdir -p "$(UML_DIR)"
+
+	@find "$(SRCDIR)" -type f -name '__init__.py' | \
+	while read -r init; do \
+		pkg="$$(dirname "$$init")"; \
+		rel="$${pkg#$(SRCDIR)}"; \
+		rel="$${rel#/}"; \
+		name="$$(basename "$$pkg")"; \
+		outdir="$(UML_DIR)/$$rel"; \
+		tmpdir="$$(mktemp -d)"; \
+		mkdir -p "$$outdir"; \
+		echo "  $$pkg"; \
+		\
+		$(PYREVERSE) \
+			-o dot \
+			-p "$$name" \
+			-d "$$tmpdir" \
+			"$$pkg"; \
+		\
+		if [ -f "$$tmpdir/classes_$$name.dot" ]; then \
+			$(DOT) \
+				-Tsvg \
+				"$$tmpdir/classes_$$name.dot" \
+				-o "$$outdir/classes.svg"; \
+		fi; \
+		\
+		if [ -f "$$tmpdir/packages_$$name.dot" ]; then \
+			$(DOT) \
+				-Tsvg \
+				"$$tmpdir/packages_$$name.dot" \
+				-o "$$outdir/packages.svg"; \
+		fi; \
+		\
+		rm -rf "$$tmpdir"; \
+	done
+
 
 profile: pypackages data_unp
 
