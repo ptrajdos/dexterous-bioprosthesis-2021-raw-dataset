@@ -1,3 +1,9 @@
+"""Module implementing independent-channel time jitter augmentation.
+
+Adds random temporal perturbations independently to each channel of a
+signal, simulating per-electrode timing variations in multi-channel
+recordings.
+"""
 from scipy.interpolate import interp1d
 from copy import deepcopy
 import numpy as np
@@ -9,6 +15,20 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import Raw
 
 
 class RawSignalsAugumenterTimeJiterIC(RawSignalsAugumenterBase):
+    """Augmenter that applies independent time jitter per channel.
+
+    Unlike :class:`RawSignalsAugumenterTimeJiter`, each channel receives
+    its own independent Gaussian time perturbation.
+
+    Args:
+        jiter_std: Standard deviation of the jitter relative to the
+            sampling interval.
+        interpolation: Interpolation method (e.g. ``'cubic'``, ``'linear'``).
+        n_repeats: Number of augmented copies per signal.
+        append_original: Whether to include original signals in the output.
+        n_jobs: Number of parallel jobs.
+        random_state: Random seed for reproducibility.
+    """
 
     def __init__(
         self,
@@ -30,6 +50,15 @@ class RawSignalsAugumenterTimeJiterIC(RawSignalsAugumenterBase):
         self.interpolation = interpolation
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
+        """Apply independent per-channel time jitter to a single signal.
+
+        Args:
+            raw_signal: The signal to augment.
+            n_repeats: Number of augmented versions to create.
+
+        Returns:
+            List of time-jittered signals.
+        """
         sig_list = []
 
         for _ in range(n_repeats):

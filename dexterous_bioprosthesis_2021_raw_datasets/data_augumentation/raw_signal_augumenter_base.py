@@ -1,3 +1,10 @@
+"""Module providing the base implementation for single-signal augmenters.
+
+This module contains :class:`RawSignalsAugumenterBase`, which extends
+:class:`RawSignalsAugumenter` with parallel processing support, random state
+management, and a template-method pattern where subclasses only need to
+implement :meth:`_sig_augument` for a single signal.
+"""
 import abc
 
 from joblib import delayed
@@ -15,6 +22,21 @@ from dexterous_bioprosthesis_2021_raw_datasets.tools.progressparallel import (
 
 
 class RawSignalsAugumenterBase(RawSignalsAugumenter):
+    """Base class for augmenters that operate on individual signals.
+
+    Provides parallel execution via joblib, optional appending of original
+    signals, configurable repetition count, and reproducible random state.
+    Subclasses must implement :meth:`_sig_augument` to define the
+    augmentation logic for a single :class:`RawSignal`.
+
+    Args:
+        n_jobs: Number of parallel jobs for joblib. ``None`` means sequential.
+        append_original: If ``True``, original signals are appended to the
+            augmented output.
+        n_repeats: Number of augmented copies to create per signal.
+        random_state: Seed or :class:`numpy.random.RandomState` instance for
+            reproducibility.
+    """
 
     def __init__(self, n_jobs=None, append_original=True, n_repeats:int=1, random_state=10) -> None:
         super().__init__()
@@ -40,12 +62,22 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
         """
     
     def _check_if_fitted(self):
+        """Raise :class:`NotFittedError` if the augmenter has not been fitted."""
         if not hasattr(self, "_is_fitted") or not self._is_fitted:
             raise NotFittedError(
                 "You must fit the augumenter before calling transform. Call fit() or fit_transform() first."
             )
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
+        """Augment all signals in the dataset using parallel processing.
+
+        Args:
+            raw_signals: The dataset of raw signals to augment.
+
+        Returns:
+            A new :class:`RawSignals` containing augmented (and optionally
+            original) signals.
+        """
         self._check_if_fitted()
         new_signals = raw_signals.initialize_empty()
 
@@ -62,15 +94,42 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
         return new_signals
 
     def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
+        """Fit the augmenter and then transform the dataset.
+
+        Args:
+            raw_signals: The dataset of raw signals.
+            y: Ignored. Present for scikit-learn pipeline compatibility.
+
+        Returns:
+            Augmented :class:`RawSignals`.
+        """
         self.fit(raw_signals, y)
         return self.transform(raw_signals)
 
     def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsAugumenter:
+        """Fit the augmenter by initialising the random state.
+
+        Args:
+            raw_signals: The dataset of raw signals.
+            y: Ignored. Present for scikit-learn pipeline compatibility.
+
+        Returns:
+            The fitted augmenter instance.
+        """
         self._is_fitted = True
         self._random_state = check_random_state(self.random_state)
         return self
     
     def sample(self, raw_signals: RawSignals, n_samples: int=1) -> RawSignals:
+        """Randomly sample and augment signals from the dataset.
+
+        Args:
+            raw_signals: The dataset to sample from.
+            n_samples: Number of augmented samples to produce.
+
+        Returns:
+            A new :class:`RawSignals` with ``n_samples`` augmented signals.
+        """
         self._check_if_fitted()
         n_signals = len(raw_signals)
         replace = n_samples > n_signals

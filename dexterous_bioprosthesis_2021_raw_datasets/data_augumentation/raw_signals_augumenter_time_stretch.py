@@ -1,3 +1,9 @@
+"""Module implementing time stretch augmentation for raw signals.
+
+Stretches or compresses the temporal axis of each channel using the
+``audiomentations`` library while preserving the original signal length.
+Requires the ``audiomentations`` package to be installed.
+"""
 import logging
 from copy import deepcopy
 
@@ -18,6 +24,19 @@ except ImportError:
 
 
 class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
+    """Augmenter that applies time stretching to raw signals.
+
+    Randomly stretches or compresses the time axis of each channel
+    while keeping the output length unchanged.
+
+    Args:
+        stretch_min: Minimum stretch rate (< 1 compresses, > 1 stretches).
+        stretch_max: Maximum stretch rate.
+        n_repeats: Number of augmented copies per signal.
+        append_original: Whether to include original signals in the output.
+        n_jobs: Number of parallel jobs.
+        random_state: Random seed for reproducibility.
+    """
 
     def __init__(
         self,
@@ -42,6 +61,15 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
         return self
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
+        """Apply time stretch to a single signal.
+
+        Args:
+            raw_signal: The signal to augment.
+            n_repeats: Number of augmented versions to create.
+
+        Returns:
+            List of time-stretched signals.
+        """
         sample_rate = raw_signal.sample_rate
         sig_list = []
         transformer = TimeStretch(

@@ -1,3 +1,8 @@
+"""Module implementing pitch shift augmentation for raw signals.
+
+Shifts the pitch of each channel independently using the ``audiomentations``
+library. Requires the ``audiomentations`` package to be installed.
+"""
 import logging
 from copy import deepcopy
 
@@ -18,6 +23,20 @@ except ImportError:
 
 
 class RawSignalsAugumenterPitchShift(RawSignalsAugumenterBase):
+    """Augmenter that applies pitch shifting to raw signals.
+
+    Shifts the pitch of each channel by a random number of semitones
+    within the specified range using the ``audiomentations.PitchShift``
+    transform.
+
+    Args:
+        min_semitones: Minimum pitch shift in semitones.
+        max_semitones: Maximum pitch shift in semitones.
+        n_repeats: Number of augmented copies per signal.
+        append_original: Whether to include original signals in the output.
+        n_jobs: Number of parallel jobs.
+        random_state: Random seed for reproducibility.
+    """
 
     def __init__(
         self,
@@ -36,6 +55,15 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenterBase):
         self.max_semitones = max_semitones
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
+        """Apply pitch shift to a single signal.
+
+        Args:
+            raw_signal: The signal to augment.
+            n_repeats: Number of augmented versions to create.
+
+        Returns:
+            List of pitch-shifted signals.
+        """
         sample_rate = raw_signal.sample_rate
         sig_list = []
         transformer = PitchShift(

@@ -1,3 +1,8 @@
+"""Module implementing uniform gain augmentation across all channels.
+
+Applies a single random gain factor uniformly to all channels of a signal,
+simulating overall amplitude variations.
+"""
 from copy import deepcopy
 
 
@@ -8,6 +13,19 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import Raw
 
 
 class RawSignalsAugumenterGainAll(RawSignalsAugumenterBase):
+    """Augmenter that applies a uniform random gain to all channels.
+
+    Multiplies the entire signal by a single random factor drawn uniformly
+    from ``[gain_perc_min, gain_perc_max]``.
+
+    Args:
+        gain_perc_min: Minimum gain multiplier.
+        gain_perc_max: Maximum gain multiplier.
+        n_repeats: Number of augmented copies per signal.
+        append_original: Whether to include original signals in the output.
+        n_jobs: Number of parallel jobs.
+        random_state: Random seed for reproducibility.
+    """
 
     def __init__(
         self,
@@ -26,6 +44,15 @@ class RawSignalsAugumenterGainAll(RawSignalsAugumenterBase):
         self.gain_perc_max = gain_perc_max
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
+        """Apply uniform gain augmentation to a single signal.
+
+        Args:
+            raw_signal: The signal to augment.
+            n_repeats: Number of augmented versions to create.
+
+        Returns:
+            List of gain-augmented signals.
+        """
         sig_list = []
 
         for _ in range(n_repeats):

@@ -1,3 +1,9 @@
+"""Module defining the abstract base interface for raw signal augmenters.
+
+This module provides the :class:`RawSignalsAugumenter` abstract class that
+establishes the contract all concrete augmenters must follow. The interface
+is designed to be compatible with scikit-learn pipelines.
+"""
 from __future__ import annotations
 import abc
 
@@ -5,6 +11,12 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 
 
 class RawSignalsAugumenter(abc.ABC):
+    """Abstract base class defining the interface for raw signal augmenters.
+
+    All concrete augmenters must implement :meth:`fit`, :meth:`transform`,
+    :meth:`fit_transform`, and :meth:`sample` methods. This ensures a
+    consistent API across all augmentation strategies.
+    """
 
     @abc.abstractmethod
     def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsAugumenter:

@@ -1,3 +1,9 @@
+"""Module implementing magnitude warping augmentation for raw signals.
+
+Applies a smooth, randomly generated warping curve to the signal amplitude.
+The curve is constructed by fitting a cubic smoothing spline through
+randomly placed knots, producing non-uniform scaling along the time axis.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -10,6 +16,23 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import Raw
 
 
 class RawSignalsAugumenterMagnitudeWarping(RawSignalsAugumenterBase):
+    """Augmenter that applies smooth magnitude warping to raw signals.
+
+    Generates a random smooth curve via cubic spline interpolation and
+    multiplies it element-wise with the signal, creating non-uniform
+    amplitude scaling over time.
+
+    Args:
+        n_repeats: Number of augmented copies per signal.
+        append_original: Whether to include original signals in the output.
+        n_jobs: Number of parallel jobs.
+        random_state: Random seed for reproducibility.
+        min_knots: Minimum number of spline knots.
+        max_knots: Maximum number of spline knots.
+        scale: Scaling factor for the warping curve standard deviation,
+            relative to the global signal standard deviation.
+        smooth: Smoothing parameter for the cubic spline (0 to 1).
+    """
 
     def __init__(
         self,
@@ -34,6 +57,15 @@ class RawSignalsAugumenterMagnitudeWarping(RawSignalsAugumenterBase):
         self.smooth = smooth
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
+        """Apply magnitude warping to a single signal.
+
+        Args:
+            raw_signal: The signal to augment.
+            n_repeats: Number of augmented versions to create.
+
+        Returns:
+            List of magnitude-warped signals.
+        """
         sig_list = []
         fs = raw_signal.get_sample_rate()
         base_sig_np = raw_signal.to_numpy()

@@ -1,3 +1,9 @@
+"""Module implementing clipping distortion augmentation for raw signals.
+
+Applies amplitude clipping to each channel of a signal, simulating
+sensor saturation or distortion artifacts. Uses the ``audiomentations``
+library when available, otherwise falls back to a custom NumPy implementation.
+"""
 import random
 from copy import deepcopy
 
@@ -54,6 +60,19 @@ except ImportError:
 
 
 class RawSignalsAugumenterClippingDistortion(RawSignalsAugumenterBase):
+    """Augmenter that applies clipping distortion to raw signals.
+
+    Clips signal amplitudes at percentile-based thresholds independently
+    for each channel, producing distorted versions of the original signals.
+
+    Args:
+        min_percentile_threshold: Lower bound for the random percentile threshold.
+        max_percentile_threshold: Upper bound for the random percentile threshold.
+        n_repeats: Number of augmented copies per signal.
+        append_original: Whether to include original signals in the output.
+        n_jobs: Number of parallel jobs.
+        random_state: Random seed for reproducibility.
+    """
 
     def __init__(
         self,
@@ -75,6 +94,15 @@ class RawSignalsAugumenterClippingDistortion(RawSignalsAugumenterBase):
         self.max_percentile_threshold = max_percentile_threshold
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
+        """Apply clipping distortion to a single signal.
+
+        Args:
+            raw_signal: The signal to augment.
+            n_repeats: Number of augmented versions to create.
+
+        Returns:
+            List of clipping-distorted signals.
+        """
         sample_rate = raw_signal.sample_rate
         sig_list = []
 

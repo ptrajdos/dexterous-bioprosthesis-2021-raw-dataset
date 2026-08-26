@@ -1,3 +1,9 @@
+"""Module providing a sampling mixin for augmenter classes.
+
+Contains :class:`SamplerMixin`, which adds a :meth:`sample` method to any
+class that implements ``fit`` and ``transform``, enabling random sampling
+and augmentation in a single step.
+"""
 import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 

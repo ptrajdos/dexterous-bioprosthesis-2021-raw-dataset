@@ -1,3 +1,9 @@
+"""Module implementing time jitter augmentation for raw signals.
+
+Adds random temporal perturbations to the signal by interpolating samples
+at jittered time points. The same jitter is applied to all channels
+(shared time axis).
+"""
 from scipy.interpolate import interp1d
 from copy import deepcopy
 import numpy as np
@@ -9,6 +15,21 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import Raw
 
 
 class RawSignalsAugumenterTimeJiter(RawSignalsAugumenterBase):
+    """Augmenter that applies shared-channel time jitter to raw signals.
+
+    Perturbs the time axis with Gaussian noise and re-interpolates the
+    signal, applying the same jitter across all channels.
+
+    Args:
+        jiter_std: Standard deviation of the jitter relative to the
+            sampling interval.
+        interpolation: Interpolation method (e.g. ``'cubic'``, ``'linear'``).
+        independent_channels: Reserved for future use; currently ignored.
+        n_repeats: Number of augmented copies per signal.
+        append_original: Whether to include original signals in the output.
+        n_jobs: Number of parallel jobs.
+        random_state: Random seed for reproducibility.
+    """
 
     def __init__(
         self,
@@ -32,6 +53,15 @@ class RawSignalsAugumenterTimeJiter(RawSignalsAugumenterBase):
         self.independant_channels = independent_channels
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
+        """Apply time jitter to a single signal.
+
+        Args:
+            raw_signal: The signal to augment.
+            n_repeats: Number of augmented versions to create.
+
+        Returns:
+            List of time-jittered signals.
+        """
         sig_list = []
 
         for _ in range(n_repeats):
