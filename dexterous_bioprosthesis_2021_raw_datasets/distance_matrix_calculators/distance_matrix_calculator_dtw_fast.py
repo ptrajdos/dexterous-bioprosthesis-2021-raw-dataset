@@ -1,3 +1,14 @@
+"""Module implementing FastDTW-based pairwise distance matrix calculation.
+
+Computes per-channel distances using the FastDTW algorithm, which provides
+linear time and space complexity approximation of DTW. Distances are
+symmetrised by averaging both directions.
+
+Reference:
+    Stan Salvador and Philip Chan. "FastDTW: Toward accurate dynamic time
+    warping in linear time and space." Intelligent Data Analysis 11.5
+    (2007): 561-580.
+"""
 from itertools import combinations, product
 from joblib import delayed
 import numpy as np
@@ -35,10 +46,19 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
         self.n_jobs = n_jobs
 
     def _filter_dtw_options(self, dtw_options):
-
+        """Return DTW options unchanged (no filtering needed for FastDTW)."""
         return dtw_options
 
     def raw_signal_dist(self, raw_signal_a: RawSignal, raw_signal_b: RawSignal):
+        """Compute symmetrised per-channel FastDTW distance between two signals.
+
+        Args:
+            raw_signal_a: First raw signal.
+            raw_signal_b: Second raw signal.
+
+        Returns:
+            Array of per-channel averaged FastDTW distances.
+        """
         signal_a = raw_signal_a.signal
         signal_b = raw_signal_b.signal
         n_channels = signal_a.shape[1]
@@ -55,6 +75,7 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
         return overall_distance
 
     def _compute_raw_signals_dist(self, raw_signals, i, j):
+        """Compute distance between signals at indices *i* and *j*."""
         distance = self.raw_signal_dist(
             raw_signal_a=raw_signals[i], raw_signal_b=raw_signals[j]
         )
@@ -62,6 +83,14 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
         return distance, i, j
 
     def calculate_distance_matrix(self, raw_signals: RawSignals):
+        """Compute the symmetric pairwise FastDTW distance matrix.
+
+        Args:
+            raw_signals: The dataset of raw signals.
+
+        Returns:
+            3-D numpy array of shape ``(n_channels, n_signals, n_signals)``.
+        """
 
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
@@ -84,6 +113,7 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
         return distance_matrix
 
     def _compute_raw_signal_2_set_dist(self, raw_signals, raw_signal, i):
+        """Compute distance between *raw_signal* and signal at index *i*."""
         distance = self.raw_signal_dist(
             raw_signal_a=raw_signal, raw_signal_b=raw_signals[i]
         )
@@ -91,6 +121,15 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
         return distance, i
 
     def raw_signal_dist_2_set(self, raw_signal: RawSignal, raw_signals: RawSignals):
+        """Compute FastDTW distances from one signal to a set of signals.
+
+        Args:
+            raw_signal: The query signal.
+            raw_signals: The reference dataset.
+
+        Returns:
+            2-D numpy array of shape ``(n_channels, n_signals)``.
+        """
 
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
@@ -111,6 +150,7 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
         return distance_matrix
 
     def _compute_raw_signals_dist_2_set(self, raw_signals_a, raw_signals_b, i, j):
+        """Compute distance between signal *i* from set A and signal *j* from set B."""
         distance = self.raw_signal_dist(
             raw_signal_a=raw_signals_a[i], raw_signal_b=raw_signals_b[j]
         )
@@ -120,6 +160,15 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
     def calculate_distance_matrix_set_2_set(
         self, raw_signals_1: RawSignals, raw_signals_2: RawSignals
     ):
+        """Compute the pairwise FastDTW distance matrix between two signal sets.
+
+        Args:
+            raw_signals_1: First set of raw signals.
+            raw_signals_2: Second set of raw signals.
+
+        Returns:
+            3-D numpy array of shape ``(n_channels, n_signals_1, n_signals_2)``.
+        """
 
         num_signals_1 = len(raw_signals_1)
         num_signals_2 = len(raw_signals_2)

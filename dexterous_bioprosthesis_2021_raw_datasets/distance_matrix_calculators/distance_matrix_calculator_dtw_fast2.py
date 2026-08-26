@@ -1,3 +1,8 @@
+"""Module implementing FastDTW-based distance matrix with row-level parallelism.
+
+Variant of :mod:`distance_matrix_calculator_dtw_fast` that parallelises
+by row rather than by pair, reducing joblib overhead for large datasets.
+"""
 from itertools import product
 from joblib import delayed
 import numpy as np
@@ -35,10 +40,11 @@ class DistanceMatrixCalculatorDTWFast2(DistanceMatrixCalculator):
         self.n_jobs = n_jobs
 
     def _filter_dtw_options(self, dtw_options):
-
+        """Return DTW options unchanged."""
         return dtw_options
 
     def raw_signal_dist(self, raw_signal_a: RawSignal, raw_signal_b: RawSignal):
+        """Compute symmetrised per-channel FastDTW distance between two signals."""
         signal_a = raw_signal_a.signal
         signal_b = raw_signal_b.signal
         n_channels = signal_a.shape[1]
@@ -55,6 +61,7 @@ class DistanceMatrixCalculatorDTWFast2(DistanceMatrixCalculator):
         return overall_distance
 
     def _compute_raw_signals_dist(self, raw_signals, i):
+        """Compute distances from signal *i* to all subsequent signals."""
 
         dist_list = []
 
@@ -67,6 +74,7 @@ class DistanceMatrixCalculatorDTWFast2(DistanceMatrixCalculator):
         return dist_list
 
     def calculate_distance_matrix(self, raw_signals: RawSignals):
+        """Compute the symmetric pairwise FastDTW distance matrix."""
 
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
@@ -93,6 +101,7 @@ class DistanceMatrixCalculatorDTWFast2(DistanceMatrixCalculator):
         return distance_matrix
 
     def _compute_raw_signal_2_set_dist(self, raw_signals, raw_signal, i):
+        """Compute distance between *raw_signal* and signal at index *i*."""
         distance = self.raw_signal_dist(
             raw_signal_a=raw_signal, raw_signal_b=raw_signals[i]
         )
@@ -100,6 +109,7 @@ class DistanceMatrixCalculatorDTWFast2(DistanceMatrixCalculator):
         return distance, i
 
     def raw_signal_dist_2_set(self, raw_signal: RawSignal, raw_signals: RawSignals):
+        """Compute FastDTW distances from one signal to a set of signals."""
 
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
@@ -120,6 +130,7 @@ class DistanceMatrixCalculatorDTWFast2(DistanceMatrixCalculator):
         return distance_matrix
 
     def _compute_raw_signals_dist_2_set(self, raw_signals_a, raw_signals_b, i, j):
+        """Compute distance between signal *i* from set A and signal *j* from set B."""
         distance = self.raw_signal_dist(
             raw_signal_a=raw_signals_a[i], raw_signal_b=raw_signals_b[j]
         )
@@ -129,6 +140,7 @@ class DistanceMatrixCalculatorDTWFast2(DistanceMatrixCalculator):
     def calculate_distance_matrix_set_2_set(
         self, raw_signals_1: RawSignals, raw_signals_2: RawSignals
     ):
+        """Compute the pairwise FastDTW distance matrix between two signal sets."""
 
         num_signals_1 = len(raw_signals_1)
         num_signals_2 = len(raw_signals_2)

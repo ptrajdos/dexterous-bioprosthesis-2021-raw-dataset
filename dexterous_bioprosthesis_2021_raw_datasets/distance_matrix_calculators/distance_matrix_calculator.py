@@ -1,3 +1,8 @@
+"""Module defining the abstract interface for distance matrix calculators.
+
+Provides :class:`DistanceMatrixCalculator`, the base contract for all
+concrete distance matrix implementations operating on raw signals.
+"""
 import abc
 import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal

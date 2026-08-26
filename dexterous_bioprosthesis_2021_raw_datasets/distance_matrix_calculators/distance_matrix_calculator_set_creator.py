@@ -1,3 +1,9 @@
+"""Module implementing feature-space distance matrix calculation via set creators.
+
+Transforms raw signals into feature vectors using a :class:`SetCreator`,
+then computes pairwise distances in the resulting feature space using
+scikit-learn's :func:`pairwise_distances`.
+"""
 import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.distance_matrix_calculators.distance_matrix_calculator import (
     DistanceMatrixCalculator,
@@ -38,6 +44,14 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
         self.is_fitted = False
 
     def process_distance_parameters(self, distance_parameters):
+        """Sanitise distance parameters by removing conflicting keys.
+
+        Args:
+            distance_parameters: Dictionary of distance metric parameters.
+
+        Returns:
+            Cleaned distance parameters dictionary.
+        """
         distance_parameters.pop("n_jobs", None)
 
         metric_val = distance_parameters.pop("metric")
@@ -47,6 +61,15 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
         return distance_parameters
 
     def raw_signal_dist(self, raw_signal_a: RawSignal, raw_signal_b: RawSignal):
+        """Compute feature-space distance between two signals.
+
+        Args:
+            raw_signal_a: First raw signal.
+            raw_signal_b: Second raw signal.
+
+        Returns:
+            1-D array containing the pairwise distance.
+        """
         if not self.is_fitted:
             raise NotFittedError("The distance matrix must be calculated first!")
 
@@ -67,6 +90,15 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
         return distance
 
     def raw_signal_dist_2_set(self, raw_signal: RawSignal, raw_signals: RawSignals):
+        """Compute feature-space distances from one signal to a set.
+
+        Args:
+            raw_signal: The query signal.
+            raw_signals: The reference dataset.
+
+        Returns:
+            2-D distance array.
+        """
 
         X, _, _ = self.set_creator.fit_transform(raw_signals=raw_signals)
         self.is_fitted = True
@@ -83,6 +115,14 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
         return distances
 
     def calculate_distance_matrix(self, raw_signals: RawSignals):
+        """Compute the pairwise distance matrix in feature space.
+
+        Args:
+            raw_signals: The dataset of raw signals.
+
+        Returns:
+            3-D numpy array of shape ``(1, n_signals, n_signals)``.
+        """
 
         X, y, t = self.set_creator.fit_transform(raw_signals)
         self.is_fitted = True
@@ -97,6 +137,15 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
     def calculate_distance_matrix_set_2_set(
         self, raw_signals_1: RawSignals, raw_signals_2: RawSignals
     ):
+        """Compute the pairwise distance matrix between two signal sets.
+
+        Args:
+            raw_signals_1: First set of raw signals (used for fitting).
+            raw_signals_2: Second set of raw signals.
+
+        Returns:
+            3-D numpy array of shape ``(1, n_signals_1, n_signals_2)``.
+        """
 
         X, _, _ = self.set_creator.fit_transform(raw_signals_1)
         self.is_fitted = True

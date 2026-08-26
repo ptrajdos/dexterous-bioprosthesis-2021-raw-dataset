@@ -1,3 +1,8 @@
+"""Module implementing additive Gaussian noise for decomposition coefficients.
+
+Adds Gaussian noise scaled by each coefficient level's standard deviation
+to the wavelet decomposition, optionally skipping approximation coefficients.
+"""
 import numpy as np
 
 from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.wt_aug.decomp_transformations.decomp_transformation_base import (
@@ -6,6 +11,19 @@ from dexterous_bioprosthesis_2021_raw_datasets.data_augumentation.wt_aug.decomp_
 
 
 class DecompTransformationGaussian(DecompTransformationBase):
+    """Transformation that adds Gaussian noise to decomposition coefficients.
+
+    Noise amplitude is scaled per channel based on the coefficient standard
+    deviation and a random percentage.
+
+    Args:
+        mean: Mean of the Gaussian noise.
+        min_noise_perc: Minimum noise percentage relative to coefficient std.
+        max_noise_perc: Maximum noise percentage relative to coefficient std.
+        alter_approximation_coeffs: If ``True``, also modify the approximation
+            (lowest frequency) coefficients.
+        random_state: Random seed for reproducibility.
+    """
 
     def __init__(
         self,
@@ -22,6 +40,14 @@ class DecompTransformationGaussian(DecompTransformationBase):
         self.alter_approximation_coeffs = alter_approximation_coeffs
 
     def transform(self, decompositions: list):
+        """Add Gaussian noise to decomposition coefficients.
+
+        Args:
+            decompositions: List of wavelet coefficient arrays.
+
+        Returns:
+            List of noise-augmented coefficient arrays.
+        """
         self._check_if_fitted()
         new_decomps = []
 

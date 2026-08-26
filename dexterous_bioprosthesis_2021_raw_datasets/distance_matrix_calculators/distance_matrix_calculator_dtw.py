@@ -1,3 +1,8 @@
+"""Module implementing DTW-based pairwise distance matrix calculation.
+
+Computes per-channel Dynamic Time Warping distances between raw signals
+using the ``dtw-python`` library, with parallel execution support.
+"""
 from itertools import combinations, product
 from joblib import delayed
 import numpy as np
@@ -29,11 +34,21 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
         self.n_jobs = n_jobs
 
     def _filter_dtw_options(self, dtw_options):
+        """Remove internally managed DTW options to avoid conflicts."""
         dtw_options.pop("keep_internals", None)
         dtw_options.pop("distance_only", None)
         return dtw_options
 
     def raw_signal_dist(self, raw_signal_a: RawSignal, raw_signal_b: RawSignal):
+        """Compute per-channel DTW distance between two signals.
+
+        Args:
+            raw_signal_a: First raw signal.
+            raw_signal_b: Second raw signal.
+
+        Returns:
+            Array of per-channel DTW distances.
+        """
         signal_a = raw_signal_a.signal
         signal_b = raw_signal_b.signal
         n_channels = signal_a.shape[1]
@@ -55,6 +70,7 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
         return overall_distance
 
     def _compute_raw_signals_dist(self, raw_signals, i, j):
+        """Compute distance between signals at indices *i* and *j*."""
         distance = self.raw_signal_dist(
             raw_signal_a=raw_signals[i], raw_signal_b=raw_signals[j]
         )
@@ -62,6 +78,14 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
         return distance, i, j
 
     def calculate_distance_matrix(self, raw_signals: RawSignals):
+        """Compute the symmetric pairwise DTW distance matrix.
+
+        Args:
+            raw_signals: The dataset of raw signals.
+
+        Returns:
+            3-D numpy array of shape ``(n_channels, n_signals, n_signals)``.
+        """
 
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
@@ -85,6 +109,7 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
         return distance_matrix
 
     def _compute_raw_signal_2_set_dist(self, raw_signals, raw_signal, i):
+        """Compute distance between *raw_signal* and signal at index *i*."""
         distance = self.raw_signal_dist(
             raw_signal_a=raw_signal, raw_signal_b=raw_signals[i]
         )
@@ -92,6 +117,15 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
         return distance, i
 
     def raw_signal_dist_2_set(self, raw_signal: RawSignal, raw_signals: RawSignals):
+        """Compute DTW distances from one signal to a set of signals.
+
+        Args:
+            raw_signal: The query signal.
+            raw_signals: The reference dataset.
+
+        Returns:
+            2-D numpy array of shape ``(n_channels, n_signals)``.
+        """
 
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
@@ -112,6 +146,7 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
         return distance_matrix
 
     def _compute_raw_signals_dist_2_set(self, raw_signals_a, raw_signals_b, i, j):
+        """Compute distance between signal *i* from set A and signal *j* from set B."""
         distance = self.raw_signal_dist(
             raw_signal_a=raw_signals_a[i], raw_signal_b=raw_signals_b[j]
         )
@@ -121,6 +156,15 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
     def calculate_distance_matrix_set_2_set(
         self, raw_signals_1: RawSignals, raw_signals_2: RawSignals
     ):
+        """Compute the pairwise DTW distance matrix between two signal sets.
+
+        Args:
+            raw_signals_1: First set of raw signals.
+            raw_signals_2: Second set of raw signals.
+
+        Returns:
+            3-D numpy array of shape ``(n_channels, n_signals_1, n_signals_2)``.
+        """
 
         num_signals_1 = len(raw_signals_1)
         num_signals_2 = len(raw_signals_2)
