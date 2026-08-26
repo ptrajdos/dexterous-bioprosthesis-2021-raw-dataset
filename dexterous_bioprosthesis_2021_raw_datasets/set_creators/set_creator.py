@@ -1,3 +1,8 @@
+"""Module defining the abstract interface for set creators.
+
+Provides :class:`SetCreator`, the base contract for transforming
+raw signal collections into feature matrices.
+"""
 from __future__ import annotations
 import abc
 from typing import Any, Optional

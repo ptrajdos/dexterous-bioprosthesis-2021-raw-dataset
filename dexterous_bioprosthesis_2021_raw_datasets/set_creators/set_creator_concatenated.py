@@ -1,3 +1,7 @@
+"""Module implementing concatenated set creation from multiple extractors.
+
+Combines features from multiple set creators by concatenation.
+"""
 from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
@@ -8,6 +12,7 @@ import numpy as np
 
 class SetCreatorConcatenated(SetCreator):
 
+    """Set creator that concatenates features from multiple sub-creators."""
     def __init__(self, creators) -> None:
         super().__init__()
 
@@ -16,6 +21,7 @@ class SetCreatorConcatenated(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
         
+        """Fit the transformer to the given data."""
         for creator in self.creators:
             creator.fit(raw_signals)
 
@@ -43,6 +49,7 @@ class SetCreatorConcatenated(SetCreator):
         return curr_max + 1
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")
         X_es = []
@@ -67,8 +74,10 @@ class SetCreatorConcatenated(SetCreator):
     
 
     def fit_transform(self, raw_signals: RawSignals, y=None):
+        """Fit and then transform the given data."""
         self.fit(raw_signals)
         return self.transform(raw_signals)
     
     def get_channel_attribs_indices(self):
+        """Return the feature indices grouped by channel."""
         return self.channel_selected_attribs

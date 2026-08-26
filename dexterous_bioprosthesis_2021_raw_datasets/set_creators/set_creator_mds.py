@@ -1,3 +1,8 @@
+"""Module implementing Multidimensional Scaling (MDS) based feature extraction.
+
+Projects raw signals into a lower-dimensional feature space using
+MDS on pairwise distance matrices.
+"""
 from joblib import delayed
 from dexterous_bioprosthesis_2021_raw_datasets.distance_matrix_calculators.distance_matrix_calculator import (
     DistanceMatrixCalculator,
@@ -38,10 +43,12 @@ default_ga_options = {
 
 
 def no_flatten(in_data, axis=None, keepdims=None):
+    """Return the distance matrix without flattening."""
     return np.copy(in_data)
 
 
 def euclid_flatten(distance_matrix, keepdims=False, axis=0):
+    """Flatten the distance matrix using Euclidean norm."""
     n_channels = distance_matrix.shape[0]
     squared_sum = np.sum(np.square(distance_matrix), axis=axis, keepdims=keepdims)
     flatten = np.sqrt(squared_sum / n_channels)
@@ -212,11 +219,13 @@ class SetCreatorMDS(SetCreator):
 
     def fit_transform(self, raw_signals: RawSignals, y=None)->tuple[np.ndarray, np.ndarray, np.ndarray]:
 
+        """Fit and then transform the given data."""
         self.fit(raw_signals)
 
         return self.dataset
 
     def fit(self, raw_signals: RawSignals, y=None):
+        """Fit the transformer to the given data."""
         super().fit(raw_signals)
 
         self.raw_signals_set = raw_signals
@@ -391,6 +400,7 @@ class SetCreatorMDS(SetCreator):
         return initial_population
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         if self.raw_signals_set is None:
             raise NotFittedError("The model is not fitted!")
 
@@ -417,4 +427,5 @@ class SetCreatorMDS(SetCreator):
 
     def get_channel_attribs_indices(self):
 
+        """Return the feature indices grouped by channel."""
         return self.attrib_indices_list

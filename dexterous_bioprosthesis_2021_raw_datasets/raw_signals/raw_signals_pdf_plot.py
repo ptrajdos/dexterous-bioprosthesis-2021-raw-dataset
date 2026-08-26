@@ -1,3 +1,8 @@
+"""Utility for plotting raw signals to PDF files.
+
+Generates per-signal PDF files with one page per channel, useful for
+visual inspection of biosignal datasets.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 
@@ -10,6 +15,7 @@ from tqdm import tqdm
 
 def raw_signals_pdf_plot(out_dir_path,raw_signals:RawSignals):
 
+    """Plot all signals to per-signal PDF files."""
     os.makedirs(out_dir_path, exist_ok=True)
 
     for rs_idx, rs in tqdm( enumerate(raw_signals), desc="Signals", total=len(raw_signals)):

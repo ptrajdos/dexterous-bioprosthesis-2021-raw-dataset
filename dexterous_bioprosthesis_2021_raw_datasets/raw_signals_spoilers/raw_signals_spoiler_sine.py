@@ -1,3 +1,7 @@
+"""Module implementing additive sinusoidal interference.
+
+Adds sine-wave interference calibrated to a target signal-to-noise ratio.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -10,6 +14,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 class RawSignalsSpoilerSine(RawSignalsSpoiler):
 
+    """Spoiler that adds sinusoidal interference calibrated to a target SNR."""
     def __init__(
         self,
         channels_spoiled_frac=0.1,
@@ -23,6 +28,7 @@ class RawSignalsSpoilerSine(RawSignalsSpoiler):
         self.frequency_deviation = freq_deviation
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 

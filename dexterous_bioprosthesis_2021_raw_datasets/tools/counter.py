@@ -1,5 +1,10 @@
+"""Module providing a simple integer counter class.
+
+Provides :class:`Counter` with increment, decrement, and comparison.
+"""
 from typing import Any
 class Counter:
+    """Simple mutable integer counter with increment, decrement, and comparison."""
     def __init__(self,initial_value=0) -> None:
         super().__init__()
         self.value = initial_value

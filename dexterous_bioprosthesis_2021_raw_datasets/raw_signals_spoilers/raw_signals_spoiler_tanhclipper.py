@@ -1,3 +1,7 @@
+"""Module implementing hyperbolic tangent soft-clipping distortion.
+
+Applies a tanh-based clipping function calibrated to a target SNR.
+"""
 import warnings
 from copy import deepcopy
 
@@ -12,6 +16,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 class RawSignalsSpoilerTanhClipper(RawSignalsSpoiler):
 
+    """Spoiler that applies tanh-based soft-clipping distortion."""
     def __init__(
         self,
         channels_spoiled_frac=0.1,
@@ -22,6 +27,7 @@ class RawSignalsSpoilerTanhClipper(RawSignalsSpoiler):
 
     def fit(self, raw_signals: RawSignals, y=None):
 
+        """Fit the transformer to the given data."""
         if self.snr < 0:
             self._effective_snr = 0
             warnings.warn("SNR is negative. Setting SNR to 0")
@@ -56,6 +62,7 @@ class RawSignalsSpoilerTanhClipper(RawSignalsSpoiler):
         return best_alpha
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 

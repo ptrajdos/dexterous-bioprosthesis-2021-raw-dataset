@@ -1,3 +1,7 @@
+"""Module implementing temporal skewness extraction.
+
+Computes the skewness of the temporal energy distribution.
+"""
 import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
@@ -10,6 +14,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 
 class NpSignalExtractorTemporalSkew(NPSignalExtractor):
 
+    """Extractor that computes the temporal skewness of signal energy."""
     def __init__(self, sanitize_output=False, check_input=False, check_output=False, proportional_time=True):
         super().__init__(sanitize_output=sanitize_output, check_input=check_input, check_output=check_output)
         self.proportional_time = proportional_time
@@ -37,4 +42,5 @@ class NpSignalExtractorTemporalSkew(NPSignalExtractor):
         return skew
 
     def attribs_per_column(self):
+        """Return the number of features extracted per channel."""
         return 1

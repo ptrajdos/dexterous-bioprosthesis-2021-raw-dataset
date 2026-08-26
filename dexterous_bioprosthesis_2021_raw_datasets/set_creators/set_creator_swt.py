@@ -1,3 +1,7 @@
+"""Module implementing SWT-based feature extraction.
+
+Decomposes signals using the Stationary Wavelet Transform.
+"""
 import pywt
 
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_wt_abstract import (
@@ -8,6 +12,7 @@ import itertools
 
 class SetCreatorSWT(SetCreatorWTAbstract):
 
+    """Set creator using Stationary Wavelet Transform decomposition."""
     def __init__(
         self, wavelet_name="db1", num_levels=2, extractors=[], norm: bool = False
     ) -> None:

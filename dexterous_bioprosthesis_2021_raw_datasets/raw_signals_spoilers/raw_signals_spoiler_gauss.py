@@ -1,3 +1,7 @@
+"""Module implementing additive Gaussian noise distortion.
+
+Adds Gaussian noise calibrated to a target signal-to-noise ratio.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -10,6 +14,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 class RawSignalsSpoilerGauss(RawSignalsSpoiler):
 
+    """Spoiler that adds Gaussian noise calibrated to a target SNR."""
     def __init__(
         self,
         channels_spoiled_frac=0.1,
@@ -19,6 +24,7 @@ class RawSignalsSpoilerGauss(RawSignalsSpoiler):
         super().__init__(channels_spoiled_frac, snr, random_state)
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 

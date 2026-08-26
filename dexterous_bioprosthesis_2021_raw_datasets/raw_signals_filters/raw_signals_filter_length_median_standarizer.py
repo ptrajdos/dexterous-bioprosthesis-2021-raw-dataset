@@ -1,3 +1,7 @@
+"""Module implementing signal length standardisation to the median length.
+
+Resamples all signals to the median length of the dataset.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -14,6 +18,7 @@ class RawSignalsFilterLengthMedianStandarizer(RawSignalsFilter):
     """
 
     def fit(self, raw_signals: RawSignals, y=None):
+        """Fit the transformer to the given data."""
         super().fit(raw_signals, y)
         lengths = [rs.to_numpy().shape[0] for rs in raw_signals]
         self._median = int( np.median(lengths))
@@ -21,6 +26,7 @@ class RawSignalsFilterLengthMedianStandarizer(RawSignalsFilter):
         return self
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_fitted()
 
         new_signals = raw_signals.initialize_empty()

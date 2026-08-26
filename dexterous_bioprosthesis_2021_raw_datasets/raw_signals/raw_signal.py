@@ -1,3 +1,8 @@
+"""Module providing the :class:`RawSignal` data structure.
+
+Represents a single multi-channel time-domain signal with associated
+metadata such as class label, timestamp, sample rate, and channel names.
+"""
 import numpy as np
 from copy import deepcopy
 
@@ -123,16 +128,21 @@ class RawSignal():
         return self.signal
     
     def get_label(self):
+        """Return the class label of this signal."""
         return self.object_class
     
     def get_timestamp(self):
+        """Return the timestamp of this signal."""
         return self.timestamp
     
     def set_label(self,label):
+        """Set the class label of this signal."""
         self.object_class = label
 
     def get_sample_rate(self):
+        """Return the sample rate."""
         return self.sample_rate
     
     def set_sample_rate(self, sample_rate):
+        """Set the sample rate."""
         self.sample_rate = sample_rate

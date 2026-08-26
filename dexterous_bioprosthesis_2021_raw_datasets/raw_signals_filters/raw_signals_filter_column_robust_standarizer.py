@@ -1,3 +1,8 @@
+"""Module implementing per-column robust standardisation.
+
+Standardises each channel independently using the median and IQR
+computed per column across the dataset.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -10,11 +15,13 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterColumnRobustStandarizer(RawSignalsFilter):
 
+    """Filter that applies per-column robust standardisation."""
     def __init__(self, eps=1e-30) -> None:
         super().__init__()
         self.eps = eps
 
     def fit(self, raw_signals: RawSignals, y=None):
+        """Fit the transformer to the given data."""
         np_data = raw_signals.to_numpy_concat()
         q1, self._median, q3 = np.percentile(np_data, [25, 50, 75], axis=(0,))
         self._iqr = q3 - q1
@@ -23,6 +30,7 @@ class RawSignalsFilterColumnRobustStandarizer(RawSignalsFilter):
 
     def transform(self, raw_signals: RawSignals):
 
+        """Transform the given data."""
         self._check_fitted()
 
         copied_signals = deepcopy(raw_signals)

@@ -1,3 +1,7 @@
+"""Module for computing dataset statistics.
+
+Provides :func:`data_stats` for summarising class distributions.
+"""
 import numpy as np
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
@@ -5,6 +9,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 
 def data_stats(signals:RawSignals):
 
+    """Compute and return class distribution statistics for a dataset."""
     stats = dict()
 
     n_objects = len(signals)

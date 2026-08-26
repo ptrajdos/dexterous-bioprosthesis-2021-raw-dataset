@@ -1,3 +1,8 @@
+"""Module implementing global z-score standardisation.
+
+Standardises all signal values by subtracting the global mean and
+dividing by the global standard deviation.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -10,6 +15,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterAllStandarizer(RawSignalsFilter):
 
+    """Filter that applies global z-score standardisation."""
     def _compute_mean(self, raw_signals: RawSignals):
         dtype = raw_signals[0].signal.dtype
         self._glob_mean = np.array(0, dtype=dtype)
@@ -36,11 +42,13 @@ class RawSignalsFilterAllStandarizer(RawSignalsFilter):
         return self._std
 
     def fit(self, raw_signals: RawSignals, y=None):
+        """Fit the transformer to the given data."""
         self._compute_mean(raw_signals)
         self._compute_std(raw_signals)
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_fitted()
         copied_signals = deepcopy(raw_signals)
         for r_signal in copied_signals:

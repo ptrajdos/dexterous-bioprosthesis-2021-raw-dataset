@@ -1,3 +1,8 @@
+"""Module implementing cluster-distance based feature extraction.
+
+Computes features based on distances to cluster centroids found
+via k-means clustering.
+"""
 from sklearn.exceptions import NotFittedError
 from sklearn.metrics import silhouette_score, silhouette_samples
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
@@ -18,6 +23,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_mds impo
 
 class SetCreatorClusterDist(SetCreator):
 
+    """Set creator using cluster-distance features from k-means clustering."""
     def __init__(
         self, distance_calculator: DistanceMatrixCalculator, flatten_function=no_flatten
     ) -> None:
@@ -106,16 +112,19 @@ class SetCreatorClusterDist(SetCreator):
         return representation, labels, timestamps
 
     def fit(self, raw_signals: RawSignals, y=None) -> SetCreator:
+        """Fit the transformer to the given data."""
         raw_signals_n = RawSignals(raw_signals)
         self._fit(raw_signals_n)
 
         return self
 
     def fit_transform(self, raw_signals: RawSignals, y=None) -> tuple:
+        """Fit and then transform the given data."""
         raw_signals_n = RawSignals(raw_signals)
         return self._fit(raw_signals_n)
 
     def transform(self, raw_signals: RawSignals) -> tuple:
+        """Transform the given data."""
         if not self.is_fitted:
             raise NotFittedError("SetCreator has not been fitted.")
 
@@ -135,4 +144,5 @@ class SetCreatorClusterDist(SetCreator):
         return repr, labels, timestamps
 
     def get_channel_attribs_indices(self):
+        """Return the feature indices grouped by channel."""
         return self.channel_selected_attribs

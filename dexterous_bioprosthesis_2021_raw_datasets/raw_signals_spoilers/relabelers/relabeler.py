@@ -1,7 +1,13 @@
+"""Module defining the abstract interface for signal relabelers.
+
+Provides :class:`Relabeler` with fit/transform pattern.
+"""
 import abc
 
 class Relabeler(abc.ABC):
     
+    """Abstract interface for signal relabelers."""
+
     @abc.abstractmethod
     def fit(self,labels):
         """

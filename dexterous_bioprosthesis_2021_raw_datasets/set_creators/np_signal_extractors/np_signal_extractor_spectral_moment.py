@@ -1,3 +1,7 @@
+"""Module implementing spectral moment extraction.
+
+Computes configurable-order spectral moments from the PSD.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor_spectral import (
     NpSignalExtractorSpectral,
 )
@@ -7,6 +11,7 @@ import numpy as np
 
 class NpSignalExtractorSpectralMoment(NpSignalExtractorSpectral):
 
+    """Extractor that computes configurable-order spectral moments."""
     def __init__(
         self,
         sanitize_output=False,
@@ -20,6 +25,7 @@ class NpSignalExtractorSpectralMoment(NpSignalExtractorSpectral):
         self.centered = centered
 
     def fit(self, X, fs=1000):
+        """Fit the transformer to the given data."""
         return super().fit(X)
 
     @staticmethod
@@ -57,4 +63,5 @@ class NpSignalExtractorSpectralMoment(NpSignalExtractorSpectral):
         ).astype(X.dtype)
 
     def attribs_per_column(self):
+        """Return the number of features extracted per channel."""
         return 1

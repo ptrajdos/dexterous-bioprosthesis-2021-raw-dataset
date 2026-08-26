@@ -1,3 +1,7 @@
+"""Module for saving datasets in ARFF format.
+
+Provides :func:`save_arff` for exporting to the Weka ARFF file format.
+"""
 import arff
 import pandas as pd
 import os

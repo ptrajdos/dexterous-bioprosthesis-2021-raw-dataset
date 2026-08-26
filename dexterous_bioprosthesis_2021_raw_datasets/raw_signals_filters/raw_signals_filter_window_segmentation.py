@@ -1,3 +1,8 @@
+"""Module implementing window-based signal segmentation.
+
+Splits each signal into fixed-length overlapping or non-overlapping
+window segments.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter import (
     RawSignalsFilter,
@@ -6,6 +11,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterWindowSegmentation(RawSignalsFilter):
 
+    """Filter that segments signals into fixed-length windows."""
     def __init__(self, window_length: int, overlap: int) -> None:
         """
         Segment the signal using sliding window.

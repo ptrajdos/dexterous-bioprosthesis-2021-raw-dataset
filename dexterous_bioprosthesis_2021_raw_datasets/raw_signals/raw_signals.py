@@ -1,3 +1,8 @@
+"""Module providing the :class:`RawSignals` collection.
+
+A mutable, list-backed container of :class:`RawSignal` objects that
+implements the :class:`IRawSignals` interface.
+"""
 from __future__ import annotations
 
 from collections.abc import Collection, Iterable
@@ -164,9 +169,11 @@ class RawSignals(IRawSignals):
         return RawSignals(raw_signal_list=[], sample_rate=self.sample_rate)
 
     def get_sample_rate(self) -> float:
+        """Return the sample rate."""
         return self.sample_rate
 
     def set_sample_rate(self, sample_rate):
+        """Set the sample rate."""
         self.sample_rate = sample_rate
 
         for sig in iter(self):

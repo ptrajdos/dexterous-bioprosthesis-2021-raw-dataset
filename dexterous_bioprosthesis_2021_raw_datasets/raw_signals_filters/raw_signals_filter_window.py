@@ -1,3 +1,8 @@
+"""Module implementing a generic window-based convolution filter.
+
+Applies a configurable window function to each signal channel via
+convolution.
+"""
 import abc
 from copy import deepcopy
 
@@ -11,6 +16,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterWindowFilter(RawSignalsFilter):
 
+    """Generic window-based convolution filter for signal smoothing."""
     def __init__(self, window_length: int = 100) -> None:
         super().__init__()
         self.window_length = window_length
@@ -34,6 +40,7 @@ class RawSignalsFilterWindowFilter(RawSignalsFilter):
         """
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
+        """Transform the given data."""
         self._check_fitted()
 
         copied_signals = deepcopy(raw_signals)

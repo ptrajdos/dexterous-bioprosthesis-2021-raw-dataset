@@ -1,3 +1,7 @@
+"""Module implementing composite spoiler application.
+
+Applies multiple spoilers to a signal dataset.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -13,6 +17,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
 
+    """Composite spoiler that applies multiple spoilers to signals."""
     def __init__(
         self,
         spoilers=[RawSignalsSpoilerDummy()],  # TODO need fixing!
@@ -39,12 +44,14 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
 
     def fit(self, raw_signals: RawSignals, y=None):
 
+        """Fit the transformer to the given data."""
         for spoiler in self.spoilers:
             spoiler.fit(raw_signals, y)
 
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_is_fitted()
 
         n_orig_objects = len(raw_signals)

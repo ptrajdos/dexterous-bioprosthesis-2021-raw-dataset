@@ -1,3 +1,8 @@
+"""Module implementing a sine-wave based synthetic signal creator.
+
+Generates multi-channel signals composed of sine waves with random
+phase shifts and additive noise.
+"""
 import numpy as np
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
@@ -9,6 +14,7 @@ import random
 
 
 class RawSignalsCreatorSines(RawSignalsCreator):
+    """Creator that generates synthetic sine-wave signals with noise and phase shifts."""
     def __init__(
         self,
         set_size: int = 30,
@@ -38,6 +44,7 @@ class RawSignalsCreatorSines(RawSignalsCreator):
         self.dtype = dtype
 
     def get_set(self) -> RawSignals:
+        """Generate and return the synthetic signal dataset."""
         signals = RawSignals()
 
         for i in range(1, self.set_size + 1):

@@ -1,3 +1,8 @@
+"""Module implementing a Moving Average Value (MAV) window filter.
+
+Applies a simple moving average to each signal channel using uniform
+window weights.
+"""
 import numpy as np
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter_window import (
@@ -7,10 +12,12 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterMAVWindowFilter(RawSignalsFilterWindowFilter):
 
+    """Moving Average Value (MAV) window filter with uniform weights."""
     def __init__(self, window_length: int = 100) -> None:
         super().__init__(window_length)
 
     def channel_transform(self, data):
+        """Apply the window transformation to a single channel."""
         M = self.window_length // 2
 
         out = np.zeros(data.shape[0])

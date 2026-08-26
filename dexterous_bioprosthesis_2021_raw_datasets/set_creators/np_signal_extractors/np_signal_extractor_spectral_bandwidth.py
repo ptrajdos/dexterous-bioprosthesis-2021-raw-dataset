@@ -1,3 +1,7 @@
+"""Module implementing spectral bandwidth extraction.
+
+Computes the spectral bandwidth from the power spectral density.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor_spectral import (
     NpSignalExtractorSpectral,
 )
@@ -11,7 +15,9 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 
 class NpSignalExtractorSpectralBandwidth(NpSignalExtractorSpectral):
 
+    """Extractor that computes the spectral bandwidth from the PSD."""
     def fit(self, X, fs=1000):
+        """Fit the transformer to the given data."""
         return super().fit(X)
 
     def _transform(self, X):
@@ -25,4 +31,5 @@ class NpSignalExtractorSpectralBandwidth(NpSignalExtractorSpectral):
         ).astype(X.dtype)
 
     def attribs_per_column(self):
+        """Return the number of features extracted per channel."""
         return 1

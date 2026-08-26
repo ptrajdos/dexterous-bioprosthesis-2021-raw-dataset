@@ -1,3 +1,8 @@
+"""Module implementing signal length outlier removal.
+
+Removes signals whose length deviates significantly from the dataset
+median, based on a configurable threshold.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -14,6 +19,7 @@ class RawSignalsFilterLengthOutlier(RawSignalsFilter):
     """
 
     def fit(self, raw_signals: RawSignals, y=None):
+        """Fit the transformer to the given data."""
         super().fit(raw_signals, y)
         lengths = [rs.to_numpy().shape[0] for rs in raw_signals]
         q1, q3 = np.percentile(lengths, [25,75])
@@ -24,6 +30,7 @@ class RawSignalsFilterLengthOutlier(RawSignalsFilter):
         return self
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_fitted()
 
         new_signals = raw_signals.initialize_empty()

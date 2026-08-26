@@ -1,3 +1,8 @@
+"""Module providing the :class:`RawSignalsNpImmutable` collection.
+
+An immutable, numpy-backed container of raw signals where all signals
+must share the same length, number of channels, and sample rate.
+"""
 from copy import deepcopy
 import numpy as np
 
@@ -127,6 +132,7 @@ class RawSignalsNpImmutable(IRawSignals):
 
     def append(self, other: RawSignal):
 
+        """Append a signal to the collection."""
         raise NotImplementedError(
             "RawSignalsNpImmutable object is immutable. You cannot append new signals."
         )
@@ -180,15 +186,18 @@ class RawSignalsNpImmutable(IRawSignals):
         return self.raw_signals_timestamps
 
     def set_labels(self, labels):
+        """Set new labels for all stored signals."""
         raise NotImplementedError(
             "RawSignalsNpImmutable object is immutable. You cannot set new labels."
         )
 
     
     def get_sample_rate(self):
+        """Return the sample rate."""
         return self.sample_rate
 
     def set_sample_rate(self, sample_rate):
+        """Set the sample rate."""
         raise NotImplementedError(
             "RawSignalsNpImmutable object is immutable. You cannot set new sample rate."
         )

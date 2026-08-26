@@ -1,3 +1,7 @@
+"""Module providing the base class for spectral feature extractors.
+
+Contains shared power spectral density (PSD) computation logic.
+"""
 from abc import ABC
 
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
@@ -7,6 +11,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 import numpy as np
 
 class NpSignalExtractorSpectral(NPSignalExtractor, ABC):
+
+    """Base class for spectral feature extractors with shared PSD computation."""
 
     @staticmethod
     def _calculate_psd(X, fs=1.0):

@@ -1,3 +1,7 @@
+"""Module implementing skewness extraction.
+
+Computes the skewness of each signal channel.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
 )
@@ -8,7 +12,9 @@ from scipy.stats import skew
 
 class NpSignalExtractorSkew(NPSignalExtractor):
 
+    """Extractor that computes the skewness of each signal channel."""
     def fit(self, X, fs=1000):
+        """Fit the transformer to the given data."""
         return super().fit(X)
 
     def _transform(self, X):
@@ -20,4 +26,5 @@ class NpSignalExtractorSkew(NPSignalExtractor):
         
 
     def attribs_per_column(self):
+        """Return the number of features extracted per channel."""
         return 1

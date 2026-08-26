@@ -1,3 +1,7 @@
+"""Module providing the abstract base for wavelet-based set creators.
+
+Defines common interface and logic shared by DWT and SWT set creators.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
     SetCreator,
@@ -9,6 +13,7 @@ import abc
 
 class SetCreatorWTAbstract(SetCreator):
 
+    """Abstract base class for wavelet-based set creators."""
     def __init__(self, wavelet_name="db1", num_levels=2, extractors=[]) -> None:
         super().__init__()
         self.wavelet_name = wavelet_name
@@ -23,6 +28,7 @@ class SetCreatorWTAbstract(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
 
+        """Fit the transformer to the given data."""
         self.n_channels = raw_signals[0].to_numpy().shape[1]
         n_extractors = len(self.extractors)
         n_levels = self.num_levels + 1
@@ -58,6 +64,7 @@ class SetCreatorWTAbstract(SetCreator):
 
     def transform(self, raw_signals: RawSignals):
 
+        """Transform the given data."""
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")
 
@@ -90,7 +97,9 @@ class SetCreatorWTAbstract(SetCreator):
         return extracted_attribs, labels, timestamps
 
     def fit_transform(self, raw_signals: RawSignals, y=None):
+        """Fit and then transform the given data."""
         return self.fit(raw_signals).transform(raw_signals)
 
     def get_channel_attribs_indices(self):
+        """Return the feature indices grouped by channel."""
         return self.channel_selected_attribs

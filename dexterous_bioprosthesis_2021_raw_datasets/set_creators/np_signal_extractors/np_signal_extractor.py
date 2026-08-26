@@ -1,3 +1,8 @@
+"""Module defining the abstract interface for numpy signal extractors.
+
+Provides :class:`NPSignalExtractor`, the base contract for per-channel
+feature extraction.
+"""
 from __future__ import annotations
 import abc
 
@@ -7,6 +12,7 @@ import logging
 
 class NPSignalExtractor(abc.ABC):
 
+    """Abstract base class for per-channel numpy signal feature extractors."""
     def _check_input(self, X) -> bool:
         """
         Check the input data.
@@ -54,6 +60,7 @@ class NPSignalExtractor(abc.ABC):
         self.check_output = check_output
 
     def fit(self, X, fs=1000) -> NPSignalExtractor:
+        """Fit the transformer to the given data."""
         if self.check_input:
             self._check_input(X)
 
@@ -68,6 +75,7 @@ class NPSignalExtractor(abc.ABC):
         """
 
     def transform(self, X) -> np.ndarray:
+        """Transform the given data."""
         if self.check_input:
             self._check_input(X)
         X_t = self._transform(X)
@@ -87,8 +95,10 @@ class NPSignalExtractor(abc.ABC):
         return X_t
 
     def fit_transform(self, X, fs=1000) -> np.ndarray:
+        """Fit and then transform the given data."""
         return self.fit(X, fs=fs).transform(X)
 
     @abc.abstractmethod
     def attribs_per_column(self) -> int:
+        """Return the number of features extracted per channel."""
         pass

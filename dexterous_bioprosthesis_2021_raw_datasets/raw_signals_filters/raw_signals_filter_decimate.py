@@ -1,3 +1,8 @@
+"""Module implementing signal decimation.
+
+Reduces the sampling rate of each signal channel using
+:func:`scipy.signal.decimate`.
+"""
 from copy import deepcopy
 
 from scipy.signal import decimate
@@ -10,6 +15,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterDecimate(RawSignalsFilter):
 
+    """Filter that reduces the sampling rate of each signal channel."""
     def __init__(self, downsample_factor=2) -> None:
         super().__init__()
         self.downsample_factor = downsample_factor

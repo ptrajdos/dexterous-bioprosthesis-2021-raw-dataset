@@ -1,3 +1,7 @@
+"""Module implementing VMD-based feature extraction.
+
+Decomposes signals using Variational Mode Decomposition.
+"""
 import itertools
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
@@ -12,6 +16,7 @@ from sktime.libs.vmdpy import VMD
 
 class SetCreatorVMD(SetCreator):
 
+    """Set creator using Variational Mode Decomposition."""
     def __init__(
         self, alpha=2000, tau=0.0, K=3, DC=0, init=1, tol=1e-7, extractors=[]
     ) -> None:
@@ -32,6 +37,7 @@ class SetCreatorVMD(SetCreator):
         )
 
     def fit(self, raw_signals: RawSignals, y=None):
+        """Fit the transformer to the given data."""
         self.n_channels = raw_signals[0].to_numpy().shape[1]
         n_extractors = len(self.extractors)
         n_levels = self.K
@@ -84,6 +90,7 @@ class SetCreatorVMD(SetCreator):
 
     def transform(self, raw_signals: RawSignals):
 
+        """Transform the given data."""
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")
 
@@ -116,7 +123,9 @@ class SetCreatorVMD(SetCreator):
         return extracted_attribs, labels, timestamps
 
     def fit_transform(self, raw_signals: RawSignals, y=None):
+        """Fit and then transform the given data."""
         return self.fit(raw_signals).transform(raw_signals)
 
     def get_channel_attribs_indices(self):
+        """Return the feature indices grouped by channel."""
         return self.channel_selected_attribs

@@ -1,3 +1,8 @@
+"""Module implementing global min-max standardisation.
+
+Scales all signal values to a specified range based on the global
+minimum and maximum computed across the entire dataset.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -10,6 +15,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterAllMinmaxStandarizer(RawSignalsFilter):
 
+    """Filter that applies global min-max standardisation."""
     def __init__(self, range_min=0, range_max=1, eps=1e-30) -> None:
         super().__init__()
         self.range_min = range_min
@@ -17,6 +23,7 @@ class RawSignalsFilterAllMinmaxStandarizer(RawSignalsFilter):
         self.eps = eps
 
     def fit(self, raw_signals: RawSignals, y=None):
+        """Fit the transformer to the given data."""
         self._min = raw_signals[0].to_numpy().min()
         self._max = raw_signals[0].to_numpy().max()
 
@@ -29,6 +36,7 @@ class RawSignalsFilterAllMinmaxStandarizer(RawSignalsFilter):
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_fitted()
         copied_signals = deepcopy(raw_signals)
         for r_signal in copied_signals:

@@ -1,3 +1,7 @@
+"""Module implementing cubic soft-clipping distortion.
+
+Applies a cubic polynomial clipping function calibrated to a target SNR.
+"""
 import warnings
 from copy import deepcopy
 
@@ -13,11 +17,13 @@ from dexterous_bioprosthesis_2021_raw_datasets.tools.numba_compat import jit
 
 class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
 
+    """Spoiler that applies cubic soft-clipping distortion calibrated to a target SNR."""
     def __init__(self, channels_spoiled_frac=0.1, snr=1, random_state=10,) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state)
 
     def fit(self, raw_signals: RawSignals, y=None):
 
+        """Fit the transformer to the given data."""
         if self.snr < 0:
             self._effective_snr = 0
             warnings.warn("SNR is negative. Setting SNR to 0")
@@ -53,6 +59,7 @@ class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
         return best_alpha
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 
@@ -75,6 +82,7 @@ class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
 
 @jit(nopython=True)
 def clipper(s, t=0.666666, tol=1e-10):
+    """Apply the cubic clipping function to a signal value."""
     s_a = np.abs(s)
     max_val = np.max(s_a)
     threshold = (t * max_val).item()

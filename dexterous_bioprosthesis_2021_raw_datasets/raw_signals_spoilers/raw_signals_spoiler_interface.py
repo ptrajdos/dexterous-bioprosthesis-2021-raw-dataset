@@ -1,3 +1,8 @@
+"""Module defining the abstract interface for raw signal spoilers.
+
+Provides :class:`RawSignalsSpoilerInterface` with ``fit``, ``transform``,
+and ``fit_transform`` methods.
+"""
 from __future__ import annotations
 import abc
 
@@ -7,6 +12,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 
 
 class RawSignalsSpoilerInterface(abc.ABC):
+
+    """Abstract interface for raw signal spoilers."""
 
     @abc.abstractmethod
     def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsSpoilerInterface:

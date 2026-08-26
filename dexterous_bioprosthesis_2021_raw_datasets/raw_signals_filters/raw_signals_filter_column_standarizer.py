@@ -1,3 +1,8 @@
+"""Module implementing per-column z-score standardisation.
+
+Standardises each channel independently by subtracting the per-column
+mean and dividing by the per-column standard deviation.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -10,6 +15,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterColumnStandarizer(RawSignalsFilter):
 
+    """Filter that applies per-column z-score standardisation."""
     def _compute_means(self, raw_signals: RawSignals):
         dtype = raw_signals[0].signal.dtype
         n_channels = raw_signals[0].signal.shape[1]
@@ -38,6 +44,7 @@ class RawSignalsFilterColumnStandarizer(RawSignalsFilter):
         return self._stds
 
     def fit(self, raw_signals: RawSignals, y=None):
+        """Fit the transformer to the given data."""
         self._compute_means(raw_signals)
         self._compute_stds(raw_signals)
 
@@ -45,6 +52,7 @@ class RawSignalsFilterColumnStandarizer(RawSignalsFilter):
 
     def transform(self, raw_signals: RawSignals):
 
+        """Transform the given data."""
         self._check_fitted()
 
         copied_signals = deepcopy(raw_signals)

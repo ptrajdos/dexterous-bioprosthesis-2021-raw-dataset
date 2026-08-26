@@ -1,3 +1,8 @@
+"""Module providing the base spoiler with SNR-based noise calibration.
+
+Computes channel powers and calibrates noise levels to achieve a
+target signal-to-noise ratio.
+"""
 import numpy as np
 from sklearn.utils import check_random_state
 
@@ -10,6 +15,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 class RawSignalsSpoiler(RawSignalsSpoilerInterface):
 
+    """Base spoiler class providing SNR-based noise calibration and channel selection."""
     def __init__(self, channels_spoiled_frac=0.1, snr=1, random_state=10) -> None:
         """
         Raw SignalsSpoiler -- introduces noises and other disturbances to signals
@@ -88,6 +94,7 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
         return snrs
 
     def fit(self, raw_signals: RawSignals, y=None):
+        """Fit the transformer to the given data."""
         self._random_state = check_random_state(self.random_state)
         # Does nothing
         return super().fit(raw_signals, y)

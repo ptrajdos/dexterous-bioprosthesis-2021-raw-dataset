@@ -1,3 +1,7 @@
+"""Module implementing sample-rate-aware window-based signal segmentation.
+
+Splits each signal into segments of a specified duration in seconds.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter import (
     RawSignalsFilter,
@@ -6,6 +10,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterWindowSegmentationFS(RawSignalsFilter):
 
+    """Filter that segments signals into windows of a specified duration in seconds."""
     def __init__(self, window_length: float, overlap: float) -> None:
         """
         Segment the signal using sliding window.

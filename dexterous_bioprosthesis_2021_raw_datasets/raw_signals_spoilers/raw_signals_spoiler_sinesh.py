@@ -1,3 +1,7 @@
+"""Module implementing additive sine harmonics interference.
+
+Adds multiple harmonically related sine waves calibrated to a target SNR.
+"""
 from copy import deepcopy
 
 import numpy as np
@@ -10,6 +14,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
 
+    """Spoiler that adds harmonically related sine interference."""
     def __init__(
         self,
         channels_spoiled_frac=0.1,
@@ -28,6 +33,7 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
 
     def fit(self, raw_signals: RawSignals, y=None):
 
+        """Fit the transformer to the given data."""
         if self.n_harmonics != len(self.harmonic_weights):
             raise ValueError(
                 "The number of harmonics is inconsistent with harmonic weights."
@@ -36,6 +42,7 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 

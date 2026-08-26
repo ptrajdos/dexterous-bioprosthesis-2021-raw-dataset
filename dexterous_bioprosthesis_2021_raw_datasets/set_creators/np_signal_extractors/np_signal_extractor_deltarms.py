@@ -1,3 +1,7 @@
+"""Module implementing delta-RMS feature extraction.
+
+Computes the RMS of the first-order difference of each channel.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
 )
@@ -9,12 +13,14 @@ import numpy as np
 
 class NpSignalExtractorDeltaRms(NPSignalExtractor):
 
+    """Extractor that computes the RMS of the first-order difference."""
     def __init__(self, window_length_ms, offset_ms, sanitize_output=False, check_input=False, check_output=False):
         super().__init__(sanitize_output=sanitize_output, check_input=check_input, check_output=check_output)
         self.window_length_ms = window_length_ms
         self.offset_ms = offset_ms
 
     def fit(self, X, fs=1000):
+        """Fit the transformer to the given data."""
         self.fs = fs
         return super().fit(X)
 
@@ -41,4 +47,5 @@ class NpSignalExtractorDeltaRms(NPSignalExtractor):
         return delta_rms
 
     def attribs_per_column(self):
+        """Return the number of features extracted per channel."""
         return 1

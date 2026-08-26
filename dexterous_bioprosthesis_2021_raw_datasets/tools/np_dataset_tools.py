@@ -1,6 +1,11 @@
+"""Module providing numpy dataset selection utilities.
+
+Provides :func:`select_with_classes` for filtering by class labels.
+"""
 import numpy as np
 
 def select_with_classes(X, y, y_sel):
+    """Select dataset rows matching the specified class labels."""
     XS = None
     ys = []
     first = True

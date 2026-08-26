@@ -1,3 +1,7 @@
+"""Module implementing function-based feature extraction.
+
+Extracts features using configurable numpy signal extractor functions.
+"""
 from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
@@ -6,6 +10,7 @@ import pywt
 
 class SetCreatorFunctions(SetCreator):
     
+    """Set creator using configurable numpy signal extractor functions."""
     def __init__(self, extractors=[]) -> None:
         """
         A SetCreator that applies a list of functions to the raw signals to create the dataset.
@@ -23,6 +28,7 @@ class SetCreatorFunctions(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
         
+        """Fit the transformer to the given data."""
         self.n_channels = raw_signals[0].to_numpy().shape[1]
         n_extractors = len(self.extractors)
 
@@ -44,6 +50,7 @@ class SetCreatorFunctions(SetCreator):
     
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")
     
@@ -70,8 +77,10 @@ class SetCreatorFunctions(SetCreator):
         return extracted_attribs, labels, timestamps
     
     def fit_transform(self, raw_signals: RawSignals, y=None):
+        """Fit and then transform the given data."""
         return self.fit(raw_signals).transform(raw_signals)
     
 
     def get_channel_attribs_indices(self):
+        """Return the feature indices grouped by channel."""
         return self.channel_selected_attribs

@@ -1,3 +1,9 @@
+"""Module defining the abstract interface for raw signal filters.
+
+Provides :class:`RawSignalsFilter`, the base contract with ``fit``,
+``transform``, and ``fit_transform`` methods following the scikit-learn
+transformer pattern.
+"""
 from __future__ import annotations
 import abc
 

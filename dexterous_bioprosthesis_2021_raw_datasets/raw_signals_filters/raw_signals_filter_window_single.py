@@ -1,3 +1,7 @@
+"""Module implementing single-window signal extraction.
+
+Extracts a single window of specified length from each signal.
+"""
 from copy import deepcopy
 
 from scipy.signal import decimate
@@ -10,6 +14,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterWindowSingle(RawSignalsFilter):
 
+    """Filter that extracts a single window from each signal."""
     def __init__(self, start_sample: int, end_sample: int) -> None:
         """
         Cuts single window from given RawSignals.

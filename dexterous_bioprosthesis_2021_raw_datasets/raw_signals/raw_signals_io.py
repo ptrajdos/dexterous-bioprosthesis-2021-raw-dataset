@@ -1,3 +1,8 @@
+"""I/O utilities for reading and writing raw signal datasets.
+
+Supports loading signals from directory structures and compressed
+archives (ZIP, TAR), as well as saving signals back to directories.
+"""
 import datetime
 import os
 import logging
@@ -17,6 +22,7 @@ date_format_string = "%Y-%m-%d %H:%M:%S"
 from tqdm import tqdm
 
 def str_sort_key(x):
+    """Return the string representation of *x* for sorting."""
     return str(x)
 
 
@@ -28,6 +34,7 @@ def read_signals_from_archive(
     file_sorting_key=lambda x: str(x),
     filter_regex = None
 ):
+    """Read raw signals from a ZIP or TAR archive."""
     accapted = RawSignals(sample_rate=sample_rate)
     rejected = RawSignals(sample_rate=sample_rate)
     
@@ -302,6 +309,7 @@ def _read_signals_from_dirs_internal(
 
 def save_signals_to_dirs(raw_signals: RawSignals, output_directory):
 
+    """Save raw signals to a directory structure."""
     os.makedirs(output_directory, exist_ok=True)
 
     signal_labels = raw_signals.get_labels()

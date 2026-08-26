@@ -1,3 +1,7 @@
+"""Module implementing autoregressive (AR) coefficient extraction.
+
+Fits an AR model to each channel and returns the coefficients as features.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
 )
@@ -9,6 +13,7 @@ from statsmodels.tsa.ar_model import AutoReg
 
 class NpSignalExtractorAr(NPSignalExtractor):
 
+    """Extractor that computes autoregressive (AR) model coefficients."""
     def __init__(
         self,
         sanitize_output=False,
@@ -26,6 +31,7 @@ class NpSignalExtractorAr(NPSignalExtractor):
         self.ar_args = ar_args
 
     def fit(self, X, fs=1000):
+        """Fit the transformer to the given data."""
         return super().fit(X)
 
     def _transform(self, X):
@@ -44,4 +50,5 @@ class NpSignalExtractorAr(NPSignalExtractor):
         return attribs
 
     def attribs_per_column(self):
+        """Return the number of features extracted per channel."""
         return self.lags + 1

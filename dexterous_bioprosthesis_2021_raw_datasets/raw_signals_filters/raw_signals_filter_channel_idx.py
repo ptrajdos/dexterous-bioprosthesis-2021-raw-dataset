@@ -1,3 +1,7 @@
+"""Module implementing channel selection by index.
+
+Selects a subset of signal channels based on provided column indices.
+"""
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import \
     RawSignal
@@ -9,6 +13,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterChannelIdx(RawSignalsFilter):
 
+    """Filter that selects signal channels by column index."""
     def __init__(self,indices_list) -> None:
         super().__init__()
         self.inidices_list = indices_list
@@ -20,6 +25,7 @@ class RawSignalsFilterChannelIdx(RawSignalsFilter):
         return super().fit(raw_signals, y)
 
     def transform(self,raw_signals:RawSignals):
+        """Transform the given data."""
         self._check_fitted()
         filtered_signals = RawSignals()
         for raw_signal in raw_signals:

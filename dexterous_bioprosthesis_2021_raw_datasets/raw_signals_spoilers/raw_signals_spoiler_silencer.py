@@ -1,3 +1,7 @@
+"""Module implementing channel silencing distortion.
+
+Sets selected signal channels to zero, simulating sensor failure.
+"""
 from copy import deepcopy
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
@@ -8,6 +12,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 class RawSignalsSpoilerSilencer(RawSignalsSpoiler):
 
+    """Spoiler that silences selected signal channels."""
     def __init__(
         self,
         channels_spoiled_frac=0.1,
@@ -17,6 +22,7 @@ class RawSignalsSpoilerSilencer(RawSignalsSpoiler):
         super().__init__(channels_spoiled_frac, snr, random_state)
 
     def transform(self, raw_signals: RawSignals):
+        """Transform the given data."""
         self._check_is_fitted()
         copied_signals = deepcopy(raw_signals)
 

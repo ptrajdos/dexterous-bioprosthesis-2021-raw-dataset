@@ -1,3 +1,7 @@
+"""Module implementing temporal moment extraction.
+
+Computes configurable-order temporal moments of signal energy.
+"""
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
 )
@@ -7,6 +11,7 @@ import numpy as np
 
 class NpSignalExtractorTemporalMoment(NPSignalExtractor):
 
+    """Extractor that computes configurable-order temporal moments."""
     def __init__(
         self,
         sanitize_output=False,
@@ -76,4 +81,5 @@ class NpSignalExtractorTemporalMoment(NPSignalExtractor):
         )
 
     def attribs_per_column(self):
+        """Return the number of features extracted per channel."""
         return 1

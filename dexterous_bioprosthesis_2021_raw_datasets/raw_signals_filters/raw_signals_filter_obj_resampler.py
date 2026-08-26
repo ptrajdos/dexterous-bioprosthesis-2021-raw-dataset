@@ -1,3 +1,8 @@
+"""Module implementing signal resampling to a target length.
+
+Resamples each signal to a specified number of samples using
+:func:`scipy.signal.resample`.
+"""
 from typing import Optional, Union
 
 from numpy.random import RandomState
@@ -11,6 +16,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterObjResampler(RawSignalsFilter):
 
+    """Filter that resamples each signal to a target number of samples."""
     def __init__(
         self,
         resampling_rate: float = 1.0,
