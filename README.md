@@ -105,6 +105,16 @@ This creates a virtual environment, installs the package in editable mode along 
 | `make clean_pypackages` | Removes the `pypackages` marker file. |
 | `make clean_tox` | Removes the `.tox` directory. |
 
+## Documentation
+
+Full Sphinx-generated documentation (API reference, UML diagrams, architecture diagrams) is available in the `docs_sphinx/` directory. To build and view it:
+
+```bash
+make sphinx
+```
+
+Then open `docs_sphinx/index.html` in your browser — it redirects to the built documentation at `docs_sphinx/_build/index.html`.
+
 ## Troubleshooting
 
 ### Missing `libffi`
