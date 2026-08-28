@@ -92,6 +92,7 @@ This creates a virtual environment, installs the package in editable mode along 
 | `make test_parallel` | Runs tests in parallel using `unittest-parallel` with coverage. |
 | `make profile` | Runs tests with `pytest` using profiling and coverage reporting. |
 | `make docs` | Generates HTML documentation using `pdoc3` and UML diagrams. |
+| `make sphinx` | Generates HTML documentation using Sphinx with autodoc, UML integration via `sphinx-pyreverse`, and Read the Docs theme. Output in `docs_sphinx/_build`. |
 | `make uml` | Generates UML class and package diagrams (SVG) using `pyreverse` and `graphviz`. |
 | `make static_check` | Runs all static analysis tools (`flake8`, `mypy`, `pylint`). |
 | `make flake8` | Runs `flake8` linter. Output saved to `static_analysis/flake8.log`. |

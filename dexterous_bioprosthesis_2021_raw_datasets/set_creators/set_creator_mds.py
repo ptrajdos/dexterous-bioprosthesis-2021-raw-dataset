@@ -58,17 +58,19 @@ def euclid_flatten(distance_matrix, keepdims=False, axis=0):
 class SetCreatorMDS(SetCreator):
     """
     Creates the set using DTW and then MDS approach.
-    Implementation inspired by:
-    @inproceedings{Wang2013,
-       doi = {10.1109/sibgrapi.2013.11},
-       url = {https://doi.org/10.1109/sibgrapi.2013.11},
-       year = {2013},
-       month = aug,
-       publisher = {{IEEE}},
-       author = {Quan Wang and Kim L. Boyer},
-       title = {Feature Learning by Multidimensional Scaling and Its Applications in Object Recognition},
-       booktitle = {2013 {XXVI} Conference on Graphics,  Patterns and Images}
-       }
+
+    Implementation inspired by::
+
+        @inproceedings{Wang2013,
+           doi = {10.1109/sibgrapi.2013.11},
+           url = {https://doi.org/10.1109/sibgrapi.2013.11},
+           year = {2013},
+           month = aug,
+           publisher = {{IEEE}},
+           author = {Quan Wang and Kim L. Boyer},
+           title = {Feature Learning by Multidimensional Scaling and Its Applications in Object Recognition},
+           booktitle = {2013 {XXVI} Conference on Graphics,  Patterns and Images}
+           }
     """
 
     def __init__(

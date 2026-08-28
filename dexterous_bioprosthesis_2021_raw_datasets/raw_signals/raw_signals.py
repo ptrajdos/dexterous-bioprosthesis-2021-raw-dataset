@@ -149,8 +149,8 @@ class RawSignals(IRawSignals):
         Set labels for all raw_signals.
 
         Arguments:
-        labels -- iterable with new labels. Must contain exact the same number of values as the number of
-            objects in the set.
+            labels -- iterable with new labels. Must contain exact the same
+                number of values as the number of objects in the set.
         """
         if len(labels) != len(self):
             raise ValueError("Wrong number of labels.")
