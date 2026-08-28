@@ -6,6 +6,7 @@ Dexterous Bioprosthesis 2021 Raw Datasets
    :caption: Contents
 
    readme
+   architecture
    uml
    api/modules
 

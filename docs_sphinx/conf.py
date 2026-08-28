@@ -21,8 +21,10 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.inheritance_diagram',
+    'sphinx.ext.graphviz',
     'sphinx_pyreverse',
     'myst_parser',
+    'sphinxcontrib.mermaid',
 ]
 
 source_suffix = {
@@ -49,3 +51,11 @@ napoleon_numpy_docstring = True
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 html_css_files = ['uml_zoom.css']
+
+# -- Options for Mermaid ------------------------------------------------------
+mermaid_version = 'latest'
+mermaid_init_js = 'mermaid.initialize({startOnLoad:true});'
+
+# -- Options for Graphviz -----------------------------------------------------
+graphviz_output_format = 'svg'
+inheritance_graph_attrs = dict(rankdir='LR', size='"12.0, 8.0"')
