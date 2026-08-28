@@ -25,6 +25,7 @@ class RawSignalsAugumenterGainAll(RawSignalsAugumenterBase):
         append_original: Whether to include original signals in the output.
         n_jobs: Number of parallel jobs.
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -52,6 +53,7 @@ class RawSignalsAugumenterGainAll(RawSignalsAugumenterBase):
 
         Returns:
             List of gain-augmented signals.
+
         """
         sig_list = []
 

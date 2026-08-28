@@ -15,6 +15,7 @@ import random
 
 class RawSignalsCreatorZeros(RawSignalsCreator):
     """Creator that generates zero-filled synthetic signals."""
+
     def __init__(
         self,
         set_size: int = 30,

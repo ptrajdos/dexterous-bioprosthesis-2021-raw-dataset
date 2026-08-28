@@ -12,8 +12,8 @@ from statsmodels.tsa.ar_model import AutoReg
 
 
 class NpSignalExtractorAr(NPSignalExtractor):
-
     """Extractor that computes autoregressive (AR) model coefficients."""
+
     def __init__(
         self,
         sanitize_output=False,

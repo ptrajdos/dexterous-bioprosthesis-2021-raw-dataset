@@ -6,8 +6,7 @@ collection implementations must satisfy.
 import abc
 
 class IRawSignals(abc.ABC):
-    """
-    Interface for raw signals dataset.
+    """Interface for raw signals dataset.
     """
 
     def __iter__(self):

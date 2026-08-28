@@ -26,8 +26,7 @@ from fastdtw import fastdtw
 
 
 class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
-    """
-    Calculates the pairwise distance matrix using fast dtw approach.
+    """Calculates the pairwise distance matrix using fast dtw approach.
     According to:
     Stan Salvador, and Philip Chan. “FastDTW: Toward accurate dynamic time warping in linear time and space.” Intelligent Data Analysis 11.5 (2007): 561-580.
     """
@@ -35,10 +34,10 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
     def __init__(
         self, dtw_options: dict = {"dist": 2}, tqdm_disable=True, n_jobs=None
     ) -> None:
-        """
-        Arguments:
+        """Arguments:
         ---------
         dtw_options -- options for the dtw algorithm (as a dict) or an empty dict
+
         """
         super().__init__()
         self.dtw_options = self._filter_dtw_options(dtw_options)
@@ -58,6 +57,7 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
 
         Returns:
             Array of per-channel averaged FastDTW distances.
+
         """
         signal_a = raw_signal_a.signal
         signal_b = raw_signal_b.signal
@@ -90,8 +90,8 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
 
         Returns:
             3-D numpy array of shape ``(n_channels, n_signals, n_signals)``.
-        """
 
+        """
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
         distance_matrix = np.zeros((num_channels, num_signals, num_signals))
@@ -129,8 +129,8 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
 
         Returns:
             2-D numpy array of shape ``(n_channels, n_signals)``.
-        """
 
+        """
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
 
@@ -168,8 +168,8 @@ class DistanceMatrixCalculatorDTWFast(DistanceMatrixCalculator):
 
         Returns:
             3-D numpy array of shape ``(n_channels, n_signals_1, n_signals_2)``.
-        """
 
+        """
         num_signals_1 = len(raw_signals_1)
         num_signals_2 = len(raw_signals_2)
         num_channels = len(raw_signals_1[0].channel_names)

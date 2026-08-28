@@ -14,6 +14,7 @@ import random
 
 class RawSignalsCreatorWhiteNoise(RawSignalsCreator):
     """Creator that generates synthetic white noise signals."""
+
     def __init__(
         self,
         set_size: int = 30,

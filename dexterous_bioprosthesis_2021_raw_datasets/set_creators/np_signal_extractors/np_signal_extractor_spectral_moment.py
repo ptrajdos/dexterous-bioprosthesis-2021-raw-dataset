@@ -10,8 +10,8 @@ import numpy as np
 
 
 class NpSignalExtractorSpectralMoment(NpSignalExtractorSpectral):
-
     """Extractor that computes configurable-order spectral moments."""
+
     def __init__(
         self,
         sanitize_output=False,

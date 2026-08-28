@@ -13,18 +13,18 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 
 
 class RawSignalsFilter(abc.ABC):
-    """
-    Class that represents an interface for filters
+    """Class that represents an interface for filters
     """
 
     @abc.abstractmethod
     def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsFilter:
-        """
-        Fits the filter.
+        """Fits the filter.
+
         Arguments:
         ---------
         raw_signals --- An object of RawSignals class to be fitted with
         y --- not used, only for compatibility with sklearn pipeline
+
         """
         self._is_fitted = True
         return self
@@ -38,20 +38,20 @@ class RawSignalsFilter(abc.ABC):
 
     @abc.abstractmethod
     def transform(self, raw_signals: RawSignals) -> RawSignals:
-        """
-        Transforms the RawSignals object
+        """Transforms the RawSignals object
+
         Arguments:
         ---------
         raw_signals --- RawSignals object to be filtered
 
         Returns:
-        --------
+        -------
         RawSignals object
+
         """
 
     def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
-        """
-        Fits and then transforms the given RawSignals object
+        """Fits and then transforms the given RawSignals object
 
         Arguments:
         ---------
@@ -59,8 +59,9 @@ class RawSignalsFilter(abc.ABC):
         y --- not used, only for compatibility with sklearn pipeline
 
         Returns:
-        --------
+        -------
         RawSignals object
+
         """
         self.fit(raw_signals, y)
         return self.transform(raw_signals)

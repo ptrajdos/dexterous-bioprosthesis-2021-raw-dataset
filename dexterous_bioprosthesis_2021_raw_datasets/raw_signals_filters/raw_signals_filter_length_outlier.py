@@ -14,8 +14,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterLengthOutlier(RawSignalsFilter):
-    """
-    Filters out raw signals objects with outlying lengths (number of samples)
+    """Filters out raw signals objects with outlying lengths (number of samples)
     """
 
     def fit(self, raw_signals: RawSignals, y=None):

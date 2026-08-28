@@ -18,15 +18,14 @@ from dtw import dtw
 
 
 class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
-    """
-    Calculates the pairwise distance matrix using dtw approach.
+    """Calculates the pairwise distance matrix using dtw approach.
     """
 
     def __init__(self, dtw_options: dict = {}, tqdm_disable=True, n_jobs=None) -> None:
-        """
-        Arguments:
+        """Arguments:
         ---------
         dtw_options -- options for the dtw algorithm (as a dict) or an empty dict
+
         """
         super().__init__()
         self.dtw_options = self._filter_dtw_options(dtw_options)
@@ -48,6 +47,7 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
 
         Returns:
             Array of per-channel DTW distances.
+
         """
         signal_a = raw_signal_a.signal
         signal_b = raw_signal_b.signal
@@ -85,8 +85,8 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
 
         Returns:
             3-D numpy array of shape ``(n_channels, n_signals, n_signals)``.
-        """
 
+        """
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
 
@@ -125,8 +125,8 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
 
         Returns:
             2-D numpy array of shape ``(n_channels, n_signals)``.
-        """
 
+        """
         num_signals = len(raw_signals)
         num_channels = len(raw_signals[0].channel_names)
 
@@ -164,8 +164,8 @@ class DistanceMatrixCalculatorDTW(DistanceMatrixCalculator):
 
         Returns:
             3-D numpy array of shape ``(n_channels, n_signals_1, n_signals_2)``.
-        """
 
+        """
         num_signals_1 = len(raw_signals_1)
         num_signals_2 = len(raw_signals_2)
         num_channels = len(raw_signals_1[0].channel_names)

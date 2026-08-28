@@ -41,6 +41,7 @@ class RawSignalsAugumenterDummy(RawSignalsAugumenter):
 
         Returns:
             The fitted augmenter instance.
+
         """
         self._is_fitted = True
         return self
@@ -53,6 +54,7 @@ class RawSignalsAugumenterDummy(RawSignalsAugumenter):
 
         Returns:
             Deep copy of the input :class:`RawSignals`.
+
         """
         self._check_fittesness()
         return deepcopy(raw_signals)
@@ -66,6 +68,7 @@ class RawSignalsAugumenterDummy(RawSignalsAugumenter):
 
         Returns:
             Deep copy of the input :class:`RawSignals`.
+
         """
         self.fit(raw_signals, y)
         return self.transform(raw_signals)
@@ -79,6 +82,7 @@ class RawSignalsAugumenterDummy(RawSignalsAugumenter):
 
         Returns:
             A new :class:`RawSignals` with ``n_samples`` copied signals.
+
         """
         self._check_fittesness()
         n_signals = len(raw_signals)

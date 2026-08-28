@@ -8,6 +8,7 @@ from tqdm import tqdm
 
 class ProgressParallel(Parallel):
     """Parallel executor with optional tqdm progress bar reporting."""
+
     def __init__(self, use_tqdm=True, total=None,leave=False,desc=None,  *args, **kwargs):
         self._use_tqdm = use_tqdm
         self._total = total

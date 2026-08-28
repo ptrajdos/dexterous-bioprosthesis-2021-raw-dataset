@@ -10,8 +10,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_wt_abstr
 
 
 class SetCreatorDWT(SetCreatorWTAbstract):
-
     """Set creator using Discrete Wavelet Transform decomposition."""
+
     def _decompose_signal(self, signal, fs=1000):
         wavelet = pywt.Wavelet(self.wavelet_name)
         coeffs = pywt.wavedec(signal, wavelet=wavelet, axis=0, level=self.num_levels)

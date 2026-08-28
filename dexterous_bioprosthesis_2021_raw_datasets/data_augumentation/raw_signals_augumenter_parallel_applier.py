@@ -27,6 +27,7 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
         augumenter_list: List of :class:`RawSignalsAugumenter` instances to
             apply. If ``None``, a default list is used.
         append_original: Whether to include original signals in the output.
+
     """
 
     def __init__(self, augumenter_list=None, append_original=True) -> None:
@@ -55,8 +56,7 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
             )
 
     def fit(self, raw_signals: RawSignals, y=None):
-        """
-        Intentionally does nothing
+        """Intentionally does nothing
         """
         self._prepare_effective_augumenter_list()
 
@@ -72,6 +72,7 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
 
         Returns:
             Combined augmented :class:`RawSignals`.
+
         """
         new_signals = raw_signals.initialize_empty()
 
@@ -88,6 +89,7 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
 
         Returns:
             Augmented :class:`RawSignals`, optionally including originals.
+
         """
         self._check_fitted()
 
@@ -107,6 +109,7 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
 
         Returns:
             Augmented :class:`RawSignals`.
+
         """
         self.fit(raw_signals, y)
         return self.transform(raw_signals)
@@ -120,6 +123,7 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
 
         Returns:
             A new :class:`RawSignals` with ``n_samples`` augmented signals.
+
         """
         self._check_fitted()
         

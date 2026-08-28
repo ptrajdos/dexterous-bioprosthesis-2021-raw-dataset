@@ -15,8 +15,8 @@ from sktime.libs.vmdpy import VMD
 
 
 class SetCreatorVMD(SetCreator):
-
     """Set creator using Variational Mode Decomposition."""
+
     def __init__(
         self, alpha=2000, tau=0.0, K=3, DC=0, init=1, tol=1e-7, extractors=[]
     ) -> None:
@@ -60,11 +60,12 @@ class SetCreatorVMD(SetCreator):
         return self
 
     def _decompose_signal(self, signal, fs=1000):
-        """
-        Generates decomposition coefficients of the signal.
+        """Generates decomposition coefficients of the signal.
 
         Returns
+        -------
         list of tuples (decomposition coefficients, sampling frequency)
+
         """
         n_rows, n_cols = signal.shape
 
@@ -89,7 +90,6 @@ class SetCreatorVMD(SetCreator):
         return results
 
     def transform(self, raw_signals: RawSignals):
-
         """Transform the given data."""
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")

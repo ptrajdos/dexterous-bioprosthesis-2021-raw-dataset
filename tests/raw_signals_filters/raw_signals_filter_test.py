@@ -18,8 +18,7 @@ class RawSignalsFilterTest(unittest.TestCase):
 
     @abc.abstractmethod
     def get_filters(self):
-        """
-        gets the filter to be tested
+        """Gets the filter to be tested
         """
         raise unittest.SkipTest("Skipping")
 

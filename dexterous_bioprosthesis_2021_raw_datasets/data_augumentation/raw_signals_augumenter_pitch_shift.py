@@ -36,6 +36,7 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenterBase):
         append_original: Whether to include original signals in the output.
         n_jobs: Number of parallel jobs.
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -63,6 +64,7 @@ class RawSignalsAugumenterPitchShift(RawSignalsAugumenterBase):
 
         Returns:
             List of pitch-shifted signals.
+
         """
         sample_rate = raw_signal.sample_rate
         sig_list = []

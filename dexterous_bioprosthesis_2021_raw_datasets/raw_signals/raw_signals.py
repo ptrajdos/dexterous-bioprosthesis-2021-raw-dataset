@@ -18,13 +18,11 @@ from .raw_signal import RawSignal
 
 
 class RawSignals(IRawSignals):
-    """
-    Class represents a dataset of raw signals
+    """Class represents a dataset of raw signals
     """
 
     def __init__(self, raw_signal_list=None, sample_rate=1000) -> None:
-        """
-        Creates a new instance of the class
+        """Creates a new instance of the class
         """
         self.raw_signals_list = list()
         self.sample_rate = sample_rate
@@ -78,11 +76,10 @@ class RawSignals(IRawSignals):
         )
 
     def append(self, other: RawSignal):
-        """
-        Appends another RawSignal object to the dataset
+        """Appends another RawSignal object to the dataset
 
         Arguments:
-        ----------
+        ---------
         other -- object to add
 
         Raises:
@@ -103,8 +100,7 @@ class RawSignals(IRawSignals):
         self.raw_signals_list.append(other)
 
     def __iadd__(self, other) -> RawSignals:
-        """
-        Operator for += on an another RawSignals object
+        """Operator for += on an another RawSignals object
         """
         for it in other:
             self.append(it)
@@ -125,32 +121,28 @@ class RawSignals(IRawSignals):
         return self.raw_signals_list == __o.raw_signals_list  # type: ignore
 
     def get_labels(self) -> np.ndarray:
-        """
-        Returns:
+        """Returns
         -------
-
         List of labels of stored signals
-        """
 
+        """
         return np.asanyarray([rs.get_label() for rs in self.raw_signals_list])
 
     def get_timestamps(self) -> np.ndarray:
-        """
-        Returns:
-        --------
-
+        """Returns
+        -------
         List of timestamps of the stored signals.
 
         """
         return np.asanyarray([rs.get_timestamp() for rs in self.raw_signals_list])
 
     def set_labels(self, labels):
-        """
-        Set labels for all raw_signals.
+        """Set labels for all raw_signals.
 
         Arguments:
             labels -- iterable with new labels. Must contain exact the same
                 number of values as the number of objects in the set.
+
         """
         if len(labels) != len(self):
             raise ValueError("Wrong number of labels.")
@@ -159,12 +151,12 @@ class RawSignals(IRawSignals):
             sig.set_label(label)
 
     def initialize_empty(self) -> RawSignals:
-        """
-        Initializes new, empty RawSignals object.
+        """Initializes new, empty RawSignals object.
         Copy attributes of the original object.
 
         Returns:
         RawSignals with empty signals list
+
         """
         return RawSignals(raw_signal_list=[], sample_rate=self.sample_rate)
 
@@ -180,13 +172,12 @@ class RawSignals(IRawSignals):
             sig.set_sample_rate(self.sample_rate)
 
     def to_numpy(self) -> np.ndarray:
-        """
-        Returns the raw_signals object as a numpy array.
+        """Returns the raw_signals object as a numpy array.
         Return tslearn compatible data
         Assuming that all raw_signal object have the same dimension.
 
-        Returns:
-        ---------
+        Returns
+        -------
         numpy array of shape (n_objects, n_samples, n_channels)
 
         """
@@ -194,12 +185,11 @@ class RawSignals(IRawSignals):
         return np_array
 
     def to_numpy_concat(self) -> np.ndarray:
-        """
-        Returns the raw_signals object as a concatenated numpy array.
+        """Returns the raw_signals object as a concatenated numpy array.
         Assuming that all raw_signal object have the same number of channels
 
-        Returns:
-        ---------
+        Returns
+        -------
         numpy array of shape (sum(n_samples), n_channels)
 
         """

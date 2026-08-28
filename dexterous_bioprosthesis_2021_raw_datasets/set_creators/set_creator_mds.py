@@ -56,8 +56,7 @@ def euclid_flatten(distance_matrix, keepdims=False, axis=0):
 
 
 class SetCreatorMDS(SetCreator):
-    """
-    Creates the set using DTW and then MDS approach.
+    """Creates the set using DTW and then MDS approach.
 
     Implementation inspired by::
 
@@ -85,8 +84,7 @@ class SetCreatorMDS(SetCreator):
         find_best: bool = False,
         step: int = 1,
     ) -> None:
-        """
-        Arguments:
+        """Arguments:
         ---------
         distance_matrix_calc: DistanceMatrixCalculator -- an object to calculate the distance matrix
         mds_options: dict -- options for the mds algorithm (as a dict) or an empty dict
@@ -96,6 +94,7 @@ class SetCreatorMDS(SetCreator):
         n_attr: int -- number of attributes to select. Max number of attributes to select if find_best is True
         find_best: bool -- Decides whether perform searching for the best number of attributes
         step: int -- step for attribute search
+
         """
         super().__init__()
         self.mds_options = self._filter_mds_options(mds_options)
@@ -220,7 +219,6 @@ class SetCreatorMDS(SetCreator):
         return X, extracted_objs_classes, extracted_objs_timestamps
 
     def fit_transform(self, raw_signals: RawSignals, y=None)->tuple[np.ndarray, np.ndarray, np.ndarray]:
-
         """Fit and then transform the given data."""
         self.fit(raw_signals)
 
@@ -265,12 +263,10 @@ class SetCreatorMDS(SetCreator):
             offset += n_channel_attribs
 
     def _distance_raw_signal_training_data(self, raw_signal: RawSignal):
-        """
-        Return distance from the raw signal to all raw signals in the training set
+        """Return distance from the raw signal to all raw signals in the training set
 
         Arguments:
         ---------
-
         raw_signal: RawSignal -- raw signal to calculate the distances
 
         Returns:
@@ -279,7 +275,6 @@ class SetCreatorMDS(SetCreator):
         Distances may be vectors
 
         """
-
         distances = []
 
         for t_sig_id, training_signal in enumerate(self.raw_signals_set):
@@ -295,18 +290,17 @@ class SetCreatorMDS(SetCreator):
         return dist_matrix
 
     def _calculate_distances_to_training_data(self, raw_signals: RawSignals):
-        """
-        Calculates distances from raw signals to all points in the training dataset
+        """Calculates distances from raw signals to all points in the training dataset
 
         Arguments:
         ---------
         raw_signals: RawSignals -- distance to calculate the distances.
 
         Returns:
-        --------
+        -------
         Numpy array containing the distances. shape (len(raw_signals), len(training_data))
-        """
 
+        """
         signal_distances_list = ProgressParallel(
             n_jobs=self.n_jobs,
             use_tqdm=not self.tqdm_disable,
@@ -321,8 +315,7 @@ class SetCreatorMDS(SetCreator):
         return signal_distances_array
 
     def _new_X_vec(self, new_to_train_distances, n_idx):
-        """
-        Returns a set of metric attributes.
+        """Returns a set of metric attributes.
 
         Arguments:
         ---------
@@ -334,7 +327,6 @@ class SetCreatorMDS(SetCreator):
         A vector containing metric representation of a given raw_signal
 
         """
-
         n_slices = len(self.channel_selected_attribs)
         solution = []
 
@@ -347,8 +339,7 @@ class SetCreatorMDS(SetCreator):
             slice_offset += n_sel
 
             def fitness_function(solution, solution_idx):
-                """
-                Fitness function for the genetic algirithm
+                """Fitness function for the genetic algirithm
                 """
                 s_sum = 0
                 for i in range(len(self.raw_signals_set)):
@@ -428,6 +419,5 @@ class SetCreatorMDS(SetCreator):
         return tr_dataset, extracted_objs_classes, extracted_objs_timestamps
 
     def get_channel_attribs_indices(self):
-
         """Return the feature indices grouped by channel."""
         return self.attrib_indices_list

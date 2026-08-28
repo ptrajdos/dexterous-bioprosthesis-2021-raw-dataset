@@ -21,6 +21,7 @@ class WTAugDWT(WTAugBase):
         transformations: Coefficient transformations to apply.
         random_state: Random seed for reproducibility.
         mode: Signal extension mode for DWT (e.g. ``'symmetric'``).
+
     """
 
     def __init__(
@@ -49,6 +50,7 @@ class WTAugDWT(WTAugBase):
 
         Returns:
             List of wavelet decomposition coefficients.
+
         """
         np_sig = raw_signal.to_numpy()
         max_level = dwt_max_level(len(np_sig), wavelet)
@@ -68,6 +70,7 @@ class WTAugDWT(WTAugBase):
 
         Returns:
             Reconstructed :class:`RawSignal`.
+
         """
         new_signal = deepcopy(raw_signal)
         rec_sig = waverec(coeffs=decomps, wavelet=wavelet, axis=0, mode=self.mode)

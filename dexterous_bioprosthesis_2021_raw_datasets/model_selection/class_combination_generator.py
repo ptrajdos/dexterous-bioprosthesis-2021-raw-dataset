@@ -15,13 +15,15 @@ class ClassCombinationGenerator:
     Given a label vector, produces every possible subset of
     ``num_to_select`` classes and yields the corresponding sample indices.
     """
+
     def __init__(self, num_to_select:int = 2) -> None:
-        """
-        Generates sets with given number of classes. 
+        """Generates sets with given number of classes.
         Every possible combination of classes is generated.
+
         Arguments:
         ---------
         num_to_select: int -- the number of class to be selected in each subset
+
         """
         self.num_to_select = num_to_select
         self.y = None
@@ -33,6 +35,7 @@ class ClassCombinationGenerator:
         Args:
             X: Feature matrix (not used, present for API compatibility).
             y: Label vector.
+
         """
         self.y = y
         n_classes = len(np.unique(y))
@@ -47,8 +50,8 @@ class ClassCombinationGenerator:
 
         Raises:
             NotFittedError: If :meth:`fit` has not been called.
+
         """
-        
         if self.y is None:
             raise NotFittedError("Model is not fitted")
 

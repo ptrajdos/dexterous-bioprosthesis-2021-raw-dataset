@@ -9,6 +9,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_dummy im
 
 class SetCreatorTransformerWrapper:
     """Wrapper adapting a SetCreator to the scikit-learn transformer interface."""
+
     def __init__(self, set_creator:SetCreator=SetCreatorDummy()) -> None:
         self.set_creator = set_creator
 
@@ -24,7 +25,6 @@ class SetCreatorTransformerWrapper:
         return Xt
     
     def fit_transform(self, X, y=None):
-
         """Fit and then transform the given data."""
         Xt, yt, t = self.set_creator.fit_transform(X, y)
         return Xt

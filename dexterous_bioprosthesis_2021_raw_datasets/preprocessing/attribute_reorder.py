@@ -14,7 +14,6 @@ class AttributeReorder(BaseEstimator, TransformerMixin):
     On :meth:`transform`, columns are reordered according to that permutation.
     Supports both NumPy arrays and pandas DataFrames.
     """
-    
 
     def fit(self, X, y=None):
         """Generate a random column permutation.
@@ -25,6 +24,7 @@ class AttributeReorder(BaseEstimator, TransformerMixin):
 
         Returns:
             The fitted transformer.
+
         """
         n_attribs = X.shape[1]
         self.indices = np.arange(n_attribs)
@@ -41,8 +41,8 @@ class AttributeReorder(BaseEstimator, TransformerMixin):
 
         Returns:
             Data with reordered columns.
-        """
 
+        """
         if isinstance(X, pd.DataFrame):
             return X.iloc[:,self.indices]
         

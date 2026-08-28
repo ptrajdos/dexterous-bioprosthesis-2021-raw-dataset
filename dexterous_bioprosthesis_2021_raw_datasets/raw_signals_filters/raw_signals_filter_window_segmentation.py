@@ -10,15 +10,14 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterWindowSegmentation(RawSignalsFilter):
-
     """Filter that segments signals into fixed-length windows."""
+
     def __init__(self, window_length: int, overlap: int) -> None:
-        """
-        Segment the signal using sliding window.
+        """Segment the signal using sliding window.
         New signals appear in the object
 
         Arguments:
-        ----------
+        ---------
         window_length:int --  window length in samples
         overlap:int -- overlap in samples
 
@@ -28,14 +27,12 @@ class RawSignalsFilterWindowSegmentation(RawSignalsFilter):
         self.overlap = overlap
 
     def fit(self, raw_signals: RawSignals, y=None):
-        """
-        Does nothing
+        """Does nothing
         """
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
-        """
-        Apply windowed segmentation with overlap
+        """Apply windowed segmentation with overlap
         """
         self._check_fitted()
         new_signals = RawSignals(sample_rate=raw_signals.sample_rate)

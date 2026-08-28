@@ -10,8 +10,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterMAV2WindowFilter(RawSignalsFilterWindowFilter):
-
     """Modified Moving Average (MAV2) window filter with trapezoidal weights."""
+
     def __init__(self, window_length: int = 100) -> None:
         super().__init__(window_length)
 

@@ -10,8 +10,7 @@ class RelabelerTest(unittest.TestCase):
             raise  unittest.SkipTest("Skipping")
         
     def get_relabelers(self):
-        """
-        gets the spoilers to be tested
+        """Gets the spoilers to be tested
         """
         raise  unittest.SkipTest("Skipping")
     

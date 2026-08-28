@@ -19,7 +19,9 @@ class OutlierGeneratorUniform(OutlierGenerator):
           outlier_label: Label value for generated outliers.
           extend_factor: Fraction by which to extend column min/max range.
           element_fraction: Fraction of input rows to generate (minimum 1).
+
       """
+
       def __init__(self, outlier_label=-1, extend_factor=0.1, element_fraction=1.0 ) -> None:
          super().__init__(outlier_label=outlier_label)
          self.extend_factor  = extend_factor
@@ -36,6 +38,7 @@ class OutlierGeneratorUniform(OutlierGenerator):
 
          Returns:
              The fitted generator.
+
          """
          super().fit(X,y)
 
@@ -56,6 +59,7 @@ class OutlierGeneratorUniform(OutlierGenerator):
 
          Returns:
              Tuple of (outlier feature array, outlier label array).
+
          """
          super().generate()
          out = np.zeros((self.n_rows_, self.n_cols_))

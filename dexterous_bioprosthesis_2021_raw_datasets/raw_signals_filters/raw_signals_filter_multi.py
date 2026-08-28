@@ -14,6 +14,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 class RawSignalsFilterMulti(RawSignalsFilter):
     """Parallel multi-filter combiner that concatenates filter outputs."""
+
     def __init__(self, filter_list=[RawSignalsFilterAllPass()]) -> None:
         super().__init__()
 
@@ -24,7 +25,6 @@ class RawSignalsFilterMulti(RawSignalsFilter):
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:
-
         """Transform the given data."""
         self._check_fitted()
 

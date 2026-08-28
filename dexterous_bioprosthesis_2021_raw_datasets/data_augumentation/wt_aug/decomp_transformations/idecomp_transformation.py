@@ -15,14 +15,12 @@ class IDecompTransformation(abc.ABC):
 
     @abc.abstractmethod
     def fit(self)->IDecompTransformation:
-        """
-        Just for initialization
+        """Just for initialization
         """
 
     @abc.abstractmethod
     def transform(self, decompositions:list)->list:
-        """
-        Transforms decomposition level
+        """Transforms decomposition level
 
         """
 
@@ -34,5 +32,6 @@ class IDecompTransformation(abc.ABC):
 
         Returns:
             Transformed list of coefficient arrays.
+
         """
         return self.fit().transform(decompositions)

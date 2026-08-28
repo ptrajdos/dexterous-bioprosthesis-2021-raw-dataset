@@ -11,8 +11,8 @@ import itertools
 
 
 class SetCreatorSWT(SetCreatorWTAbstract):
-
     """Set creator using Stationary Wavelet Transform decomposition."""
+
     def __init__(
         self, wavelet_name="db1", num_levels=2, extractors=[], norm: bool = False
     ) -> None:

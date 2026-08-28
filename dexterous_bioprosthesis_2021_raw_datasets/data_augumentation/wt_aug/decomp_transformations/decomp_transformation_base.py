@@ -20,6 +20,7 @@ class DecompTransformationBase(IDecompTransformation):
 
     Args:
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(self, random_state=10) -> None:
@@ -37,6 +38,7 @@ class DecompTransformationBase(IDecompTransformation):
 
         Returns:
             The fitted transformation instance.
+
         """
         self._random_state = check_random_state(self.random_state)
         self._is_fitted = True

@@ -29,6 +29,7 @@ class RawSignalsAugumenterTimeJiter(RawSignalsAugumenterBase):
         append_original: Whether to include original signals in the output.
         n_jobs: Number of parallel jobs.
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -61,6 +62,7 @@ class RawSignalsAugumenterTimeJiter(RawSignalsAugumenterBase):
 
         Returns:
             List of time-jittered signals.
+
         """
         sig_list = []
 

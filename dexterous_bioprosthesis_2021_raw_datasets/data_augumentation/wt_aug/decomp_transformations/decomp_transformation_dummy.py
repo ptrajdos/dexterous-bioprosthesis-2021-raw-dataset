@@ -20,6 +20,7 @@ class DecompTransformationDummy(DecompTransformationBase):
 
         Returns:
             Deep copy of the input coefficients.
+
         """
         self._check_if_fitted()
         return deepcopy(decompositions)

@@ -11,19 +11,21 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 import numpy as np
 
 class NpSignalExtractorSpectral(NPSignalExtractor, ABC):
-
     """Base class for spectral feature extractors with shared PSD computation."""
 
     @staticmethod
     def _calculate_psd(X, fs=1.0):
         """Calculate the Power Spectral Density (PSD) of the signal using FFT.
 
-        Parameters:
+        Parameters
+        ----------
         X (np.ndarray): Input signal of shape (n_samples, n_channels).
 
-        Returns:
+        Returns
+        -------
         psd (np.ndarray): Power Spectral Density of shape (n_freqs, n_channels).
         freqs (np.ndarray): Corresponding frequency bins of shape (n_freqs,).
+
         """
         n_samples = X.shape[0]
         fft_vals = np.fft.rfft(X, axis=0)

@@ -175,8 +175,7 @@ def read_signals_from_dirs(
     file_sorting_key=lambda x: str(x),
     dtype=np.double,
 ):
-    """
-    Reads raw signals from the directory structure.
+    """Reads raw signals from the directory structure.
     Return tuple of accepted and rejected signals
     """
     sample_rate_file_path  = os.path.join(input_dir, "sample_rate.txt")
@@ -213,8 +212,7 @@ def read_signals_from_dirs(
 
 
 def _read_class_dir(class_dir, file_order_key=str_sort_key, dtype=np.double):
-    """
-    Read objects from class-specific directory
+    """Read objects from class-specific directory
     Arguments:
      class_dir -- class specific directories. It contains csv and dat files
     """
@@ -272,8 +270,7 @@ def _read_signals_from_dirs_internal(
     file_order_key=str_sort_key,
     dtype=np.double,
 ):
-    """
-    Read the raw dataset from the directory structure.
+    """Read the raw dataset from the directory structure.
     """
     sorted_class_dirs = sorted(
         [
@@ -308,7 +305,6 @@ def _read_signals_from_dirs_internal(
 
 
 def save_signals_to_dirs(raw_signals: RawSignals, output_directory):
-
     """Save raw signals to a directory structure."""
     os.makedirs(output_directory, exist_ok=True)
 

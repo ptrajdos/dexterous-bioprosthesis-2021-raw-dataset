@@ -11,8 +11,8 @@ import numpy as np
 
 
 class SetCreatorConcatenated(SetCreator):
-
     """Set creator that concatenates features from multiple sub-creators."""
+
     def __init__(self, creators) -> None:
         super().__init__()
 
@@ -20,7 +20,6 @@ class SetCreatorConcatenated(SetCreator):
         self.channel_selected_attribs = None # List containing number of attributes for each channel
 
     def fit(self, raw_signals: RawSignals, y=None):
-        
         """Fit the transformer to the given data."""
         for creator in self.creators:
             creator.fit(raw_signals)

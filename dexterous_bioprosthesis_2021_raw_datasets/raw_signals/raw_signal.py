@@ -10,21 +10,21 @@ from collections.abc import Iterable
 from collections.abc import Collection
 import numbers
 class RawSignal():
-    """
-    Class represents raw signal (in the time domain).
+    """Class represents raw signal (in the time domain).
     The signal may contain single or multiple channels.
     """
-    def __init__(self, signal, object_class=np.nan,channel_names=None, timestamp=0, sample_rate = 1000):
-        """
-         Initializaes the class instance
-         Arguments:
-         ----------
-         signal -- numpy array samples (rows) x channels (columns)
-         object_class -- int/string represents class
-         timestamp -- unix timestamp or zero
-         sample_rate -- sample rate of the signal
-        """
 
+    def __init__(self, signal, object_class=np.nan,channel_names=None, timestamp=0, sample_rate = 1000):
+        """Initializaes the class instance
+
+        Arguments:
+        ---------
+        signal -- numpy array samples (rows) x channels (columns)
+        object_class -- int/string represents class
+        timestamp -- unix timestamp or zero
+        sample_rate -- sample rate of the signal
+
+        """
         self.signal = signal
         self.object_class = object_class
         self.timestamp = timestamp
@@ -65,14 +65,12 @@ class RawSignal():
         return True
         
     def __getitem__(self, pos):
-        """
-        Returns a sliced object
+        """Returns a sliced object
 
         Arguments:
         pos -- slice, number of tuple of those
 
         """
-
         if isinstance(pos, tuple):
             if len(pos) == 1:
                 return RawSignal(signal= self.signal[pos],
@@ -122,8 +120,7 @@ class RawSignal():
         return self.signal.shape[0]
     
     def to_numpy(self)->np.ndarray:
-        """
-        Returns: signal representation as an numpy ndarray
+        """Returns: signal representation as an numpy ndarray
         """
         return self.signal
     

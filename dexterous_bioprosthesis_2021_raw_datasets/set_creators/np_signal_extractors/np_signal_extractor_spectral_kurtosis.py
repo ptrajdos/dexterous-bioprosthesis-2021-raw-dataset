@@ -14,8 +14,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 
 
 class NpSignalExtractorSpectralKurtosis(NpSignalExtractorSpectral):
-
     """Extractor that computes the spectral kurtosis from the PSD."""
+
     def fit(self, X, fs=1000):
         """Fit the transformer to the given data."""
         return super().fit(X)

@@ -13,8 +13,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterLengthMedianStandarizer(RawSignalsFilter):
-    """
-    Forces all filtered signals to have length equal to median of signal lengths in the training data
+    """Forces all filtered signals to have length equal to median of signal lengths in the training data
     """
 
     def fit(self, raw_signals: RawSignals, y=None):

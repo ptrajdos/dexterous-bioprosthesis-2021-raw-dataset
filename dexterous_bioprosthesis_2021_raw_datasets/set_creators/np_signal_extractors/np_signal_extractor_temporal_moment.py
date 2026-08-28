@@ -10,8 +10,8 @@ import numpy as np
 
 
 class NpSignalExtractorTemporalMoment(NPSignalExtractor):
-
     """Extractor that computes configurable-order temporal moments."""
+
     def __init__(
         self,
         sanitize_output=False,

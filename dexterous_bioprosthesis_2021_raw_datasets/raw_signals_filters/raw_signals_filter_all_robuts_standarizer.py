@@ -14,8 +14,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterAllRobustStandarizer(RawSignalsFilter):
-
     """Filter that applies global robust standardisation using median and IQR."""
+
     def __init__(self, eps=1e-30) -> None:
         super().__init__()
         self.eps = eps

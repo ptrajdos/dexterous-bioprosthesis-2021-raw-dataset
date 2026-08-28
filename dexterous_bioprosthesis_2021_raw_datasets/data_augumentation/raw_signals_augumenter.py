@@ -20,8 +20,7 @@ class RawSignalsAugumenter(abc.ABC):
 
     @abc.abstractmethod
     def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsAugumenter:
-        """
-        Fits the data augumenter
+        """Fits the data augumenter
 
         Arguments:
         ---------
@@ -32,8 +31,7 @@ class RawSignalsAugumenter(abc.ABC):
 
     @abc.abstractmethod
     def transform(self, raw_signals: RawSignals) -> RawSignals:
-        """
-        Transforms the dataset.
+        """Transforms the dataset.
         New data contains changed version of each RawSignal in RawSignals
 
         Arguments:
@@ -41,15 +39,14 @@ class RawSignalsAugumenter(abc.ABC):
         raw_signals: RawSignals -- the dataset to be augumented
 
         Returns:
-        --------
+        -------
         Transformed RawSignals
 
         """
 
     @abc.abstractmethod
     def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
-        """
-        Fits and then transforms the dataset.
+        """Fits and then transforms the dataset.
         New data contains changed version of each RawSignal in RawSignals
 
         Arguments:
@@ -58,15 +55,14 @@ class RawSignalsAugumenter(abc.ABC):
         y: not used, only for compatibility with sklearn pipeline
 
         Returns:
-        --------
+        -------
         Transformed RawSignals
 
         """
 
     @abc.abstractmethod
     def sample(self, raw_signals: RawSignals, n_samples: int=1) -> RawSignals:
-        """
-        Samples n_samples from the dataset
+        """Samples n_samples from the dataset
 
         Arguments:
         ---------
@@ -74,7 +70,7 @@ class RawSignalsAugumenter(abc.ABC):
         n_samples: int -- how many samples to sample
 
         Returns:
-        --------
+        -------
         Sampled RawSignals
 
         """

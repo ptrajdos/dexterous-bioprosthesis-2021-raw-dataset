@@ -11,8 +11,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
 
 
 class SetCreatorDummy(SetCreator):
-
     """Identity set creator that converts raw signals directly to numpy arrays."""
+
     def __init__(self) -> None:
         super().__init__()
         self.channel_attribs_indices = None

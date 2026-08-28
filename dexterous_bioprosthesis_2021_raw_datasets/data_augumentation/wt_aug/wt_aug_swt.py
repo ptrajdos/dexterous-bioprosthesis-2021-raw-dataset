@@ -29,6 +29,7 @@ class WTAugSWT(WTAugBase):
 
         Returns:
             List of wavelet decomposition coefficients.
+
         """
         np_sig = raw_signal.to_numpy()
         max_lvl = swt_max_level(len(np_sig))
@@ -53,6 +54,7 @@ class WTAugSWT(WTAugBase):
 
         Returns:
             Reconstructed :class:`RawSignal`.
+
         """
         new_signal = deepcopy(raw_signal)
         rec_sig = iswt(coeffs=decomps, wavelet=wavelet, axis=0, norm=True)

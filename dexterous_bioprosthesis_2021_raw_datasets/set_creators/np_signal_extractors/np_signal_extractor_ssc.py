@@ -10,8 +10,8 @@ import numpy as np
 
 
 class NpSignalExtractorSsc(NPSignalExtractor):
-
     """Extractor that computes the Slope Sign Change count."""
+
     def fit(self, X, fs=1000):
         """Fit the transformer to the given data."""
         return super().fit(X)

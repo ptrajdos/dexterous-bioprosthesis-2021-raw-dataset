@@ -13,8 +13,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerSine(RawSignalsSpoiler):
-
     """Spoiler that adds sinusoidal interference calibrated to a target SNR."""
+
     def __init__(
         self,
         channels_spoiled_frac=0.1,

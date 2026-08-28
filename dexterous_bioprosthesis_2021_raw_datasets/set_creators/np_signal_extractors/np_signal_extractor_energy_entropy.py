@@ -10,8 +10,8 @@ import numpy as np
 
 
 class NpSignalExtractorEnergyEntropy(NPSignalExtractor):
-
     """Extractor that computes the energy entropy of signal sub-windows."""
+
     def fit(self, X, fs=1000):
         """Fit the transformer to the given data."""
         return super().fit(X)

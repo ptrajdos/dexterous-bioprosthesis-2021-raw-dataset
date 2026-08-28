@@ -14,8 +14,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterColumnRobustStandarizer(RawSignalsFilter):
-
     """Filter that applies per-column robust standardisation."""
+
     def __init__(self, eps=1e-30) -> None:
         super().__init__()
         self.eps = eps
@@ -29,7 +29,6 @@ class RawSignalsFilterColumnRobustStandarizer(RawSignalsFilter):
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
-
         """Transform the given data."""
         self._check_fitted()
 

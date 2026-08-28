@@ -12,21 +12,20 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 
 
 class RawSignalsSpoilerInterface(abc.ABC):
-
     """Abstract interface for raw signal spoilers."""
 
     @abc.abstractmethod
     def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsSpoilerInterface:
-        """
-        Fits the RawSignalsSpoiler
+        """Fits the RawSignalsSpoiler
 
         Arguments:
-        ----------
+        ---------
         raw_signals -- raw_signals to fit
         y -- not used, only for compatibility with sklearn pipeline
 
         Returns:
           RawSignalSpoiler (self)
+
         """
         self._is_fitted = True
         return self
@@ -39,30 +38,28 @@ class RawSignalsSpoilerInterface(abc.ABC):
 
     @abc.abstractmethod
     def transform(self, raw_signals: RawSignals) -> RawSignals:
-        """
-        Transforms the RawSignals
+        """Transforms the RawSignals
 
         Arguments:
-        ----------
+        ---------
         raw_signals:RawSignals -- raw_signals to transform
 
         Returns:
-        --------
+        -------
             RawSignals -- transformed signals
 
         """
 
     def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
-        """
-        Fits and then transforms the RawSignals
+        """Fits and then transforms the RawSignals
 
         Arguments:
-        ----------
+        ---------
         raw_signals:RawSignals -- raw_signals to transform
         y -- not used, only for compatibility with sklearn pipeline
 
         Returns:
-        --------
+        -------
             RawSignals -- transformed signals
 
         """

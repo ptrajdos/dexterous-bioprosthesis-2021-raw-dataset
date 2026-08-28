@@ -11,17 +11,15 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterAllPass(RawSignalsFilter):
-
     """Identity filter that returns a deep copy of the input without modification."""
+
     def fit(self, raw_signals: RawSignals, y=None):
-        """
-        Does nothing
+        """Does nothing
         """
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
-        """
-        Just make a deep copy of an object
+        """Just make a deep copy of an object
         """
         self._check_fitted()
         return deepcopy(raw_signals)

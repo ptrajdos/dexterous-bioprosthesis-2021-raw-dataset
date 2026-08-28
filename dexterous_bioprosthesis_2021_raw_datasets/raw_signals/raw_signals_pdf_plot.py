@@ -14,7 +14,6 @@ import os
 from tqdm import tqdm
 
 def raw_signals_pdf_plot(out_dir_path,raw_signals:RawSignals):
-
     """Plot all signals to per-signal PDF files."""
     os.makedirs(out_dir_path, exist_ok=True)
 

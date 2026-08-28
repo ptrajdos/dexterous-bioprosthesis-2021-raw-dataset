@@ -15,8 +15,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterObjResampler(RawSignalsFilter):
-
     """Filter that resamples each signal to a target number of samples."""
+
     def __init__(
         self,
         resampling_rate: float = 1.0,
@@ -29,8 +29,7 @@ class RawSignalsFilterObjResampler(RawSignalsFilter):
         self.random_state = random_state
 
     def fit(self, raw_signals: RawSignals, y=None):
-        """
-        Only rng
+        """Only rng
         """
         self._random_state = check_random_state(self.random_state)
         return super().fit(raw_signals, y)
@@ -47,8 +46,7 @@ class RawSignalsFilterObjResampler(RawSignalsFilter):
         return n_resampled
 
     def transform(self, raw_signals: RawSignals):
-        """
-        Resample
+        """Resample
         """
         self._check_fitted()
         if not hasattr(self, "_random_state"):

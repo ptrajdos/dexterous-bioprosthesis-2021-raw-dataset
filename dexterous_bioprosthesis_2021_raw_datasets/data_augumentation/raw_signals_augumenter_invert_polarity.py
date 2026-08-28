@@ -25,6 +25,7 @@ class RawSignalsAugumenterInvertPolarity(RawSignalsAugumenterBase):
         n_repeats: Number of augmented copies per signal (polarity inversion
             always produces one copy regardless of this value).
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -46,6 +47,7 @@ class RawSignalsAugumenterInvertPolarity(RawSignalsAugumenterBase):
 
         Returns:
             List containing a single polarity-inverted signal.
+
         """
         new_signal = deepcopy(raw_signal)
         np_sig = new_signal.signal

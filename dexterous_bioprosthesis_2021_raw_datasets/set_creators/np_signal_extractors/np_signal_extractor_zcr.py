@@ -10,8 +10,8 @@ import numpy as np
 
 
 class NpSignalExtractorZcr(NPSignalExtractor):
-
     """Extractor that computes the Zero Crossing Rate."""
+
     def fit(self, X, fs=1000):
         """Fit the transformer to the given data."""
         return super().fit(X)

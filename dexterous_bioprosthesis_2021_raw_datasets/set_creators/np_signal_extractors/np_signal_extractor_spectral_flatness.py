@@ -11,8 +11,8 @@ import numpy as np
 
 
 class NpSignalExtractorSpectralFlatness(NpSignalExtractorSpectral):
-
     """Extractor that computes the spectral flatness (Wiener entropy)."""
+
     def fit(self, X, fs=1000):
         """Fit the transformer to the given data."""
         return super().fit(X)

@@ -14,8 +14,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterColumnStandarizer(RawSignalsFilter):
-
     """Filter that applies per-column z-score standardisation."""
+
     def _compute_means(self, raw_signals: RawSignals):
         dtype = raw_signals[0].signal.dtype
         n_channels = raw_signals[0].signal.shape[1]
@@ -51,7 +51,6 @@ class RawSignalsFilterColumnStandarizer(RawSignalsFilter):
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
-
         """Transform the given data."""
         self._check_fitted()
 

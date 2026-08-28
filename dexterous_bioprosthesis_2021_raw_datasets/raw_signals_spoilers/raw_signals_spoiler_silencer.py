@@ -11,8 +11,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerSilencer(RawSignalsSpoiler):
-
     """Spoiler that silences selected signal channels."""
+
     def __init__(
         self,
         channels_spoiled_frac=0.1,

@@ -16,13 +16,12 @@ from dexterous_bioprosthesis_2021_raw_datasets.tools.numba_compat import jit
 
 
 class RawSignalsSpoilerCubicClipper(RawSignalsSpoiler):
-
     """Spoiler that applies cubic soft-clipping distortion calibrated to a target SNR."""
+
     def __init__(self, channels_spoiled_frac=0.1, snr=1, random_state=10,) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state)
 
     def fit(self, raw_signals: RawSignals, y=None):
-
         """Fit the transformer to the given data."""
         if self.snr < 0:
             self._effective_snr = 0

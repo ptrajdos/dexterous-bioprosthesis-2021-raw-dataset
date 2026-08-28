@@ -51,7 +51,7 @@ class DistanceMatrixCalculatorTest(unittest.TestCase):
             # self.assertTrue( self.check_triangle_inequality(distance_matrix[ch,:,:]) )
 
     def check_triangle_inequality(self,matrix):
-        """ Returns true iff the matrix D fulfills
+        """Returns true iff the matrix D fulfills
         the triangle inequaltiy.
         """
         n = len(matrix)

@@ -15,6 +15,7 @@ class OutlierGenerator(abc.ABC):
 
     Args:
         outlier_label: Label value assigned to generated outlier samples.
+
     """
 
     def __init__(self, outlier_label=-1) -> None:
@@ -23,11 +24,11 @@ class OutlierGenerator(abc.ABC):
 
     @abc.abstractmethod
     def fit(self,X,y):
-        """
-        Fits Outlier generator
+        """Fits Outlier generator
 
         Returns:
         self
+
         """
         np_labels = np.asanyarray(y)
         self.outlier_label_dtype_ = np_labels.dtype
@@ -40,8 +41,7 @@ class OutlierGenerator(abc.ABC):
 
     @abc.abstractmethod
     def generate(self):
-        """
-        Generates outliers
+        """Generates outliers
         Returns:
         tuple X,y 
         """
@@ -57,5 +57,6 @@ class OutlierGenerator(abc.ABC):
 
         Returns:
             Tuple of (outlier features, outlier labels).
+
         """
         return self.fit(X,y).generate()

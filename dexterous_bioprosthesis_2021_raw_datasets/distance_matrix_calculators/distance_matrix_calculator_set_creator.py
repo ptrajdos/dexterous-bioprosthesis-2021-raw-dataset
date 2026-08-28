@@ -21,8 +21,7 @@ default_distance_parameters = {"metric": "euclidean"}
 
 
 class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
-    """
-    Calculates the pairwise distance matrix using dtw approach.
+    """Calculates the pairwise distance matrix using dtw approach.
     """
 
     def __init__(
@@ -31,10 +30,10 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
         distance_parameters=default_distance_parameters,
         n_jobs=None,
     ) -> None:
-        """
-        Arguments:
+        """Arguments:
         ---------
         dtw_options -- options for the dtw algorithm (as a dict) or an empty dict
+
         """
         super().__init__()
 
@@ -51,6 +50,7 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
 
         Returns:
             Cleaned distance parameters dictionary.
+
         """
         distance_parameters.pop("n_jobs", None)
 
@@ -69,6 +69,7 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
 
         Returns:
             1-D array containing the pairwise distance.
+
         """
         if not self.is_fitted:
             raise NotFittedError("The distance matrix must be calculated first!")
@@ -98,8 +99,8 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
 
         Returns:
             2-D distance array.
-        """
 
+        """
         X, _, _ = self.set_creator.fit_transform(raw_signals=raw_signals)
         self.is_fitted = True
 
@@ -122,8 +123,8 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
 
         Returns:
             3-D numpy array of shape ``(1, n_signals, n_signals)``.
-        """
 
+        """
         X, y, t = self.set_creator.fit_transform(raw_signals)
         self.is_fitted = True
 
@@ -145,8 +146,8 @@ class DistanceMatrixCalculatorSetCreator(DistanceMatrixCalculator):
 
         Returns:
             3-D numpy array of shape ``(1, n_signals_1, n_signals_2)``.
-        """
 
+        """
         X, _, _ = self.set_creator.fit_transform(raw_signals_1)
         self.is_fitted = True
         Y, _, _ = self.set_creator.transform(raw_signals_2)

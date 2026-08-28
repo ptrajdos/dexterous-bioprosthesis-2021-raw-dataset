@@ -16,8 +16,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
-
     """Composite spoiler that applies multiple spoilers to signals."""
+
     def __init__(
         self,
         spoilers=[RawSignalsSpoilerDummy()],  # TODO need fixing!
@@ -43,7 +43,6 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
         self.spoiler_relabelers = spoiler_relabalers
 
     def fit(self, raw_signals: RawSignals, y=None):
-
         """Fit the transformer to the given data."""
         for spoiler in self.spoilers:
             spoiler.fit(raw_signals, y)

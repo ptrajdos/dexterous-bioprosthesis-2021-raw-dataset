@@ -14,8 +14,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterAllStandarizer(RawSignalsFilter):
-
     """Filter that applies global z-score standardisation."""
+
     def _compute_mean(self, raw_signals: RawSignals):
         dtype = raw_signals[0].signal.dtype
         self._glob_mean = np.array(0, dtype=dtype)

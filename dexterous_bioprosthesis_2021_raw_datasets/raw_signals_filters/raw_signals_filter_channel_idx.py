@@ -12,15 +12,14 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterChannelIdx(RawSignalsFilter):
-
     """Filter that selects signal channels by column index."""
+
     def __init__(self,indices_list) -> None:
         super().__init__()
         self.inidices_list = indices_list
     
     def fit(self,raw_signals:RawSignals,y=None):
-        """
-        Does nothing.
+        """Does nothing.
         """
         return super().fit(raw_signals, y)
 

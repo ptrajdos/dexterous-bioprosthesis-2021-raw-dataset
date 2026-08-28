@@ -22,8 +22,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_mds impo
 
 
 class SetCreatorClusterDist(SetCreator):
-
     """Set creator using cluster-distance features from k-means clustering."""
+
     def __init__(
         self, distance_calculator: DistanceMatrixCalculator, flatten_function=no_flatten
     ) -> None:

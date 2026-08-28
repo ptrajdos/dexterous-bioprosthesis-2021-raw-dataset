@@ -21,6 +21,7 @@ class DecompTransformationMultiplierUniform(DecompTransformationBase):
         alter_approximation_coeffs: If ``True``, also scale the approximation
             (lowest frequency) coefficients.
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -43,6 +44,7 @@ class DecompTransformationMultiplierUniform(DecompTransformationBase):
 
         Returns:
             List of scaled coefficient arrays.
+
         """
         self._check_if_fitted()
         new_decomps = []

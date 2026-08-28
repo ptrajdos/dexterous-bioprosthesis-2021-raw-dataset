@@ -11,11 +11,11 @@ class SelectAttributesTransformer(BaseEstimator, TransformerMixin):
 
     Args:
         column_indices: List of column indices to retain.
+
     """
 
     def __init__(self, column_indices=[0]) -> None:
-        """
-        Selects a single attribute (column) from datases
+        """Selects a single attribute (column) from datases
 
         Arguments:
         column_number:int -- column to select
@@ -26,8 +26,7 @@ class SelectAttributesTransformer(BaseEstimator, TransformerMixin):
 
 
     def fit(self, X, y=None):
-        """
-        Does nothing
+        """Does nothing
         """
         return self
 
@@ -40,8 +39,8 @@ class SelectAttributesTransformer(BaseEstimator, TransformerMixin):
 
         Returns:
             Data with only the selected columns.
-        """
 
+        """
         if isinstance(X, pd.DataFrame):
             return X.iloc[:,self.column_indices]
 

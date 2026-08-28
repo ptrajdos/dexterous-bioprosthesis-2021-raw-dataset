@@ -14,8 +14,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterButter(RawSignalsFilter):
-
     """Filter that applies a Butterworth IIR filter to each signal channel."""
+
     def __init__(self, low_freq=48, high_freq=52, order=4, btype="bandstop") -> None:
         super().__init__()
         self.low_freq = low_freq

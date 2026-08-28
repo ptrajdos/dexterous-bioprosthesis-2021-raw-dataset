@@ -15,28 +15,27 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterWindowFilter(RawSignalsFilter):
-
     """Generic window-based convolution filter for signal smoothing."""
+
     def __init__(self, window_length: int = 100) -> None:
         super().__init__()
         self.window_length = window_length
 
     def fit(self, raw_signals: RawSignals, y=None):
-        """
-        Does nothing
+        """Does nothing
         """
         return super().fit(raw_signals, y)
 
     @abc.abstractmethod
     def channel_transform(self, data) -> np.ndarray:
-        """
-        Transforms single channel
+        """Transforms single channel
 
         Arguments:
         data -- one dimensional numpy array
 
         Returns:
         one domensional numpy array -- filtered channel
+
         """
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:

@@ -27,6 +27,7 @@ class RawSignalsAugumenterWhiteNoise(RawSignalsAugumenterBase):
         append_original: Whether to include original signals in the output.
         n_jobs: Number of parallel jobs.
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -57,6 +58,7 @@ class RawSignalsAugumenterWhiteNoise(RawSignalsAugumenterBase):
 
         Returns:
             List of noise-augmented signals.
+
         """
         sig_list = []
 

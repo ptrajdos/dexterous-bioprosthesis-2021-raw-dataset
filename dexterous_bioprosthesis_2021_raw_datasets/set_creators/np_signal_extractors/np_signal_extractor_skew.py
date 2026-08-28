@@ -11,8 +11,8 @@ from scipy.stats import skew
 
 
 class NpSignalExtractorSkew(NPSignalExtractor):
-
     """Extractor that computes the skewness of each signal channel."""
+
     def fit(self, X, fs=1000):
         """Fit the transformer to the given data."""
         return super().fit(X)

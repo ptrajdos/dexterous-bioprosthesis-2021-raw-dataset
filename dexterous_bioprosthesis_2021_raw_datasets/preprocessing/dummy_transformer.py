@@ -10,8 +10,7 @@ class DummyTransformer(BaseEstimator, TransformerMixin):
     """Identity transformer that returns unmodified copies of the input."""
 
     def fit(self, X, y=None):
-        """
-        Does nothing
+        """Does nothing
         """
         return self
 

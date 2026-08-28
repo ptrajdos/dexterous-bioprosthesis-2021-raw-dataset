@@ -23,8 +23,7 @@ except ImportError:
     print("audiomentations not found. Using custom ClippingDistortion fallback.")
 
     class ClippingDistortion:
-        """
-        A standalone, drop-in replacement for audiomentations.ClippingDistortion.
+        """A standalone, drop-in replacement for audiomentations.ClippingDistortion.
         """
 
         def __init__(
@@ -35,8 +34,7 @@ except ImportError:
             self.p = p
 
         def __call__(self, samples, sample_rate):
-            """
-            Applies the clipping distortion.
+            """Applies the clipping distortion.
             """
             # 1. Probability check
             if random.random() > self.p:
@@ -72,6 +70,7 @@ class RawSignalsAugumenterClippingDistortion(RawSignalsAugumenterBase):
         append_original: Whether to include original signals in the output.
         n_jobs: Number of parallel jobs.
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -102,6 +101,7 @@ class RawSignalsAugumenterClippingDistortion(RawSignalsAugumenterBase):
 
         Returns:
             List of clipping-distorted signals.
+
         """
         sample_rate = raw_signal.sample_rate
         sig_list = []

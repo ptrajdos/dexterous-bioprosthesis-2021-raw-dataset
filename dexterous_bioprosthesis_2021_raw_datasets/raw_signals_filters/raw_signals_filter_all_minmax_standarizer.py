@@ -14,8 +14,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterAllMinmaxStandarizer(RawSignalsFilter):
-
     """Filter that applies global min-max standardisation."""
+
     def __init__(self, range_min=0, range_max=1, eps=1e-30) -> None:
         super().__init__()
         self.range_min = range_min

@@ -13,8 +13,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerDamper(RawSignalsSpoiler):
-
     """Spoiler that attenuates signal amplitude by a configurable damping factor."""
+
     def __init__(self, channels_spoiled_frac=0.1, snr=1, random_state=10,) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state)
 

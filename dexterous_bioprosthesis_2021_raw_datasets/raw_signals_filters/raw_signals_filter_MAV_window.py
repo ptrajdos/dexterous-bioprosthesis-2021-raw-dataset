@@ -11,8 +11,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterMAVWindowFilter(RawSignalsFilterWindowFilter):
-
     """Moving Average Value (MAV) window filter with uniform weights."""
+
     def __init__(self, window_length: int = 100) -> None:
         super().__init__(window_length)
 

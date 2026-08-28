@@ -15,14 +15,13 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerRappAM(RawSignalsSpoiler):
-
     """Spoiler that applies Rapp-model AM/AM nonlinear distortion."""
+
     def __init__(self, channels_spoiled_frac=0.1, snr=1, random_state=10, p=3) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state)
         self.p = p
 
     def fit(self, raw_signals: RawSignals, y=None):
-
         """Fit the transformer to the given data."""
         if self.snr < 0:
             self._effective_snr = 0
@@ -81,8 +80,7 @@ class RawSignalsSpoilerRappAM(RawSignalsSpoiler):
         return copied_signals
 
     def _rapp_amplifier(self, x, gain=1.0, sat=1.5):
-        """
-        Rapp amplifier model (AM/AM only)
+        """Rapp amplifier model (AM/AM only)
 
         x    : input signal
         gain : small-signal gain

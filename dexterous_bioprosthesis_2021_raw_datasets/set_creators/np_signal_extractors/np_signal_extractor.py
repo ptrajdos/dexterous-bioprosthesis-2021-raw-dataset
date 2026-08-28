@@ -11,11 +11,10 @@ import logging
 
 
 class NPSignalExtractor(abc.ABC):
-
     """Abstract base class for per-channel numpy signal feature extractors."""
+
     def _check_input(self, X) -> bool:
-        """
-        Check the input data.
+        """Check the input data.
         """
         assert not np.any(
             np.isnan(X)
@@ -32,8 +31,7 @@ class NPSignalExtractor(abc.ABC):
         return X
 
     def _check_output(self, X) -> bool:
-        """
-        Check the output data.
+        """Check the output data.
         """
         assert not np.any(
             np.isnan(X)
@@ -44,8 +42,8 @@ class NPSignalExtractor(abc.ABC):
         return True
 
     def __init__(self, sanitize_output=False, check_input=False, check_output=False):
-        """
-        Initialize the signal extractor.
+        """Initialize the signal extractor.
+
         Parameters
         ----------
         sanitize_output : bool, optional
@@ -54,6 +52,7 @@ class NPSignalExtractor(abc.ABC):
             If True, check the input data for NaN and infinite values.
         check_output : bool, optional
             If True, check the output data for NaN and infinite values.
+
         """
         self.sanitize_output = sanitize_output
         self.check_input = check_input
@@ -70,8 +69,7 @@ class NPSignalExtractor(abc.ABC):
 
     @abc.abstractmethod
     def _transform(self, X) -> np.ndarray:
-        """
-        Transform the input data.
+        """Transform the input data.
         """
 
     def transform(self, X) -> np.ndarray:

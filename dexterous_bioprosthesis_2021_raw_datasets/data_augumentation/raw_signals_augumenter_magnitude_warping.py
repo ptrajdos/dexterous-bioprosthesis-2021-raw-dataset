@@ -32,6 +32,7 @@ class RawSignalsAugumenterMagnitudeWarping(RawSignalsAugumenterBase):
         scale: Scaling factor for the warping curve standard deviation,
             relative to the global signal standard deviation.
         smooth: Smoothing parameter for the cubic spline (0 to 1).
+
     """
 
     def __init__(
@@ -65,6 +66,7 @@ class RawSignalsAugumenterMagnitudeWarping(RawSignalsAugumenterBase):
 
         Returns:
             List of magnitude-warped signals.
+
         """
         sig_list = []
         fs = raw_signal.get_sample_rate()

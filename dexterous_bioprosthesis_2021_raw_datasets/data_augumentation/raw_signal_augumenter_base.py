@@ -36,6 +36,7 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
         n_repeats: Number of augmented copies to create per signal.
         random_state: Seed or :class:`numpy.random.RandomState` instance for
             reproducibility.
+
     """
 
     def __init__(self, n_jobs=None, append_original=True, n_repeats:int=1, random_state=10) -> None:
@@ -47,8 +48,7 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
 
     @abc.abstractmethod
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int=1) -> list:
-        """
-        Auguments a single signal
+        """Auguments a single signal
 
         Arguments:
         ---------
@@ -56,7 +56,7 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
         n_repeats: int -- how many augumented versions of signal to create
 
         Returns:
-        --------
+        -------
         List of augumented signals
 
         """
@@ -77,6 +77,7 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
         Returns:
             A new :class:`RawSignals` containing augmented (and optionally
             original) signals.
+
         """
         self._check_if_fitted()
         new_signals = raw_signals.initialize_empty()
@@ -102,6 +103,7 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
 
         Returns:
             Augmented :class:`RawSignals`.
+
         """
         self.fit(raw_signals, y)
         return self.transform(raw_signals)
@@ -115,6 +117,7 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
 
         Returns:
             The fitted augmenter instance.
+
         """
         self._is_fitted = True
         self._random_state = check_random_state(self.random_state)
@@ -129,6 +132,7 @@ class RawSignalsAugumenterBase(RawSignalsAugumenter):
 
         Returns:
             A new :class:`RawSignals` with ``n_samples`` augmented signals.
+
         """
         self._check_if_fitted()
         n_signals = len(raw_signals)

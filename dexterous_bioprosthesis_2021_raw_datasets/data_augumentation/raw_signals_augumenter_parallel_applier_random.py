@@ -26,6 +26,7 @@ class RawSignalsAugumenterParallelApplierRandom(RawSignalsAugumenterParallelAppl
 
         Returns:
             Augmented :class:`RawSignals`, optionally including originals.
+
         """
         self._check_fitted()
         new_signals = raw_signals.initialize_empty()

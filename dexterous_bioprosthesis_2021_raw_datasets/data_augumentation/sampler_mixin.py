@@ -9,17 +9,17 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 
 
 class SamplerMixin:
-    """
-    Class enabling sampling for classes that implement fit and transform methods.
+    """Class enabling sampling for classes that implement fit and transform methods.
     """
 
     def sample(self, raw_signals: RawSignals, n_samples: int = 1) -> RawSignals:
-        """
-        Samples n_samples from the dataset
+        """Samples n_samples from the dataset
+
         Arguments:
         ---------
         raw_signals: RawSignals -- the dataset to be sampled
         n_samples: int -- how many samples to sample
+
         """
         n_pre_sampled_signals = len(raw_signals)
         rnd = self._random_state if hasattr(self, "_random_state") else np.random

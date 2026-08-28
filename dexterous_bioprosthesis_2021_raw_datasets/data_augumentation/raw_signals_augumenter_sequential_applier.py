@@ -28,6 +28,7 @@ class RawSignalsAugumenterSequentialApplier(RawSignalsAugumenterParallelApplier)
 
         Returns:
             Accumulated augmented :class:`RawSignals`.
+
         """
         tmp_signals = deepcopy(raw_signals)
 
@@ -44,6 +45,7 @@ class RawSignalsAugumenterSequentialApplier(RawSignalsAugumenterParallelApplier)
 
         Returns:
             Augmented :class:`RawSignals`.
+
         """
         self._check_fitted()
         return self._inner_transform(raw_signals)
@@ -57,6 +59,7 @@ class RawSignalsAugumenterSequentialApplier(RawSignalsAugumenterParallelApplier)
 
         Returns:
             A new :class:`RawSignals` with ``n_samples`` augmented signals.
+
         """
         self._check_fitted()
 

@@ -7,8 +7,8 @@ import pandas as pd
 import os
 
 def save_arff(X,y,t,arff_path,relation_name=None):
-    """
-    Save dataset as an arff file
+    """Save dataset as an arff file
+
     Arguments:
     ---------
     X -- data representation objects x attributes. numpy array or pandas dataframe
@@ -18,7 +18,6 @@ def save_arff(X,y,t,arff_path,relation_name=None):
     relation_name -- name of the relation or None
 
     """
-
     if relation_name is None:
         int_rel_name = os.path.splitext( os.path.basename(arff_path) )[0]
     else:

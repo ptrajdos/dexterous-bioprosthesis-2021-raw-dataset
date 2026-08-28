@@ -17,8 +17,7 @@ class RawSignalsSpoilerInterfaceTest(unittest.TestCase):
             raise unittest.SkipTest("Skipping")
 
     def get_spoilers(self) -> list:
-        """
-        gets the spoilers to be tested
+        """Gets the spoilers to be tested
         """
         raise unittest.SkipTest("Skipping")
 

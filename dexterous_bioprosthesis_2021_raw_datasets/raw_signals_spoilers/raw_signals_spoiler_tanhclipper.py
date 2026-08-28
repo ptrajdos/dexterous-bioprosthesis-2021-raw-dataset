@@ -15,8 +15,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerTanhClipper(RawSignalsSpoiler):
-
     """Spoiler that applies tanh-based soft-clipping distortion."""
+
     def __init__(
         self,
         channels_spoiled_frac=0.1,
@@ -26,7 +26,6 @@ class RawSignalsSpoilerTanhClipper(RawSignalsSpoiler):
         super().__init__(channels_spoiled_frac, snr, random_state=random_state)
 
     def fit(self, raw_signals: RawSignals, y=None):
-
         """Fit the transformer to the given data."""
         if self.snr < 0:
             self._effective_snr = 0

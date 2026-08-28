@@ -16,8 +16,7 @@ from collections.abc import Collection
 
 
 class RawSignalsNpImmutable(IRawSignals):
-    """
-    Class represents a dataset of raw signals.
+    """Class represents a dataset of raw signals.
     It assumes that the underlying numpy array is immutable. You cannot add or remove signals after creation.
     All signals must have the same number of channels and length.
     All signals mus thave the same sample rate.
@@ -31,19 +30,19 @@ class RawSignalsNpImmutable(IRawSignals):
         raw_signals_timestamps,
         sample_rate=1000,
     ):
-        """
-        Creates RawSignalsNpImmutable object from numpy arrays.
+        """Creates RawSignalsNpImmutable object from numpy arrays.
 
         Arguments:
-        ----------
+        ---------
         raw_signals_buffer -- numpy array of shape (n_objects, n_samples, n_channels)
         raw_signals_labels -- numpy array of shape (n_objects,)
         raw_signals_timestamps -- numpy array of shape (n_objects,)
         sample_rate -- sample rate of the signals
 
         Returns:
-        --------
+        -------
         RawSignalsNpImmutable object
+
         """
         obj = cls()
         obj.raw_signals_buffer = raw_signals_buffer
@@ -53,8 +52,7 @@ class RawSignalsNpImmutable(IRawSignals):
         return obj
 
     def __init__(self, raw_signal_list=None, sample_rate=1000) -> None:
-        """
-        Creates a new instance of the class
+        """Creates a new instance of the class
         """
         tmp_raw_signals = RawSignals(
             raw_signal_list=raw_signal_list, sample_rate=sample_rate
@@ -131,7 +129,6 @@ class RawSignalsNpImmutable(IRawSignals):
         )
 
     def append(self, other: RawSignal):
-
         """Append a signal to the collection."""
         raise NotImplementedError(
             "RawSignalsNpImmutable object is immutable. You cannot append new signals."
@@ -166,20 +163,16 @@ class RawSignalsNpImmutable(IRawSignals):
         return True
 
     def get_labels(self):
-        """
-        Returns:
+        """Returns
         -------
-
         List of labels of stored signals
-        """
 
+        """
         return self.raw_signals_labels
 
     def get_timestamps(self):
-        """
-        Returns:
-        --------
-
+        """Returns
+        -------
         List of timestamps of the stored signals.
 
         """
@@ -203,25 +196,22 @@ class RawSignalsNpImmutable(IRawSignals):
         )
 
     def to_numpy(self):
-        """
-        Returns the raw_signals object as a numpy array.
+        """Returns the raw_signals object as a numpy array.
         Assuming that all raw_signal object have the same dimension
 
-        Returns:
-        ---------
+        Returns
+        -------
         numpy array of shape (n_objects, n_samples, n_channels)
 
         """
-
         return self.raw_signals_buffer
 
     def to_numpy_concat(self):
-        """
-        Returns the raw_signals object as a concatenated numpy array.
+        """Returns the raw_signals object as a concatenated numpy array.
         Assuming that all raw_signal object have the same number of channels
 
-        Returns:
-        ---------
+        Returns
+        -------
         numpy array of shape (sum(n_samples), n_channels)
 
         """

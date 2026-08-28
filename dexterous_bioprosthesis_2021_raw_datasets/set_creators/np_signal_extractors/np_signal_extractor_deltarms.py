@@ -12,8 +12,8 @@ import numpy as np
 import numpy as np
 
 class NpSignalExtractorDeltaRms(NPSignalExtractor):
-
     """Extractor that computes the RMS of the first-order difference."""
+
     def __init__(self, window_length_ms, offset_ms, sanitize_output=False, check_input=False, check_output=False):
         super().__init__(sanitize_output=sanitize_output, check_input=check_input, check_output=check_output)
         self.window_length_ms = window_length_ms

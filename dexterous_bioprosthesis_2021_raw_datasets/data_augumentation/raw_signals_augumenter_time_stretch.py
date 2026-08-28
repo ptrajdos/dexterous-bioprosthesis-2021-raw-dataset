@@ -36,6 +36,7 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
         append_original: Whether to include original signals in the output.
         n_jobs: Number of parallel jobs.
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -55,8 +56,7 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
         self.stretch_max = stretch_max
 
     def fit(self, raw_signals: RawSignals, y=None):
-        """
-        Intentionally does nothing
+        """Intentionally does nothing
         """
         return self
 
@@ -69,6 +69,7 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
 
         Returns:
             List of time-stretched signals.
+
         """
         sample_rate = raw_signal.sample_rate
         sig_list = []

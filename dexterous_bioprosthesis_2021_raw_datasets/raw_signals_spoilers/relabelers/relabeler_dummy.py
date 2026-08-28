@@ -6,8 +6,8 @@ from copy import deepcopy
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.relabelers.relabeler import Relabeler
 
 class RelabelerDummy(Relabeler):
-
     """Identity relabeler that preserves original signal labels."""
+
     def fit(self, labels):
         """Fit the transformer to the given data."""
         return self

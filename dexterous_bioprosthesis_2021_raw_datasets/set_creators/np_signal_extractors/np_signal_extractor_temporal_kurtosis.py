@@ -13,8 +13,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 
 
 class NpSignalExtractorTemporalKurtosis(NPSignalExtractor):
-
     """Extractor that computes the temporal kurtosis of signal energy."""
+
     def __init__(self, sanitize_output=False, check_input=False, check_output=False, proportional_time=True):
         super().__init__(sanitize_output=sanitize_output, check_input=check_input, check_output=check_output)
         self.proportional_time = proportional_time

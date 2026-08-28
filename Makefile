@@ -32,7 +32,8 @@ PDOC= pdoc3
 SPHINXBUILD= sphinx-build
 SPHINXAPIDOC= sphinx-apidoc
 PYREVERSE= pyreverse
-DOT=neato
+DOT=dot
+DOT_OPTS:= -Gsplines=false -Goverlap=false
 PYLINT= pylint
 FLAKE8= flake8
 MYPY= mypy
@@ -154,6 +155,7 @@ uml: pypackages
 		if [ -f "$$tmpdir/classes_$$name.dot" ]; then \
 			$(DOT) \
 				-Tsvg \
+				$(DOT_OPTS) \
 				"$$tmpdir/classes_$$name.dot" \
 				-o "$$outdir/classes.svg"; \
 		fi; \
@@ -161,6 +163,7 @@ uml: pypackages
 		if [ -f "$$tmpdir/packages_$$name.dot" ]; then \
 			$(DOT) \
 				-Tsvg \
+				$(DOT_OPTS) \
 				"$$tmpdir/packages_$$name.dot" \
 				-o "$$outdir/packages.svg"; \
 		fi; \

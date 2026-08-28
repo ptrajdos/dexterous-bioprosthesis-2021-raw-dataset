@@ -15,6 +15,7 @@ import random
 
 class RawSignalsCreatorSines(RawSignalsCreator):
     """Creator that generates synthetic sine-wave signals with noise and phase shifts."""
+
     def __init__(
         self,
         set_size: int = 30,

@@ -9,14 +9,15 @@ import numpy as np
 import pywt
 
 class SetCreatorFunctions(SetCreator):
-    
     """Set creator using configurable numpy signal extractor functions."""
+
     def __init__(self, extractors=[]) -> None:
-        """
-        A SetCreator that applies a list of functions to the raw signals to create the dataset.
+        """A SetCreator that applies a list of functions to the raw signals to create the dataset.
+
         Arguments:
-        ----------
+        ---------
         extractors -- A list of functions that take a signal as input and return a vector of attributes
+
         """
         super().__init__()
         self.extractors = extractors
@@ -27,7 +28,6 @@ class SetCreatorFunctions(SetCreator):
 
 
     def fit(self, raw_signals: RawSignals, y=None):
-        
         """Fit the transformer to the given data."""
         self.n_channels = raw_signals[0].to_numpy().shape[1]
         n_extractors = len(self.extractors)

@@ -5,8 +5,8 @@ Assigns a fixed label value to all signals.
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.relabelers.relabeler import Relabeler
 
 class RelabelerConstant(Relabeler):
-    
     """Relabeler that assigns a fixed label to all signals."""
+
     def __init__(self, new_label=0) -> None:
         super().__init__()
 

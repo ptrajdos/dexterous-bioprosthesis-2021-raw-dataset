@@ -13,8 +13,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
-
     """Spoiler that adds harmonically related sine interference."""
+
     def __init__(
         self,
         channels_spoiled_frac=0.1,
@@ -32,7 +32,6 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
         self.harmonic_weights = harmonic_weights
 
     def fit(self, raw_signals: RawSignals, y=None):
-
         """Fit the transformer to the given data."""
         if self.n_harmonics != len(self.harmonic_weights):
             raise ValueError(

@@ -12,8 +12,8 @@ import abc
 
 
 class SetCreatorWTAbstract(SetCreator):
-
     """Abstract base class for wavelet-based set creators."""
+
     def __init__(self, wavelet_name="db1", num_levels=2, extractors=[]) -> None:
         super().__init__()
         self.wavelet_name = wavelet_name
@@ -27,7 +27,6 @@ class SetCreatorWTAbstract(SetCreator):
         )
 
     def fit(self, raw_signals: RawSignals, y=None):
-
         """Fit the transformer to the given data."""
         self.n_channels = raw_signals[0].to_numpy().shape[1]
         n_extractors = len(self.extractors)
@@ -52,18 +51,18 @@ class SetCreatorWTAbstract(SetCreator):
 
     @abc.abstractmethod
     def _decompose_signal(self, signal, fs=1000) -> list:
-        """
-        Generates decomposition coefficients of the signal.
+        """Generates decomposition coefficients of the signal.
         Order is the order returned by pywt waveded.
 
         Returns
+        -------
         list of tuples (decomposition coefficients, sampling frequency)
         A_n first
+
         """
         pass
 
     def transform(self, raw_signals: RawSignals):
-
         """Transform the given data."""
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")

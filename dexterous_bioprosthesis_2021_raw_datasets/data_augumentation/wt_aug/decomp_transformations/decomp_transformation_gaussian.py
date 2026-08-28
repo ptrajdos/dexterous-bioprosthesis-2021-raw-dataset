@@ -23,6 +23,7 @@ class DecompTransformationGaussian(DecompTransformationBase):
         alter_approximation_coeffs: If ``True``, also modify the approximation
             (lowest frequency) coefficients.
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -47,6 +48,7 @@ class DecompTransformationGaussian(DecompTransformationBase):
 
         Returns:
             List of noise-augmented coefficient arrays.
+
         """
         self._check_if_fitted()
         new_decomps = []

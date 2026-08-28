@@ -17,6 +17,7 @@ class UniformTransformer(BaseEstimator, TransformerMixin):
     Args:
         extend_factor: Fraction by which to extend the column value range.
         element_fraction: Fraction of rows to generate (minimum 1).
+
     """
 
     def __init__(self,extend_factor=0.1, element_fraction=1.0 ) -> None:
@@ -26,10 +27,8 @@ class UniformTransformer(BaseEstimator, TransformerMixin):
 
     
     def fit(self, X, y=None, **fit_params):
+        """Does nothing
         """
-        Does nothing
-        """
-        
         return self
 
     def transform(self, X, y=None):
@@ -41,8 +40,8 @@ class UniformTransformer(BaseEstimator, TransformerMixin):
 
         Returns:
             Array of uniform random values with the same shape as *X*.
-        """
 
+        """
         column_mins = np.min(X,axis=0)
         column_maxs = np.max(X,axis=0)
 

@@ -11,8 +11,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerDummy(RawSignalsSpoiler):
-
     """Identity spoiler that returns signals without distortion."""
+
     def __init__(
         self,
         channels_spoiled_frac=0.1,

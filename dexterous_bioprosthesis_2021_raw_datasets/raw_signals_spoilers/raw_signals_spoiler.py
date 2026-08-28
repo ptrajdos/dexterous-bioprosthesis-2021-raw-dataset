@@ -14,11 +14,10 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoiler(RawSignalsSpoilerInterface):
-
     """Base spoiler class providing SNR-based noise calibration and channel selection."""
+
     def __init__(self, channels_spoiled_frac=0.1, snr=1, random_state=10) -> None:
-        """
-        Raw SignalsSpoiler -- introduces noises and other disturbances to signals
+        """Raw SignalsSpoiler -- introduces noises and other disturbances to signals
 
         Arguments:
         ---------
@@ -32,15 +31,15 @@ class RawSignalsSpoiler(RawSignalsSpoilerInterface):
         self.random_state = random_state
 
     def _random_channel_selection(self, raw_signal: RawSignal) -> list[int]:
-        """
-        Return list of randomly selected channels
+        """Return list of randomly selected channels
 
         Arguments:
-        ----------
+        ---------
         raw_signals -- RawSignals object
 
         Returns:
         iterable of selected channel indices
+
         """
         if self.channels_spoiled_frac == 0:
             # Explicit zero is passed

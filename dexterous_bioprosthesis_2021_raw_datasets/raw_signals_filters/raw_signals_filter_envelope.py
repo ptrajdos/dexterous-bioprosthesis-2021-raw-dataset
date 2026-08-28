@@ -15,8 +15,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterEnvelope(RawSignalsFilter):
-
     """Filter that extracts the signal envelope via the Hilbert transform."""
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -25,7 +25,6 @@ class RawSignalsFilterEnvelope(RawSignalsFilter):
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
-
         """Transform the given data."""
         self._check_fitted()
 

@@ -38,6 +38,7 @@ class WTAugBase(RawSignalsAugumenter):
         transformations: List of :class:`IDecompTransformation` instances.
             Defaults to :class:`DecompTransformationDummy`.
         random_state: Random seed for reproducibility.
+
     """
 
     def __init__(
@@ -78,6 +79,7 @@ class WTAugBase(RawSignalsAugumenter):
 
         Returns:
             The fitted augmenter instance.
+
         """
         self._set_effective_wavelets()
         self._set_effective_transformations()
@@ -100,6 +102,7 @@ class WTAugBase(RawSignalsAugumenter):
 
         Returns:
             Tuple of (wavelets, levels, transformations) arrays.
+
         """
         n_signals = len(raw_signals)
         sel_wavelets = self._random_state.choice(
@@ -116,14 +119,12 @@ class WTAugBase(RawSignalsAugumenter):
 
     @abc.abstractmethod
     def _wt_trans(self, raw_signal: RawSignal, wavelet, level: int) -> list:
-        """
-        Transforms a signal using a kind of wavelet transform
+        """Transforms a signal using a kind of wavelet transform
         """
 
     @abc.abstractmethod
     def _wt_itrans(self, raw_signal: RawSignal, wavelet, decomps: list) -> RawSignal:
-        """
-        Inverse transformation
+        """Inverse transformation
         """
 
     def _apply_transformation(self, trans, decomp) -> list:
@@ -138,6 +139,7 @@ class WTAugBase(RawSignalsAugumenter):
 
         Returns:
             Augmented :class:`RawSignals`.
+
         """
         self._check_fitted()
         sel_wavelets, sel_levels, sel_transformations = self._select_params(raw_signals)
@@ -162,6 +164,7 @@ class WTAugBase(RawSignalsAugumenter):
 
         Returns:
             A new :class:`RawSignals` with ``n_samples`` augmented signals.
+
         """
         self._check_fitted()
         n_sigs = len(raw_signals)
@@ -179,6 +182,7 @@ class WTAugBase(RawSignalsAugumenter):
 
         Returns:
             Augmented :class:`RawSignals`.
+
         """
         self.fit(raw_signals)
         return self.transform(raw_signals)
