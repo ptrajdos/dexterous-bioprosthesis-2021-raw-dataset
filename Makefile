@@ -129,12 +129,12 @@ sphinx: pypackages uml
 	done
 	${ACTIVATE}; ${SPHINXBUILD} -b html ${SPHINX_SRCDIR} ${SPHINX_BUILDDIR}
 
-uml:
+uml: pypackages
 	@echo "Generating UML diagrams..."
 	@rm -rf "$(UML_DIR)"
 	@mkdir -p "$(UML_DIR)"
 
-	@find "$(SRCDIR)" -type f -name '__init__.py' | \
+	@${ACTIVATE}; find "$(SRCDIR)" -type f -name '__init__.py' | \
 	while read -r init; do \
 		pkg="$$(dirname "$$init")"; \
 		rel="$${pkg#$(SRCDIR)}"; \
