@@ -104,6 +104,7 @@ This creates a virtual environment, installs the package in editable mode along 
 | `make clean_venv` | Removes only the virtual environment and logs. |
 | `make clean_pypackages` | Removes the `pypackages` marker file. |
 | `make clean_tox` | Removes the `.tox` directory. |
+| `make docs_zip` | Builds Sphinx docs and packages them into a single `.zip` file named after the library. |
 
 ## Documentation
 

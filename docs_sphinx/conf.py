@@ -55,6 +55,27 @@ html_css_files = ['uml_zoom.css']
 # -- Options for Mermaid ------------------------------------------------------
 mermaid_version = 'latest'
 mermaid_init_js = 'mermaid.initialize({startOnLoad:true});'
+mermaid_cmd = 'mmdc'
+mermaid_output_format = 'png'
+mermaid_params = ['-w', '2000', '--scale', '2']
+
+# -- Options for LaTeX output -------------------------------------------------
+latex_elements = {
+    'papersize': 'a4paper',
+    'pointsize': '10pt',
+    'preamble': r'''
+\usepackage{pdflscape}
+\usepackage{grffile}
+\usepackage{adjustbox}
+\usepackage[htt]{hyphenat}
+\sloppy
+''',
+}
+
+latex_documents = [
+    ('index', 'DexterousBioprosthesis2021RawDatasets.tex',
+     project, author, 'manual'),
+]
 
 # -- Options for Graphviz -----------------------------------------------------
 graphviz_output_format = 'svg'
