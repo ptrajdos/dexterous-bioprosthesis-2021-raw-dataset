@@ -28,15 +28,22 @@ class SetCreatorDWTTest(SetCreatorTest):
     __test__ = True
 
     def get_creators(self):
-        extractors = [
-            SetCreatorDWT(
+        extractors = {
+            "default": SetCreatorDWT(
                 extractors=[
                     NpSignalExtractorMav(),
                     NpSignalExtractorSsc(),
                     NpSignalExtractorSpectralMoment(),
                 ]
-            )
-        ]
+            ),
+            "normalized": SetCreatorDWT(
+                extractors=[
+                    NpSignalExtractorMav(),
+                    NpSignalExtractorSsc(),
+                ],
+                normalise_across_levels=True,
+            ),
+        }
         return extractors
 
     def get_sample_data_parameters(self):

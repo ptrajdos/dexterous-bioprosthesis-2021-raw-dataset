@@ -9,7 +9,10 @@ class SetCreatorMDSTest(SetCreatorTest):
     
     __test__ = True
     def get_creators(self) :
-        extractors = [SetCreatorMDS(), SetCreatorMDS(flatten_function=euclid_flatten)]
+        extractors = {
+            "default": SetCreatorMDS(),
+            "flattened": SetCreatorMDS(flatten_function=euclid_flatten)
+        }
         return extractors
 
 

@@ -28,22 +28,29 @@ class SetCreatorSWTTest(SetCreatorTest):
     __test__ = True
 
     def get_creators(self):
-        extractors = [
-            SetCreatorSWT(
+        extractors = {
+            "default": SetCreatorSWT(
                 extractors=[
                     NpSignalExtractorMav(),
                     NpSignalExtractorSsc(),
                     NpSignalExtractorSpectralMoment(),
                 ]
             ),
-            SetCreatorSWT(
+            "lvl3": SetCreatorSWT(
                 extractors=[
                     NpSignalExtractorMav(),
                     NpSignalExtractorSsc(),
                 ],
                 num_levels=3,
             ),
-        ]
+            "normalized": SetCreatorSWT(
+                extractors=[
+                    NpSignalExtractorMav(),
+                    NpSignalExtractorSsc(),
+                ],
+                normalise_across_levels=True,
+            ),
+        }
         return extractors
 
     def get_sample_data_parameters(self):

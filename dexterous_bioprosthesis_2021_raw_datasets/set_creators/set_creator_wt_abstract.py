@@ -2,6 +2,7 @@
 
 Defines common interface and logic shared by DWT and SWT set creators.
 """
+
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
     SetCreator,
@@ -14,13 +15,20 @@ import abc
 class SetCreatorWTAbstract(SetCreator):
     """Abstract base class for wavelet-based set creators."""
 
-    def __init__(self, wavelet_name="db1", num_levels=2, extractors=[]) -> None:
+    def __init__(
+        self,
+        wavelet_name="db1",
+        num_levels=2,
+        extractors=[],
+        normalise_across_levels=False,
+    ) -> None:
         super().__init__()
         self.wavelet_name = wavelet_name
         self.num_levels = num_levels
         self.extractors = extractors
+        self.normalise_across_levels = normalise_across_levels
 
-        self._num_attribs:int = None
+        self._num_attribs: int = None
         self.n_channels: int = None
         self.channel_selected_attribs = (
             None  # List containing number of attributes for each channel
@@ -57,6 +65,9 @@ class SetCreatorWTAbstract(SetCreator):
         Returns
         -------
         list of tuples (decomposition coefficients, sampling frequency)
+        Each list element corresponds to a decomposition level, with the first element being the approximation coefficients at the highest level,
+          and the last element being the detail coefficients at level 1.
+        decomposition coefficients are numpy arrays of shape (n_samples, n_channels)
         A_n first
 
         """
@@ -75,6 +86,7 @@ class SetCreatorWTAbstract(SetCreator):
         for raw_signal_id, raw_signal in enumerate(raw_signals):
 
             signal = raw_signal.to_numpy()
+            n_channels = signal.shape[1]
             orig_fs = raw_signal.get_sample_rate()
             labels.append(raw_signal.get_label())
             timestamps.append(raw_signal.get_timestamp())
@@ -82,13 +94,27 @@ class SetCreatorWTAbstract(SetCreator):
             offset = 0
 
             for extractor_id, extractor in enumerate(self.extractors):
+                n_attribs_per_ch = extractor.attribs_per_column()
+                extr_offset = offset
                 for decomposed_level, fs in decomposeds:
                     extracted = extractor.fit_transform(decomposed_level, fs=fs)
                     n_extracted = extracted.shape[0]
+
                     extracted_attribs[
                         raw_signal_id, offset : (offset + n_extracted)
                     ] = extracted
                     offset += n_extracted
+
+                if self.normalise_across_levels:
+                    # Normalise each channel independently across all levels for this extractor
+                    for ch_id in range(n_channels):
+                        ch_idx = np.arange(extr_offset + ch_id * n_attribs_per_ch,
+                                           offset,
+                                           n_channels * n_attribs_per_ch)
+                        idx = np.concatenate([np.arange(s, s + n_attribs_per_ch) for s in ch_idx])
+                        norm = np.linalg.norm(extracted_attribs[raw_signal_id, idx])
+                        if norm > 0:
+                            extracted_attribs[raw_signal_id, idx] /= norm
 
         extracted_attribs = extracted_attribs.astype(raw_signals[0].to_numpy().dtype)
         labels = np.asanyarray(labels)

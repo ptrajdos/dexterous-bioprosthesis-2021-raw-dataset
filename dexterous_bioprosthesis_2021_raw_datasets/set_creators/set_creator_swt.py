@@ -2,6 +2,7 @@
 
 Decomposes signals using the Stationary Wavelet Transform.
 """
+
 import pywt
 
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_wt_abstract import (
@@ -14,10 +15,18 @@ class SetCreatorSWT(SetCreatorWTAbstract):
     """Set creator using Stationary Wavelet Transform decomposition."""
 
     def __init__(
-        self, wavelet_name="db1", num_levels=2, extractors=[], norm: bool = False
+        self,
+        wavelet_name="db1",
+        num_levels=2,
+        extractors=[],
+        norm: bool = False,
+        normalise_across_levels=False,
     ) -> None:
         super().__init__(
-            wavelet_name=wavelet_name, num_levels=num_levels, extractors=extractors
+            wavelet_name=wavelet_name,
+            num_levels=num_levels,
+            extractors=extractors,
+            normalise_across_levels=normalise_across_levels,
         )
         self._norm = norm
 

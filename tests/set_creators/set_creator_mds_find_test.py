@@ -9,10 +9,10 @@ class SetCreatorMDSFindTest(SetCreatorTest):
     
     __test__ = True
     def get_creators(self) :
-        extractors = [
-            SetCreatorMDS(n_attr=10,step=1, find_best=True), 
-            SetCreatorMDS(n_attr=10,step=1, find_best=True, flatten_function=euclid_flatten), 
-            ]
+        extractors = {
+            "default": SetCreatorMDS(n_attr=10,step=1, find_best=True),
+            "flattened": SetCreatorMDS(n_attr=10,step=1, find_best=True, flatten_function=euclid_flatten),
+        }
         return extractors
 
     

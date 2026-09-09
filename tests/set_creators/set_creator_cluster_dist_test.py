@@ -11,10 +11,10 @@ class SetCreatorClusterDistTest(SetCreatorTest):
     
     __test__ = True
     def get_creators(self) :
-        extractors = [
-            SetCreatorClusterDist(distance_calculator= DistanceMatrixCalculatorDTWFast2()),
-            SetCreatorClusterDist(distance_calculator= DistanceMatrixCalculatorDTWFast2(), flatten_function=euclid_flatten)
-            ]
+        extractors = {
+            "default": SetCreatorClusterDist(distance_calculator= DistanceMatrixCalculatorDTWFast2()),
+            "flattened": SetCreatorClusterDist(distance_calculator= DistanceMatrixCalculatorDTWFast2(), flatten_function=euclid_flatten)
+        }
         return extractors
 
 

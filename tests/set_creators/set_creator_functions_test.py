@@ -16,12 +16,12 @@ class SetCreatorFunctionsTest(SetCreatorTest):
     
     __test__ = True
     def get_creators(self) :
-        extractors = [
-            SetCreatorFunctions(extractors=[
+        extractors = {
+            "default": SetCreatorFunctions(extractors=[
                 NpSignalExtractorMav(),
                 NpSignalExtractorSsc(),
             ])
-            ]
+        }
         return extractors
     
     # def generate_sample_data(self, dtype=np.double):

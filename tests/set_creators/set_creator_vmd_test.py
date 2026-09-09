@@ -24,27 +24,27 @@ import warnings
 from tests.testing_tools import generate_sample_data
 
 
-class SetCreatorSWTTest(SetCreatorTest):
+class SetCreatorVMDTest(SetCreatorTest):
 
     __test__ = True
 
     def get_creators(self):
-        extractors = [
-            SetCreatorVMD(
+        extractors = {
+            "default": SetCreatorVMD(
                 extractors=[
                     NpSignalExtractorMav(),
                     NpSignalExtractorSsc(),
                     NpSignalExtractorSpectralMoment(),
                 ]
             ),
-            SetCreatorVMD(
+            "K3": SetCreatorVMD(
                 extractors=[
                     NpSignalExtractorMav(),
                     NpSignalExtractorSsc(),
                 ],
                 K=3
             ),
-        ]
+        }
         return extractors
 
     def get_sample_data_parameters(self):
