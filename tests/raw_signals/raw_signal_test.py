@@ -22,6 +22,10 @@ class RawSignalTest(unittest.TestCase):
 
         obj3 = RawSignal(signal=sig, timestamp=10, object_class=1.1 )
 
+        obj4 = RawSignal(signal=sig, timestamp=10, object_class="class1")
+
+        obj5 = RawSignal(signal=sig, timestamp=10, object_class=np.array([1, 2, 3]))
+
     def test_equaity(self):
         R, C = 50, 10
         sig = np.zeros((R, C))
@@ -55,11 +59,29 @@ class RawSignalTest(unittest.TestCase):
         )
         self.assertTrue(obj != obj2, "Object should not have been equal")
 
+        obj3 = RawSignal(
+            signal=sig,
+            timestamp=10,
+            object_class=np.asanyarray([0, 1]),)
+        
+        obj4 = RawSignal(
+            signal=sig,
+            timestamp=10,
+            object_class=np.asanyarray([0, 1]),)
+
+        obj5 = RawSignal(
+            signal=sig,
+            timestamp=10,
+            object_class=np.asanyarray([0, 2]),)
+        
+        self.assertTrue(obj3 == obj4, "Objects 3 and 4 should have been equal")
+        self.assertTrue(obj3 != obj5, "Objects 3 and 5 should not have been equal")
+
     def test_more_equality(self):
         R, C = 50, 10
         sig = np.zeros((R, C))
         sig2 = np.ones((R, C))
-        dtypes = [np.float32, np.float64, np.single, np.double,str, object]
+        dtypes = [np.float32, np.float64, np.single, np.double,str, object, np.str_, np.object_]
         for dtype in dtypes:
             with self.subTest(dtype=dtype):
                 c1 = np.int32(1)
@@ -71,6 +93,119 @@ class RawSignalTest(unittest.TestCase):
                 self.assertTrue(obj == obj2, "Objects should have been equal")
                 self.assertTrue(obj != obj3, "Objects should not have been equal")
 
+    def test_more_equality_arrays(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        sig2 = np.ones((R, C))
+        dtypes = [np.float32, np.float64, np.single, np.double,np.str_, np.object_, str, object]
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                a1 = np.array([1, 2, 3], dtype=dtype)
+                a2 = np.array([1, 2, 4], dtype=dtype)
+                obj = RawSignal(signal=sig, timestamp=10, object_class=a1)
+                obj2 = RawSignal(signal=sig, timestamp=10, object_class=a1)
+                obj3 = RawSignal(signal=sig, timestamp=10, object_class=a2)
+
+                self.assertTrue(obj == obj2, "Objects should have been equal")
+                self.assertTrue(obj != obj3, "Objects should not have been equal")
+
+    def test_array_label_2d(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        dtypes = [np.float32, np.float64, np.str_, np.object_]
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                a1 = np.array([[1, 2], [3, 4]], dtype=dtype)
+                a2 = np.array([[1, 2], [3, 4]], dtype=dtype)
+                a3 = np.array([[1, 2], [3, 5]], dtype=dtype)
+                obj = RawSignal(signal=sig, timestamp=10, object_class=a1)
+                obj2 = RawSignal(signal=sig, timestamp=10, object_class=a2)
+                obj3 = RawSignal(signal=sig, timestamp=10, object_class=a3)
+
+                self.assertTrue(obj == obj2, "2D array labels should have been equal")
+                self.assertTrue(obj != obj3, "2D array labels should not have been equal")
+
+    def test_array_label_different_shapes(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        a1 = np.array([1, 2, 3])
+        a2 = np.array([1, 2])
+        obj = RawSignal(signal=sig, timestamp=10, object_class=a1)
+        obj2 = RawSignal(signal=sig, timestamp=10, object_class=a2)
+
+        self.assertTrue(obj != obj2, "Arrays with different shapes should not be equal")
+
+    def test_array_label_empty(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        dtypes = [np.float64, np.str_]
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                a1 = np.array([], dtype=dtype)
+                a2 = np.array([], dtype=dtype)
+                obj = RawSignal(signal=sig, timestamp=10, object_class=a1)
+                obj2 = RawSignal(signal=sig, timestamp=10, object_class=a2)
+
+                self.assertTrue(obj == obj2, "Empty array labels should have been equal")
+
+    def test_array_label_vs_scalar(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        obj_arr = RawSignal(signal=sig, timestamp=10, object_class=np.array([1]))
+        obj_scalar = RawSignal(signal=sig, timestamp=10, object_class=1)
+
+        self.assertTrue(obj_arr != obj_scalar, "Array label vs scalar label should not be equal")
+
+    def test_array_label_numeric_tolerance(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        a1 = np.array([1.0, 2.0, 3.0], dtype=np.float64)
+        a2 = np.array([1.0 + 1e-8, 2.0 - 1e-8, 3.0 + 1e-8], dtype=np.float64)
+        a3 = np.array([1.0, 2.0, 4.0], dtype=np.float64)
+        obj = RawSignal(signal=sig, timestamp=10, object_class=a1)
+        obj2 = RawSignal(signal=sig, timestamp=10, object_class=a2)
+        obj3 = RawSignal(signal=sig, timestamp=10, object_class=a3)
+
+        self.assertTrue(obj == obj2, "Numeric arrays within tolerance should be equal")
+        self.assertTrue(obj != obj3, "Numeric arrays with large diff should not be equal")
+
+    def test_array_label_string_values(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        a1 = np.array(["class_a", "class_b"], dtype=np.str_)
+        a2 = np.array(["class_a", "class_b"], dtype=np.str_)
+        a3 = np.array(["class_a", "class_c"], dtype=np.str_)
+        obj = RawSignal(signal=sig, timestamp=10, object_class=a1)
+        obj2 = RawSignal(signal=sig, timestamp=10, object_class=a2)
+        obj3 = RawSignal(signal=sig, timestamp=10, object_class=a3)
+
+        self.assertTrue(obj == obj2, "String array labels should have been equal")
+        self.assertTrue(obj != obj3, "String array labels should not have been equal")
+
+    def test_array_label_serialization(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        dtypes = [np.float32, np.float64, np.str_, np.object_]
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                a = np.array([1, 2, 3], dtype=dtype)
+                obj = RawSignal(signal=sig, timestamp=10, object_class=a)
+                pickled = get_pickled_obj(obj)
+
+                self.assertIsNotNone(pickled, "Pickled should not have been None!")
+                self.assertTrue(obj == pickled, "Pickled object should have been equal")
+
+    def test_array_label_getitem_preserves(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+        a = np.array([10, 20, 30], dtype=np.float64)
+        obj = RawSignal(signal=sig, timestamp=10, object_class=a)
+
+        sliced = obj[:20]
+        self.assertTrue(np.array_equal(sliced.object_class, a), "Slicing should preserve array label")
+
+        sliced2 = obj[:, :5]
+        self.assertTrue(np.array_equal(sliced2.object_class, a), "Column slicing should preserve array label")
 
     def test_getitem(self):
 
@@ -186,6 +321,19 @@ class RawSignalTest(unittest.TestCase):
         sig = np.zeros((R, C))
 
         obj = RawSignal(signal=sig, timestamp=10, object_class=0)
+
+        pickled = get_pickled_obj(obj)
+
+        self.assertIsNotNone(pickled, "Pickled should not have been None!")
+        self.assertTrue(
+            obj == pickled, "Object and object reqd from pickle should have been equall"
+        )
+
+    def test_serialization_arrays(self):
+        R, C = 50, 10
+        sig = np.zeros((R, C))
+
+        obj = RawSignal(signal=sig, timestamp=10, object_class=np.zeros((1,3)))
 
         pickled = get_pickled_obj(obj)
 

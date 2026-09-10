@@ -100,14 +100,20 @@ class RawSignalsTest(unittest.TestCase):
             pass
 
     def generate_sample_data(
-        self, signal_number=10, column_number=3, samples_number=12, dtype=np.float32, sample_rate=1000,
+        self,
+        signal_number=10,
+        column_number=3,
+        samples_number=12,
+        dtype=np.float32,
+        sample_rate=1000,
     ) -> RawSignals:
         signals = RawSignals(sample_rate=sample_rate)
 
         for i in range(1, signal_number + 1):
             signals.append(
                 RawSignal(
-                    signal=np.zeros((samples_number, column_number), dtype=dtype), object_class=1.0
+                    signal=np.zeros((samples_number, column_number), dtype=dtype),
+                    object_class=1.0,
                 )
             )
 
@@ -234,9 +240,7 @@ class RawSignalsTest(unittest.TestCase):
         self.assertIsInstance(
             it, RawSignals, "Object get is not an instance of RawSignals"
         )
-        self.assertTrue(
-            len(it) == len(sel_list), "The length of new object is wrong."
-        )
+        self.assertTrue(len(it) == len(sel_list), "The length of new object is wrong.")
 
     def test_getitem_list_bool(self):
         signals = self.generate_sample_data()
@@ -341,11 +345,19 @@ class RawSignalsTest(unittest.TestCase):
         self.assertTrue(len(empty_sigs) == 0, "Not empty")
 
     def test_to_numpy(self):
-        
-        for n_sig, n_samples, n_channels in [(1, 10, 1), (2, 20, 2), (5, 50, 5), (10, 100, 10), (100, 111, 10)]:
+
+        for n_sig, n_samples, n_channels in [
+            (1, 10, 1),
+            (2, 20, 2),
+            (5, 50, 5),
+            (10, 100, 10),
+            (100, 111, 10),
+        ]:
             with self.subTest(n_sig=n_sig, n_samples=n_samples, n_channels=n_channels):
                 signals = self.generate_sample_data(
-                    column_number=n_channels, samples_number=n_samples, signal_number=n_sig
+                    column_number=n_channels,
+                    samples_number=n_samples,
+                    signal_number=n_sig,
                 )
 
                 np_array = signals.to_numpy()
@@ -365,11 +377,19 @@ class RawSignalsTest(unittest.TestCase):
                 )
 
     def test_to_numpy_concat(self):
-    
-        for n_sig, n_samples, n_channels in [(1, 10, 1), (2, 20, 2), (5, 50, 5), (10, 100, 10), (100, 111, 10)]:
+
+        for n_sig, n_samples, n_channels in [
+            (1, 10, 1),
+            (2, 20, 2),
+            (5, 50, 5),
+            (10, 100, 10),
+            (100, 111, 10),
+        ]:
             with self.subTest(n_sig=n_sig, n_samples=n_samples, n_channels=n_channels):
                 signals = self.generate_sample_data(
-                    column_number=n_channels, samples_number=n_samples, signal_number=n_sig
+                    column_number=n_channels,
+                    samples_number=n_samples,
+                    signal_number=n_sig,
                 )
 
                 np_array = signals.to_numpy_concat()
@@ -386,7 +406,7 @@ class RawSignalsTest(unittest.TestCase):
                 self.assertTrue(
                     np_array.shape == (n_sig * n_samples, n_channels),
                     "Wrong shape of the returned signal.",
-            )
+                )
 
     def test_set_sample_rate(self):
         n_sig = 100
@@ -408,14 +428,15 @@ class RawSignalsTest(unittest.TestCase):
         n_channels = 10
         sr = 1666
         signals = self.generate_sample_data(
-            column_number=n_channels, samples_number=n_samples, signal_number=n_sig, sample_rate=sr
+            column_number=n_channels,
+            samples_number=n_samples,
+            signal_number=n_sig,
+            sample_rate=sr,
         )
 
         self.assertTrue(signals.get_sample_rate() == sr, "Wrong global sample rate.")
         for sig in signals:
             self.assertTrue(sig.get_sample_rate() == sr, "Wrong signal sample rate.")
-        
-
 
     def test_dtype(self):
         n_sig = 100
@@ -446,6 +467,193 @@ class RawSignalsTest(unittest.TestCase):
                     np_array.shape == (n_sig, n_samples, n_channels),
                     "Wrong shape of the returned signal.",
                 )
+
+    def test_y_numpy_array(self):
+
+        signals = RawSignals()
+        N = 10
+        M = 10
+        C = 6
+
+        for i in range(1, N + 1):
+            signals.append(
+                RawSignal(signal=np.zeros((M * i, C)), object_class=np.asanyarray([i]))
+            )
+
+        self.assertTrue(len(signals) == N, "Not all signals have been added!")
+
+    def test_array_class_get_labels(self):
+        signals = RawSignals()
+        N = 5
+        M = 10
+        C = 3
+
+        for i in range(N):
+            signals.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([i, i + 1]))
+            )
+
+        labels = signals.get_labels()
+        self.assertIsNotNone(labels, "Labels should not be None")
+        self.assertEqual(len(labels), N, "Wrong number of labels")
+        for i, label in enumerate(labels):
+            self.assertTrue(np.array_equal(label, np.array([i, i + 1])),
+                            f"Wrong label at index {i}")
+
+    def test_array_class_set_labels(self):
+        signals = RawSignals()
+        N = 5
+        M = 10
+        C = 3
+
+        for i in range(N):
+            signals.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([0]))
+            )
+
+        new_labels = [np.array([i, i * 2]) for i in range(N)]
+        signals.set_labels(new_labels)
+
+        for i, sig in enumerate(signals):
+            self.assertTrue(np.array_equal(sig.get_label(), new_labels[i]),
+                            f"Wrong label after set at index {i}")
+
+    def test_array_class_equality(self):
+        signals_1 = RawSignals()
+        signals_2 = RawSignals()
+        N = 5
+        M = 10
+        C = 3
+
+        for i in range(N):
+            signals_1.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([i, i + 1]))
+            )
+            signals_2.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([i, i + 1]))
+            )
+
+        self.assertTrue(signals_1 == signals_2, "Signals with same array classes should be equal")
+
+        signals_3 = RawSignals()
+        for i in range(N):
+            signals_3.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([i, i + 2]))
+            )
+
+        self.assertTrue(signals_1 != signals_3, "Signals with different array classes should not be equal")
+
+    def test_array_class_deepcopy(self):
+        signals = RawSignals()
+        N = 5
+        M = 10
+        C = 3
+
+        for i in range(N):
+            signals.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([i, i + 1]))
+            )
+
+        signals_copy = deepcopy(signals)
+        self.assertTrue(signals == signals_copy, "Deep copy should be equal")
+
+    def test_array_class_pickle(self):
+        signals = RawSignals()
+        N = 5
+        M = 10
+        C = 3
+
+        for i in range(N):
+            signals.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([i, i + 1]))
+            )
+
+        pickled = get_pickled_obj(signals)
+        self.assertTrue(signals == pickled, "Pickled object should be equal")
+
+    def test_array_class_getitem(self):
+        signals = RawSignals()
+        N = 10
+        M = 10
+        C = 3
+
+        for i in range(N):
+            signals.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([i]))
+            )
+
+        sig = signals[3]
+        self.assertTrue(np.array_equal(sig.get_label(), np.array([3])),
+                        "Single getitem should preserve array class")
+
+        sliced = signals[2:5]
+        self.assertIsInstance(sliced, RawSignals, "Sliced should be RawSignals")
+        self.assertEqual(len(sliced), 3, "Wrong slice length")
+        for i, sig in enumerate(sliced):
+            self.assertTrue(np.array_equal(sig.get_label(), np.array([i + 2])),
+                            f"Wrong label in sliced at index {i}")
+
+    def test_array_class_concat(self):
+        signals_1 = RawSignals()
+        signals_2 = RawSignals()
+        N = 5
+        M = 10
+        C = 3
+
+        for i in range(N):
+            signals_1.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([i]))
+            )
+            signals_2.append(
+                RawSignal(signal=np.zeros((M, C)), object_class=np.array([i + N]))
+            )
+
+        signals_1 += signals_2
+        self.assertEqual(len(signals_1), 2 * N, "Wrong length after concat")
+        for i, sig in enumerate(signals_1):
+            self.assertTrue(np.array_equal(sig.get_label(), np.array([i])),
+                            f"Wrong label after concat at index {i}")
+
+    def test_array_class_dtypes(self):
+        dtypes = [np.float32, np.float64, np.int32, np.int64, np.str_, np.object_]
+        N = 5
+        M = 10
+        C = 3
+
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                signals = RawSignals()
+                for i in range(N):
+                    signals.append(
+                        RawSignal(signal=np.zeros((M, C)),
+                                  object_class=np.array([1, 2, 3], dtype=dtype))
+                    )
+
+                self.assertEqual(len(signals), N, "Wrong number of signals")
+
+                signals_copy = deepcopy(signals)
+                self.assertTrue(signals == signals_copy,
+                                f"Deep copy should be equal for dtype {dtype}")
+
+    def test_array_class_2d(self):
+        signals = RawSignals()
+        N = 5
+        M = 10
+        C = 3
+
+        for i in range(N):
+            signals.append(
+                RawSignal(signal=np.zeros((M, C)),
+                          object_class=np.array([[i, i + 1], [i + 2, i + 3]]))
+            )
+
+        self.assertEqual(len(signals), N, "Wrong number of signals")
+
+        labels = signals.get_labels()
+        self.assertEqual(len(labels), N, "Wrong number of labels")
+
+        pickled = get_pickled_obj(signals)
+        self.assertTrue(signals == pickled, "Pickled 2D array class should be equal")
 
 
 if __name__ == "__main__":

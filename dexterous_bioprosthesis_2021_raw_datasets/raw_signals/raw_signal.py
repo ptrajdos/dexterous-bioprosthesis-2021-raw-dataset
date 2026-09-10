@@ -46,12 +46,23 @@ class RawSignal():
         if not np.allclose(self.signal, __o.signal, rtol=1E-6, atol=1E-6):
             return False
 
-        if  isinstance(self.object_class, numbers.Number) and isinstance(__o.object_class, numbers.Number):
+        if isinstance(self.object_class, (np.ndarray,)) and isinstance(__o.object_class, (np.ndarray,)):
+            if self.object_class.shape != __o.object_class.shape:
+                return False
+            if np.issubdtype(self.object_class.dtype, np.number) and np.issubdtype(__o.object_class.dtype, np.number):
+                if not np.allclose(self.object_class, __o.object_class, rtol=1E-6, atol=1E-6):
+                    return False
+            else:
+                if not np.array_equal(self.object_class, __o.object_class):
+                    return False
+        elif isinstance(self.object_class, (np.ndarray,)) or isinstance(__o.object_class, (np.ndarray,)):
+            return False
+        elif isinstance(self.object_class, numbers.Number) and isinstance(__o.object_class, numbers.Number):
             if not np.isclose(self.object_class, __o.object_class):
                 return False
-
-        if self.object_class != __o.object_class:
-            return False
+        else:
+            if self.object_class != __o.object_class:
+                return False
 
         if self.timestamp != __o.timestamp:
             return False
