@@ -39,7 +39,9 @@ def read_signals_from_archive(
     rejected = RawSignals(sample_rate=sample_rate)
     
      # --- ZIP ---
+    channel_names = None
     sample_rate_regex = r".*/sample_rate.txt"
+    channel_names_regex = r".*/channel_names.txt"
 
     if zipfile.is_zipfile(archive_path):
         with zipfile.ZipFile(archive_path, "r", allowZip64=True) as z:
@@ -54,6 +56,13 @@ def read_signals_from_archive(
                         rejected.set_sample_rate(sample_rate)
                     except:
                         logging.warning(f"Invalid sample rate in file: {member}")
+                    continue
+                if re.match(channel_names_regex, member):
+                    try:
+                        cn_text = z.read(member).decode('utf-8')
+                        channel_names = [line.strip() for line in cn_text.strip().splitlines() if line.strip()]
+                    except:
+                        logging.warning(f"Invalid channel names in file: {member}")
                     continue
                 match_regex = True if filter_regex is None else re.match(filter_regex,member)
                 if member.endswith(".csv") and match_regex:
@@ -92,9 +101,9 @@ def read_signals_from_archive(
                                 )
 
                         if not is_rejected:
-                            accapted.append(RawSignal(data, class_name, timestamp=object_timestamp))
+                            accapted.append(RawSignal(data, class_name, channel_names=channel_names, timestamp=object_timestamp))
                         else:
-                            rejected.append(RawSignal(data, class_name, timestamp=object_timestamp))
+                            rejected.append(RawSignal(data, class_name, channel_names=channel_names, timestamp=object_timestamp))
 
     # --- TAR (supports tar, tar.gz, tar.bz2, tar.xz) ---
     elif tarfile.is_tarfile(archive_path):
@@ -113,6 +122,15 @@ def read_signals_from_archive(
                         rejected.set_sample_rate(sample_rate)
                     except:
                         logging.warning(f"Invalid sample rate in file: {member}")
+                    continue
+                if re.match(channel_names_regex, member.name):
+                    try:
+                        cn_handler = tar.extractfile(member)
+                        if cn_handler is not None:
+                            cn_text = cn_handler.read().decode('utf-8')
+                            channel_names = [line.strip() for line in cn_text.strip().splitlines() if line.strip()]
+                    except:
+                        logging.warning(f"Invalid channel names in file: {member}")
                     continue
                 match_regex = True if filter_regex is None else re.match(filter_regex,member.name)
                 if member.isfile() and member.name.endswith(".csv") and match_regex:
@@ -154,9 +172,9 @@ def read_signals_from_archive(
                                 )
 
                         if not is_rejected:
-                            accapted.append(RawSignal(data, class_name, timestamp=object_timestamp))
+                            accapted.append(RawSignal(data, class_name, channel_names=channel_names, timestamp=object_timestamp))
                         else:
-                            rejected.append(RawSignal(data, class_name, timestamp=object_timestamp))
+                            rejected.append(RawSignal(data, class_name, channel_names=channel_names, timestamp=object_timestamp))
 
     else:
         raise ValueError(f"Unsupported archive format: {archive_path}")
@@ -185,7 +203,13 @@ def read_signals_from_dirs(
                 sample_rate = int(file.read().strip())
             except:
                 logging.warning(f"Invalid sample rate in file: {sample_rate_file_path}")
-    
+
+    channel_names = None
+    channel_names_file_path = os.path.join(input_dir, "channel_names.txt")
+    if os.path.exists(channel_names_file_path):
+        with open(channel_names_file_path, "r") as file:
+            channel_names = [line.strip() for line in file.readlines() if line.strip()]
+
     accepted = _read_signals_from_dirs_internal(
         input_dir,
         sample_rate,
@@ -193,6 +217,7 @@ def read_signals_from_dirs(
         parallel_options=parallel_options,
         dir_sorting_key=dir_sorting_key,
         dtype=dtype,
+        channel_names=channel_names,
     )
 
     rejected_measurements_path = os.path.join(input_dir, "rejected")
@@ -204,6 +229,7 @@ def read_signals_from_dirs(
             parallel_options=parallel_options,
             dir_sorting_key=dir_sorting_key,
             dtype=dtype,
+            channel_names=channel_names,
         )
     else:
         rejected = None
@@ -211,7 +237,7 @@ def read_signals_from_dirs(
     return {"accepted": accepted, "rejected": rejected}
 
 
-def _read_class_dir(class_dir, file_order_key=str_sort_key, dtype=np.double):
+def _read_class_dir(class_dir, file_order_key=str_sort_key, dtype=np.double, channel_names=None):
     """Read objects from class-specific directory
     Arguments:
      class_dir -- class specific directories. It contains csv and dat files
@@ -256,7 +282,7 @@ def _read_class_dir(class_dir, file_order_key=str_sort_key, dtype=np.double):
                 )
             )
 
-        signal_objects.append(RawSignal(data, class_name, timestamp=object_timestamp))
+        signal_objects.append(RawSignal(data, class_name, channel_names=channel_names, timestamp=object_timestamp))
 
     return signal_objects
 
@@ -269,6 +295,7 @@ def _read_signals_from_dirs_internal(
     dir_sorting_key=lambda x: str(x),
     file_order_key=str_sort_key,
     dtype=np.double,
+    channel_names=None,
 ):
     """Read the raw dataset from the directory structure.
     """
@@ -294,7 +321,7 @@ def _read_signals_from_dirs_internal(
         **parallel_options
     )(
         delayed(_read_class_dir)(
-            os.path.join(input_dir, directory), file_order_key, dtype=dtype
+            os.path.join(input_dir, directory), file_order_key, dtype=dtype, channel_names=channel_names
         )
         for directory in sorted_class_dirs
     )
@@ -313,6 +340,13 @@ def save_signals_to_dirs(raw_signals: RawSignals, output_directory):
     fs_file_path = os.path.join(output_directory, "sample_rate.txt")
     with open(fs_file_path, "w") as file:
         print(raw_signals.get_sample_rate(), file=file)
+
+    if len(raw_signals) > 0:
+        channel_names = raw_signals[0].channel_names
+        cn_file_path = os.path.join(output_directory, "channel_names.txt")
+        with open(cn_file_path, "w") as file:
+            for name in channel_names:
+                print(name, file=file)
 
 
     for label in unique_labels:
@@ -348,3 +382,53 @@ def save_signals_to_dirs(raw_signals: RawSignals, output_directory):
             with open(date_file_path, "w") as file:
                 print(date_string, file=file)
             cnt += 1
+
+
+def save_signals_to_archive(raw_signals: RawSignals, archive_path):
+    """Save raw signals to a ZIP archive."""
+    import io
+
+    with zipfile.ZipFile(archive_path, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as z:
+        # Determine root prefix from archive filename
+        archive_basename = os.path.splitext(os.path.basename(archive_path))[0]
+        root_prefix = archive_basename + "/"
+
+        # Write sample_rate.txt
+        z.writestr(root_prefix + "sample_rate.txt", str(raw_signals.get_sample_rate()) + "\n")
+
+        # Write channel_names.txt
+        if len(raw_signals) > 0:
+            channel_names = raw_signals[0].channel_names
+            cn_text = "\n".join(channel_names) + "\n"
+            z.writestr(root_prefix + "channel_names.txt", cn_text)
+
+        signal_labels = raw_signals.get_labels()
+        unique_labels = set(signal_labels)
+
+        for label in unique_labels:
+            label_str = str(label)
+            label_indices = [
+                i for i in range(len(raw_signals)) if raw_signals[i].object_class == label
+            ]
+            signal_label_subset = raw_signals[label_indices]
+
+            subset_signal_indices_string = sorted(
+                ["{}".format(i) for i in range(1, len(signal_label_subset) + 1)]
+            )
+
+            cnt = 0
+            for istr in subset_signal_indices_string:
+                csv_path = f"{root_prefix}{label_str}/{istr}.csv"
+                signal_np = signal_label_subset[cnt].signal
+                signal_df = pd.DataFrame(signal_np)
+                buf = io.StringIO()
+                signal_df.to_csv(buf, sep=";", header=False, index=False, decimal=",")
+                z.writestr(csv_path, buf.getvalue())
+
+                dat_path = f"{root_prefix}{label_str}/{istr}.dat"
+                date_object = datetime.datetime.fromtimestamp(
+                    signal_label_subset[cnt].timestamp
+                )
+                date_string = date_object.strftime(date_format_string)
+                z.writestr(dat_path, date_string + "\n")
+                cnt += 1
