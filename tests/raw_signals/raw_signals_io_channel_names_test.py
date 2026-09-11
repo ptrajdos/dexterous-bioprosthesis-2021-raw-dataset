@@ -30,7 +30,7 @@ class RawSignalsIOChannelNamesTest(unittest.TestCase):
         signals = RawSignals(sample_rate=1000)
         for i in range(n):
             sig = np.random.random((rows, cols)).astype(np.float64)
-            signals.append(RawSignal(signal=sig, object_class="classA",
+            signals.append(RawSignal(signal=sig, object_class="aclassA",
                                      channel_names=channel_names, timestamp=i))
         return signals
 
@@ -123,7 +123,7 @@ class RawSignalsIOChannelNamesTest(unittest.TestCase):
             self.assertEqual(lines, names)
 
     def test_archive_roundtrip_preserves_channel_names(self):
-        names = ["Sensor_A", "Sensor_B", "Sensor_C"]
+        names = ["aSensor_A", "aSensor_B", "aSensor_C"]
         signals = self._make_signals(names)
         path = self._archive_path()
         save_signals_to_archive(signals, path)

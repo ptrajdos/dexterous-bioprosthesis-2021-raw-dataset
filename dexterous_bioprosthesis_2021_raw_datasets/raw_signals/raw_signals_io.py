@@ -48,6 +48,16 @@ def read_signals_from_archive(
             memberlist = z.namelist()
             memberlist.sort(key=str_sort_key)
             n_members = len(memberlist)
+            for member in memberlist:
+                if re.match(channel_names_regex, member):
+                    try:
+                        cn_text = z.read(member).decode('utf-8')
+                        channel_names = [line.strip() for line in cn_text.strip().splitlines() if line.strip()]
+                    except:
+                        logging.warning(f"Invalid channel names in file: {member}")
+                    finally:
+                        break
+
             for member in tqdm(memberlist, total=n_members, desc="Zip file iterating archive elements", leave=True):
                 if re.match(sample_rate_regex, member):
                     try:
@@ -57,13 +67,7 @@ def read_signals_from_archive(
                     except:
                         logging.warning(f"Invalid sample rate in file: {member}")
                     continue
-                if re.match(channel_names_regex, member):
-                    try:
-                        cn_text = z.read(member).decode('utf-8')
-                        channel_names = [line.strip() for line in cn_text.strip().splitlines() if line.strip()]
-                    except:
-                        logging.warning(f"Invalid channel names in file: {member}")
-                    continue
+                
                 match_regex = True if filter_regex is None else re.match(filter_regex,member)
                 if member.endswith(".csv") and match_regex:
                     base_filename = os.path.splitext(os.path.basename(member))[0]
@@ -112,6 +116,19 @@ def read_signals_from_archive(
             memberlist.sort(key=str_sort_key)
             n_members = len(memberlist)
             members_names_list = [m.name for m in memberlist]
+
+            for member in memberlist:
+                if re.match(channel_names_regex, member.name):
+                    try:
+                        cn_handler = tar.extractfile(member)
+                        if cn_handler is not None:
+                            cn_text = cn_handler.read().decode('utf-8')
+                            channel_names = [line.strip() for line in cn_text.strip().splitlines() if line.strip()]
+                    except:
+                        logging.warning(f"Invalid channel names in file: {member}")
+                    finally:
+                        break
+
             for member in tqdm( memberlist, leave=True, desc= "Tar file iterating over archive members", total=n_members):
                 if re.match(sample_rate_regex, member.name):
                     try:
@@ -123,15 +140,7 @@ def read_signals_from_archive(
                     except:
                         logging.warning(f"Invalid sample rate in file: {member}")
                     continue
-                if re.match(channel_names_regex, member.name):
-                    try:
-                        cn_handler = tar.extractfile(member)
-                        if cn_handler is not None:
-                            cn_text = cn_handler.read().decode('utf-8')
-                            channel_names = [line.strip() for line in cn_text.strip().splitlines() if line.strip()]
-                    except:
-                        logging.warning(f"Invalid channel names in file: {member}")
-                    continue
+
                 match_regex = True if filter_regex is None else re.match(filter_regex,member.name)
                 if member.isfile() and member.name.endswith(".csv") and match_regex:
                     member_name = member.name
