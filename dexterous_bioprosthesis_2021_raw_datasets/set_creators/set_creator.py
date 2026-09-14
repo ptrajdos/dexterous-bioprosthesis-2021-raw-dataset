@@ -69,7 +69,7 @@ class SetCreator(abc.ABC):
         """Get indices of channel-specific attributes
 
         Returns:
-        List containing lists of channel specific attributes.
+        List containing lists of channel specific attributes (their indices).
         Or None.
         None means that there is no simple mapping from channels to attributes in output set
 

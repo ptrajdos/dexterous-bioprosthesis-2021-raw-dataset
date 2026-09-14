@@ -328,5 +328,31 @@ class RawSignalsFilterWindowSegmentationTest(RawSignalsFilterTest):
         for i in range(1, len(f_signals)):
             self.assertFalse(np.any(f_signals[i].signal == 999.0))
 
+    def test_lengths(self):
+        """Mixing int and float types for window_length and overlap should raise ValueError."""
+        n_samples_variants = [21 ,30,31,100,103]
+        n_objects = 20
+
+        win_overlap_pairs = ((7,1), (7,2), (7,3), (10,1),(9,1),(11,5), (11,6), (12,7), (12,6))
+
+        for n_samples in n_samples_variants:
+            raw_signels = self.generate_sample_data(n_objects,samples_number=n_samples)
+            for w_len, overlap in win_overlap_pairs:
+                with self.subTest(n_samples=n_samples, w_len=w_len, overlap=overlap):
+                    filter = RawSignalsFilterWindowSegmentation(window_length=w_len, overlap=overlap)
+                    filtered = filter.fit_transform(raw_signels)
+
+                    self.assertTrue(len(filtered)>len(raw_signels), "Smaller number of filtered signals")
+                    lengths = []
+                    for sig in filtered:
+                        sig_len = len(sig)
+                        self.assertTrue(sig_len<n_samples, "Segmented signal longer than original")
+                        lengths.append(sig_len)
+                    len_np = np.asanyarray(lengths)
+                    u_lens = np.unique(len_np)
+                    self.assertTrue(u_lens.size <=1, f"Windows of different lengths: {u_lens}")
+            
+
+
 if __name__ == "__main__":
     unittest.main()
