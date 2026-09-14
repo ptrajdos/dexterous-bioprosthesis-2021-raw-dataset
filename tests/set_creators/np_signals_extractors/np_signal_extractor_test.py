@@ -32,7 +32,7 @@ class NpSignalExtractorTest(unittest.TestCase):
             self.assertIsNotNone(T, "None type has been returned")
             self.assertIsInstance(T, np.ndarray, "Wrong type")
             self.assertTrue(
-                len(T) == n_desired_attrs, "Wrong number of returned values"
+                len(T) == n_desired_attrs, f"Wrong number of returned values. Expected {n_desired_attrs}, got {len(T)}"
             )
             self.assertFalse(np.any(np.isnan(T)), "NaNs in outut")
             self.assertTrue(np.all(np.isfinite(T)), "Infinite values in output")
