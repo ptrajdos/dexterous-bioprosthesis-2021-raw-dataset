@@ -383,3 +383,138 @@ class SetCreatorWindowDeltaTest(SetCreatorTest):
         X, y, t = creator.fit_transform(raw_set)
         # MAV of constant 3.0 should be 3.0 for each window
         np.testing.assert_allclose(X, 3.0)
+
+    # --- Classification quality tests with non-random data ---
+
+    def _generate_deterministic_data(self, n_per_class=20, n_channels=3, samples_number=40):
+        """Generate non-random data where each class has a distinct signal pattern.
+
+        Class 0: low-frequency sine wave (slow oscillation)
+        Class 1: high-frequency sine wave (fast oscillation)
+        Class 2: linear ramp signal
+        """
+        from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
+        from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
+
+        signals = RawSignals()
+        t = np.linspace(0, 1, samples_number)
+
+        for class_idx in range(3):
+            for i in range(n_per_class):
+                signal = np.zeros((samples_number, n_channels))
+                for ch in range(n_channels):
+                    if class_idx == 0:
+                        # Low-frequency sine
+                        signal[:, ch] = np.sin(2 * np.pi * 1 * t) * (ch + 1)
+                    elif class_idx == 1:
+                        # High-frequency sine
+                        signal[:, ch] = np.sin(2 * np.pi * 10 * t) * (ch + 1)
+                    else:
+                        # Linear ramp
+                        signal[:, ch] = t * (ch + 1) * 5
+                signals.append(RawSignal(signal=signal.astype(np.double), object_class=class_idx))
+
+        return signals
+
+    def test_classification_kappa_with_deterministic_data(self):
+        """Non-random deterministic data should yield high kappa with a simple classifier."""
+        from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+        from sklearn.metrics import cohen_kappa_score
+        from sklearn.model_selection import cross_val_predict
+
+        creator = SetCreatorWindowDelta(
+            extractors=[NpSignalExtractorMav(), NpSignalExtractorSsc()],
+            window_length=0.5, overlap=0.5,
+        )
+
+        raw_set = self._generate_deterministic_data(n_per_class=20, n_channels=3, samples_number=40)
+        X, y, t = creator.fit_transform(raw_set)
+
+        clf = LinearDiscriminantAnalysis()
+        y_pred = cross_val_predict(clf, X, y, cv=5)
+        kappa = cohen_kappa_score(y, y_pred)
+
+        self.assertGreater(kappa, 0.8, f"Kappa too low: {kappa:.3f}. Expected > 0.8 for well-separated classes.")
+
+    def test_classification_kappa_two_classes_deterministic(self):
+        """Two-class deterministic data should yield high kappa."""
+        from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+        from sklearn.metrics import cohen_kappa_score
+        from sklearn.model_selection import cross_val_predict
+        from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
+        from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
+
+        creator = SetCreatorWindowDelta(
+            extractors=[NpSignalExtractorMav(), NpSignalExtractorSsc()],
+            window_length=0.5, overlap=0.5,
+        )
+
+        signals = RawSignals()
+        t_axis = np.linspace(0, 1, 40)
+        for i in range(30):
+            # Class 0: constant signal
+            sig0 = np.column_stack([np.ones(40) * 2.0, np.ones(40) * 2.0])
+            signals.append(RawSignal(signal=sig0, object_class=0))
+            # Class 1: oscillating signal
+            sig1 = np.column_stack([np.sin(2 * np.pi * 8 * t_axis), np.cos(2 * np.pi * 8 * t_axis)])
+            signals.append(RawSignal(signal=sig1, object_class=1))
+
+        X, y, t = creator.fit_transform(signals)
+
+        clf = LinearDiscriminantAnalysis()
+        y_pred = cross_val_predict(clf, X, y, cv=5)
+        kappa = cohen_kappa_score(y, y_pred)
+
+        self.assertGreater(kappa, 0.8, f"Kappa too low: {kappa:.3f}. Expected > 0.8 for constant vs oscillating.")
+
+    def test_classification_kappa_low_for_identical_classes(self):
+        """When all classes have identical signals, kappa should be low (near 0)."""
+        from sklearn.tree import DecisionTreeClassifier
+        from sklearn.metrics import cohen_kappa_score
+        from sklearn.model_selection import cross_val_predict
+        from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
+        from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
+
+        creator = SetCreatorWindowDelta(
+            extractors=[NpSignalExtractorMav(), NpSignalExtractorSsc()],
+            window_length=0.5, overlap=0.5,
+        )
+
+        signals = RawSignals()
+        for i in range(60):
+            sig = np.ones((40, 2)) * 3.0
+            label = i % 3  # 3 classes, all identical signals
+            signals.append(RawSignal(signal=sig, object_class=label))
+
+        X, y, t = creator.fit_transform(signals)
+
+        clf = DecisionTreeClassifier(random_state=42)
+        y_pred = cross_val_predict(clf, X, y, cv=5)
+        kappa = cohen_kappa_score(y, y_pred)
+
+        self.assertLess(kappa, 0.5, f"Kappa too high: {kappa:.3f}. Identical signals should not be classifiable.")
+
+    def test_deterministic_data_features_not_all_equal(self):
+        """Features from different deterministic classes should differ."""
+        creator = SetCreatorWindowDelta(
+            extractors=[NpSignalExtractorMav(), NpSignalExtractorSsc()],
+            window_length=0.5, overlap=0.5,
+        )
+
+        raw_set = self._generate_deterministic_data(n_per_class=10, n_channels=2, samples_number=40)
+        X, y, t = creator.fit_transform(raw_set)
+
+        # Features for class 0 and class 1 should have different means
+        mean_class0 = X[y == 0].mean(axis=0)
+        mean_class1 = X[y == 1].mean(axis=0)
+        mean_class2 = X[y == 2].mean(axis=0)
+
+        # At least some features should differ significantly between classes
+        self.assertFalse(
+            np.allclose(mean_class0, mean_class1, atol=1e-6),
+            "Class 0 and Class 1 features should differ for deterministic data."
+        )
+        self.assertFalse(
+            np.allclose(mean_class0, mean_class2, atol=1e-6),
+            "Class 0 and Class 2 features should differ for deterministic data."
+        )
