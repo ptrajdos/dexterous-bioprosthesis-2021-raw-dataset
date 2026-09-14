@@ -21,6 +21,7 @@ class SetCreatorConcatenated(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
+        raw_signals = RawSignals.construct_from_list(raw_signals)
         for creator in self.creators:
             creator.fit(raw_signals)
 
@@ -51,6 +52,8 @@ class SetCreatorConcatenated(SetCreator):
         """Transform the given data."""
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")
+        
+        raw_signals = RawSignals.construct_from_list(raw_signals)
         X_es = []
         y_f = None
         t_f = None

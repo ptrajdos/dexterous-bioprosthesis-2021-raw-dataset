@@ -227,6 +227,7 @@ class SetCreatorMDS(SetCreator):
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
         super().fit(raw_signals)
+        raw_signals = RawSignals.construct_from_list(raw_signals)
 
         self.raw_signals_set = raw_signals
 
@@ -397,6 +398,7 @@ class SetCreatorMDS(SetCreator):
         if self.raw_signals_set is None:
             raise NotFittedError("The model is not fitted!")
 
+        raw_signals = RawSignals.construct_from_list(raw_signals)
         new_to_train_distances = self._calculate_distances_to_training_data(raw_signals)
 
         new_X = ProgressParallel(

@@ -655,6 +655,19 @@ class RawSignalsTest(unittest.TestCase):
         pickled = get_pickled_obj(signals)
         self.assertTrue(signals == pickled, "Pickled 2D array class should be equal")
 
+    def test_from_list_creation(self):
+        fs = 1666
+        sample_data_raw = self.generate_sample_data(sample_rate=fs)
+        sample_data_list = sample_data_raw.raw_signals_list
+
+        new_obj_l = RawSignals.construct_from_list(sample_data_list)
+        self.assertIsInstance(new_obj_l, RawSignals, "Created object is not raw Signals")
+        self.assertTrue(new_obj_l.sample_rate == fs, "Wrong sample rate")
+
+        self.assertTrue(sample_data_raw == new_obj_l, "Objects shoud be identical")
+
+        new_obj_obj = RawSignals.construct_from_list(sample_data_raw)
+        self.assertTrue(new_obj_obj == sample_data_raw, "Object created from object mismatch")
 
 if __name__ == "__main__":
     unittest.main()

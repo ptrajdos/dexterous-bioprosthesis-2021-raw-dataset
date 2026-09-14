@@ -112,7 +112,7 @@ class RawSignalsFilterWindowSegmentation(RawSignalsFilter):
     def transform(self, raw_signals: RawSignals):
         """Apply windowed segmentation with overlap"""
         self._check_fitted()
-        new_signals = RawSignals(sample_rate=raw_signals.sample_rate)
+        new_signals = raw_signals.initialize_empty()
 
         for signal in raw_signals:
             s_len = signal.signal.shape[0]

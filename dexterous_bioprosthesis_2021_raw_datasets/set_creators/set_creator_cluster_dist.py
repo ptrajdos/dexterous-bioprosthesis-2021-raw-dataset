@@ -113,6 +113,7 @@ class SetCreatorClusterDist(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None) -> SetCreator:
         """Fit the transformer to the given data."""
+        raw_signals = RawSignals.construct_from_list(raw_signals)
         raw_signals_n = RawSignals(raw_signals)
         self._fit(raw_signals_n)
 
@@ -128,6 +129,7 @@ class SetCreatorClusterDist(SetCreator):
         if not self.is_fitted:
             raise NotFittedError("SetCreator has not been fitted.")
 
+        raw_signals = RawSignals.construct_from_list(raw_signals)
         repr = np.concatenate(
             self.flatten_function(
                 self.distance_calculator.calculate_distance_matrix_set_2_set(

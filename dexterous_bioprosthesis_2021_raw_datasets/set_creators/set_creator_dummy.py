@@ -19,6 +19,7 @@ class SetCreatorDummy(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
+        raw_signals = RawSignals.construct_from_list(raw_signals)
         self.channel_attribs_indices = []
         return super().fit(raw_signals)
 
@@ -27,6 +28,7 @@ class SetCreatorDummy(SetCreator):
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")
 
+        raw_signals = RawSignals.construct_from_list(raw_signals)
         X = raw_signals
         y = np.asanyarray([rs.get_label() for rs in raw_signals])
         t = np.asanyarray([rs.get_timestamp() for rs in raw_signals])

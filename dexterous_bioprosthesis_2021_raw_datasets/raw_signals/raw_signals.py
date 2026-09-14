@@ -21,6 +21,17 @@ class RawSignals(IRawSignals):
     """Class represents a dataset of raw signals
     """
 
+    def construct_from_list(raw_signals_list)->RawSignals:
+        if not isinstance(raw_signals_list, RawSignals):
+            if len(raw_signals_list) == 0:
+                return RawSignals()
+            rs:RawSignal = raw_signals_list[0]
+            fs = rs.get_sample_rate()
+            return RawSignals(raw_signal_list=raw_signals_list, sample_rate=fs)
+        
+        return raw_signals_list
+
+
     def __init__(self, raw_signal_list=None, sample_rate=1000) -> None:
         """Creates a new instance of the class
         """

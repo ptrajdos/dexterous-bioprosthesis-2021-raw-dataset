@@ -29,6 +29,7 @@ class SetCreatorFunctions(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
+        raw_signals = RawSignals.construct_from_list(raw_signals)
         self.n_channels = raw_signals[0].to_numpy().shape[1]
         n_extractors = len(self.extractors)
 
@@ -54,6 +55,7 @@ class SetCreatorFunctions(SetCreator):
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")
     
+        raw_signals = RawSignals.construct_from_list(raw_signals)
         n_signals = len(raw_signals)
         extracted_attribs = np.zeros( (n_signals, self._num_attribs))
         labels = []
