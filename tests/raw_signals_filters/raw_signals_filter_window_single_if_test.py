@@ -19,6 +19,11 @@ class RawSignalsFilterWindowSingleIFTest(RawSignalsFilterTest):
             RawSignalsFilterWindowSingleIF(offset=5, length=10),
             RawSignalsFilterWindowSingleIF(offset=0.0, length=0.5),
             RawSignalsFilterWindowSingleIF(offset=0.25, length=0.5),
+            RawSignalsFilterWindowSingleIF(offset=5, length=0.5),
+            RawSignalsFilterWindowSingleIF(offset=0.25, length=5),
+            RawSignalsFilterWindowSingleIF(offset=0, length=None),
+            RawSignalsFilterWindowSingleIF(offset=5, length=None),
+            RawSignalsFilterWindowSingleIF(offset=0.25, length=None),
         ]
 
     # --- Integer parameter tests ---
@@ -292,33 +297,101 @@ class RawSignalsFilterWindowSingleIFTest(RawSignalsFilterTest):
         with self.assertRaises(ValueError):
             sig_filter.fit_transform(signals)
 
-    def test_wrong_args_mixed_types(self):
-        """Mixing int and float types should raise ValueError."""
+    def test_mixed_int_offset_float_length(self):
+        """Int offset with float length should work correctly."""
+        # offset=5 (absolute), length=0.5 of 20 → 10
+        sig_filter = RawSignalsFilterWindowSingleIF(offset=5, length=0.5)
+        original_data = np.arange(40).reshape(20, 2).astype(np.float64)
+        signals = RawSignals()
+        signals.append(RawSignal(signal=original_data.copy()))
+
+        f_signals = sig_filter.fit_transform(signals)
+        self.assertEqual(f_signals[0].signal.shape, (10, 2))
+        np.testing.assert_array_equal(f_signals[0].signal, original_data[5:15, :])
+
+    def test_mixed_float_offset_int_length(self):
+        """Float offset with int length should work correctly."""
+        # offset=0.25 of 20 → 5, length=10 (absolute)
+        sig_filter = RawSignalsFilterWindowSingleIF(offset=0.25, length=10)
+        original_data = np.arange(40).reshape(20, 2).astype(np.float64)
+        signals = RawSignals()
+        signals.append(RawSignal(signal=original_data.copy()))
+
+        f_signals = sig_filter.fit_transform(signals)
+        self.assertEqual(f_signals[0].signal.shape, (10, 2))
+        np.testing.assert_array_equal(f_signals[0].signal, original_data[5:15, :])
+
+    def test_mixed_types_validation_errors(self):
+        """Mixed types should still validate each parameter independently."""
         signals = RawSignals()
         signals.append(RawSignal(signal=np.random.random((20, 2))))
 
-        mixed_args = {
-            "int offset float length": RawSignalsFilterWindowSingleIF(offset=5, length=0.5),
-            "float offset int length": RawSignalsFilterWindowSingleIF(offset=0.5, length=5),
-        }
-        for name, sig_filter in mixed_args.items():
-            with self.subTest(name=name):
-                with self.assertRaises(ValueError):
-                    sig_filter.fit_transform(signals)
+        # int offset negative + float length
+        with self.assertRaises(ValueError):
+            RawSignalsFilterWindowSingleIF(offset=-1, length=0.5).fit_transform(signals)
 
-    def test_wrong_args_none_type(self):
-        """None values for parameters should raise ValueError."""
+        # float offset invalid + int length
+        with self.assertRaises(ValueError):
+            RawSignalsFilterWindowSingleIF(offset=1.0, length=5).fit_transform(signals)
+
+        # int offset + float length exceeding signal
+        with self.assertRaises(ValueError):
+            RawSignalsFilterWindowSingleIF(offset=15, length=0.5).fit_transform(signals)
+
+    def test_wrong_args_none_offset(self):
+        """None offset should raise ValueError."""
         signals = RawSignals()
         signals.append(RawSignal(signal=np.random.random((20, 2))))
+        sig_filter = RawSignalsFilterWindowSingleIF(offset=None, length=5)
+        with self.assertRaises(ValueError):
+            sig_filter.fit_transform(signals)
 
-        none_args = {
-            "None offset": RawSignalsFilterWindowSingleIF(offset=None, length=5),
-            "None length": RawSignalsFilterWindowSingleIF(offset=5, length=None),
-        }
-        for name, sig_filter in none_args.items():
-            with self.subTest(name=name):
-                with self.assertRaises(ValueError):
-                    sig_filter.fit_transform(signals)
+    # --- None length tests ---
+
+    def test_none_length_from_start(self):
+        """length=None with offset=0 should return the entire signal."""
+        sig_filter = RawSignalsFilterWindowSingleIF(offset=0, length=None)
+        original_data = np.arange(40).reshape(20, 2).astype(np.float64)
+        signals = RawSignals()
+        signals.append(RawSignal(signal=original_data.copy()))
+
+        f_signals = sig_filter.fit_transform(signals)
+        self.assertEqual(f_signals[0].signal.shape, (20, 2))
+        np.testing.assert_array_equal(f_signals[0].signal, original_data)
+
+    def test_none_length_with_int_offset(self):
+        """length=None with int offset should return from offset to end."""
+        sig_filter = RawSignalsFilterWindowSingleIF(offset=5, length=None)
+        original_data = np.arange(40).reshape(20, 2).astype(np.float64)
+        signals = RawSignals()
+        signals.append(RawSignal(signal=original_data.copy()))
+
+        f_signals = sig_filter.fit_transform(signals)
+        self.assertEqual(f_signals[0].signal.shape, (15, 2))
+        np.testing.assert_array_equal(f_signals[0].signal, original_data[5:, :])
+
+    def test_none_length_with_float_offset(self):
+        """length=None with float offset should return from offset to end."""
+        # offset=0.25 of 20 → 5
+        sig_filter = RawSignalsFilterWindowSingleIF(offset=0.25, length=None)
+        original_data = np.arange(40).reshape(20, 2).astype(np.float64)
+        signals = RawSignals()
+        signals.append(RawSignal(signal=original_data.copy()))
+
+        f_signals = sig_filter.fit_transform(signals)
+        self.assertEqual(f_signals[0].signal.shape, (15, 2))
+        np.testing.assert_array_equal(f_signals[0].signal, original_data[5:, :])
+
+    def test_none_length_multiple_signals(self):
+        """length=None should work with multiple signals of different lengths."""
+        sig_filter = RawSignalsFilterWindowSingleIF(offset=5, length=None)
+        signals = RawSignals()
+        signals.append(RawSignal(signal=np.ones((20, 2)) * 1.0))
+        signals.append(RawSignal(signal=np.ones((30, 2)) * 2.0))
+
+        f_signals = sig_filter.fit_transform(signals)
+        self.assertEqual(f_signals[0].signal.shape, (15, 2))
+        self.assertEqual(f_signals[1].signal.shape, (25, 2))
 
 
 if __name__ == "__main__":

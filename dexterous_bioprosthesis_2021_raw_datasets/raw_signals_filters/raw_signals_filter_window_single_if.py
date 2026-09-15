@@ -1,8 +1,10 @@
 """Module implementing single-window signal extraction.
 
 Extracts a single window of specified offset and length from each signal.
-Supports both integer (absolute sample indices) and float (fractional, 0-1) parameters.
+Supports integer (absolute sample indices), float (fractional, 0-1), and mixed parameters.
 """
+from __future__ import annotations
+
 from copy import deepcopy
 from numbers import Integral, Real
 
@@ -15,13 +17,13 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 class RawSignalsFilterWindowSingleIF(RawSignalsFilter):
     """Filter that extracts a single window from each signal."""
 
-    def __init__(self, offset: Real, length: Real) -> None:
+    def __init__(self, offset: Real, length: Real | None) -> None:
         """Cuts single window from given RawSignals.
 
         Arguments:
         ---------
         offset:Real -- offset from the beginning of the signal (samples if int, fraction if float)
-        length:Real -- length of the window (samples if int, fraction if float)
+        length:Real|None -- length of the window (samples if int, fraction if float, None for rest of signal)
 
         """
         super().__init__()
@@ -47,58 +49,75 @@ class RawSignalsFilterWindowSingleIF(RawSignalsFilter):
                 f"offset is not a numeric type. Got: {type(self.offset)}"
             )
 
-        if not isinstance(self.length, Real):
+        if self.length is not None and not isinstance(self.length, Real):
             raise ValueError(
                 f"length is not a numeric type. Got: {type(self.length)}"
             )
 
-        if isinstance(self.offset, Integral) and isinstance(self.length, Integral):
-            if self.offset < 0:
-                raise ValueError(f"Offset is negative. Got: {self.offset}")
+        effective_offset = self._resolve_param(
+            self.offset, "offset", signal_length, is_offset=True
+        )
 
-            if self.length < 1:
-                raise ValueError(f"Length is smaller than 1. Got: {self.length}")
+        if self.length is None:
+            effective_length = signal_length - effective_offset
+        else:
+            effective_length = self._resolve_param(
+                self.length, "length", signal_length, is_offset=False
+            )
 
-            if self.offset >= signal_length:
-                raise ValueError(
-                    f"Offset ({self.offset}) is greater than or equal to signal length ({signal_length})"
-                )
+        if effective_offset + effective_length > signal_length:
+            raise ValueError(
+                f"Effective offset + length ({effective_offset + effective_length}) is greater than signal length ({signal_length})"
+            )
 
-            if self.offset + self.length > signal_length:
-                raise ValueError(
-                    f"Offset + length ({self.offset + self.length}) is greater than signal length ({signal_length})"
-                )
+        return (effective_offset, effective_length)
 
-            return (self.offset, self.length)
+    @staticmethod
+    def _resolve_param(
+        value: Real, name: str, signal_length: int, *, is_offset: bool
+    ) -> int:
+        """Resolves a single parameter to an absolute sample count.
 
-        if isinstance(self.offset, Real) and isinstance(self.length, Real):
-            if not (self.offset >= 0 and self.offset < 1):
-                raise ValueError(
-                    f"Offset should be within [0,1) interval. Got {self.offset}"
-                )
+        Arguments:
+        ---------
+        value:Real -- parameter value (int → absolute samples, float → fraction)
+        name:str -- parameter name for error messages
+        signal_length:int -- total signal length in samples
+        is_offset:bool -- True for offset semantics, False for length semantics
 
-            if not (self.length > 0 and self.length < 1):
-                raise ValueError(
-                    f"Length should be within (0,1) interval. Got {self.length}"
-                )
+        Returns:
+        int -- resolved absolute value in samples
 
-            if self.offset + self.length > 1:
-                raise ValueError(
-                    f"Offset + length ({self.offset + self.length}) exceeds 1.0"
-                )
+        """
+        if isinstance(value, Integral):
+            if is_offset:
+                if value < 0:
+                    raise ValueError(f"Offset is negative. Got: {value}")
+                if value >= signal_length:
+                    raise ValueError(
+                        f"Offset ({value}) is greater than or equal to signal length ({signal_length})"
+                    )
+            else:
+                if value < 1:
+                    raise ValueError(f"Length is smaller than 1. Got: {value}")
+            return int(value)
 
-            effective_offset = int(round(self.offset * signal_length))
-            effective_length = max(int(round(self.length * signal_length)), 1)
-
-            if effective_offset + effective_length > signal_length:
-                raise ValueError(
-                    f"Effective offset + length ({effective_offset + effective_length}) is greater than signal length ({signal_length})"
-                )
-
-            return (effective_offset, effective_length)
+        if isinstance(value, Real):
+            if is_offset:
+                if not (value >= 0 and value < 1):
+                    raise ValueError(
+                        f"Offset should be within [0,1) interval. Got {value}"
+                    )
+                return int(round(value * signal_length))
+            else:
+                if not (value > 0 and value < 1):
+                    raise ValueError(
+                        f"Length should be within (0,1) interval. Got {value}"
+                    )
+                return max(int(round(value * signal_length)), 1)
 
         raise ValueError(
-            f"offset and length must be both integers or both floats. Got: {type(self.offset)} and {type(self.length)}"
+            f"{name} is not a numeric type. Got: {type(value)}"
         )
 
     def fit(self, raw_signals: RawSignals, y=None):
