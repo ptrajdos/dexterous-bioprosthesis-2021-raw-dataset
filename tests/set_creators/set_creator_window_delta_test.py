@@ -29,10 +29,10 @@ class SetCreatorWindowDeltaTest(SetCreatorTest):
 
     def get_creators(self):
         extractors = {
-            # "default": SetCreatorWindowDelta(extractors=[
-            #     NpSignalExtractorMav(),
-            #     NpSignalExtractorSsc(),
-            # ])
+            "default": SetCreatorWindowDelta(extractors=[
+                NpSignalExtractorMav(),
+                NpSignalExtractorSsc(),
+            ]),
             "w_0.5;o_0.5": SetCreatorWindowDelta(
                 extractors=[
                     NpSignalExtractorMav(),
