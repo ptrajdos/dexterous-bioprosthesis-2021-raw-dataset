@@ -9,13 +9,13 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
     RawSignalsFilterWindowSegmentation,
 )
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
-    SetCreator,
+    ASetCreator,
 )
 import numpy as np
 import pywt
 
 
-class SetCreatorWindowDelta(SetCreator):
+class SetCreatorWindowDelta(ASetCreator):
     """Set creator using configurable numpy signal extractor functions."""
 
     def __init__(self, extractors=[], window_length=0.33, overlap=0.5) -> None:
@@ -41,7 +41,7 @@ class SetCreatorWindowDelta(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
-        
+        super().fit(raw_signals, y)
         raw_signals = RawSignals.construct_from_list(raw_signals)
 
         self.n_channels = raw_signals[0].to_numpy().shape[1]

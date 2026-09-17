@@ -7,7 +7,7 @@ from sklearn.exceptions import NotFittedError
 from sklearn.metrics import silhouette_score, silhouette_samples
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
-    SetCreator,
+    ASetCreator,
 )
 from dexterous_bioprosthesis_2021_raw_datasets.distance_matrix_calculators.distance_matrix_calculator import (
     DistanceMatrixCalculator,
@@ -21,7 +21,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_mds impo
 )
 
 
-class SetCreatorClusterDist(SetCreator):
+class SetCreatorClusterDist(ASetCreator):
     """Set creator using cluster-distance features from k-means clustering."""
 
     def __init__(
@@ -111,8 +111,9 @@ class SetCreatorClusterDist(SetCreator):
 
         return representation, labels, timestamps
 
-    def fit(self, raw_signals: RawSignals, y=None) -> SetCreator:
+    def fit(self, raw_signals: RawSignals, y=None) -> ASetCreator:
         """Fit the transformer to the given data."""
+        super().fit(raw_signals, y)
         raw_signals = RawSignals.construct_from_list(raw_signals)
         raw_signals_n = RawSignals(raw_signals)
         self._fit(raw_signals_n)

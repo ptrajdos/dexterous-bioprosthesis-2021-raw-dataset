@@ -5,3 +5,8 @@ build-backend = "setuptools.build_meta"
 [test-system]
 requires = [ "pytest" ]  # PEP 508 specifications.
 test-backend = "pytest"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error::dexterous_bioprosthesis_2021_raw_datasets.tools.warnings.ChannelNamesDeprecation",
+]

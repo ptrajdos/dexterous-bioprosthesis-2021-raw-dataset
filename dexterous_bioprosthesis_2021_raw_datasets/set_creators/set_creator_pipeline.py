@@ -31,3 +31,7 @@ class SetCreatorPipeline(Pipeline):
     def get_channel_attribs_indices(self):
         """Delegate to the SetCreator step's get_channel_attribs_indices."""
         return self._find_set_creator().get_channel_attribs_indices()
+
+    def get_channel_names(self):
+        """Delegate to the SetCreator step's get_channel_names."""
+        return self._find_set_creator().get_channel_names()

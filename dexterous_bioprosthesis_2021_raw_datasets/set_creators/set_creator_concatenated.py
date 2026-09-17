@@ -4,13 +4,13 @@ Combines features from multiple set creators by concatenation.
 """
 from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
+from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import ASetCreator
 
 import pandas as pd
 import numpy as np
 
 
-class SetCreatorConcatenated(SetCreator):
+class SetCreatorConcatenated(ASetCreator):
     """Set creator that concatenates features from multiple sub-creators."""
 
     def __init__(self, creators) -> None:
@@ -21,6 +21,7 @@ class SetCreatorConcatenated(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
+        super().fit(raw_signals, y)
         raw_signals = RawSignals.construct_from_list(raw_signals)
         for creator in self.creators:
             creator.fit(raw_signals)

@@ -4,11 +4,11 @@ Extracts features using configurable numpy signal extractor functions.
 """
 from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
+from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import ASetCreator
 import numpy as np 
 import pywt
 
-class SetCreatorFunctions(SetCreator):
+class SetCreatorFunctions(ASetCreator):
     """Set creator using configurable numpy signal extractor functions."""
 
     def __init__(self, extractors=[]) -> None:
@@ -29,6 +29,7 @@ class SetCreatorFunctions(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
+        super().fit(raw_signals, y)
         raw_signals = RawSignals.construct_from_list(raw_signals)
         self.n_channels = raw_signals[0].to_numpy().shape[1]
         n_extractors = len(self.extractors)

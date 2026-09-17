@@ -5,7 +5,7 @@ Decomposes signals using Variational Mode Decomposition.
 import itertools
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
-    SetCreator,
+    ASetCreator,
 )
 from sklearn.exceptions import NotFittedError
 import numpy as np
@@ -14,7 +14,7 @@ import abc
 from sktime.libs.vmdpy import VMD
 
 
-class SetCreatorVMD(SetCreator):
+class SetCreatorVMD(ASetCreator):
     """Set creator using Variational Mode Decomposition."""
 
     def __init__(
@@ -38,6 +38,7 @@ class SetCreatorVMD(SetCreator):
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
+        super().fit(raw_signals, y)
         raw_signals = RawSignals.construct_from_list(raw_signals)
 
         self.n_channels = raw_signals[0].to_numpy().shape[1]

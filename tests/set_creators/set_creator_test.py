@@ -291,6 +291,24 @@ class SetCreatorTest(unittest.TestCase):
                 "Wrong coverage",
             )
 
+    def test_channel_names(self):
+        creators = self.get_creators()
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                raw_set = self.generate_sample_data(
+                    samples_number=self.get_default_sample_number()
+                )
+                expected_names = raw_set.get_channel_names()
+
+                creator.fit(raw_set)
+                names = creator.get_channel_names()
+
+                self.assertEqual(
+                    names, expected_names,
+                    f"Channel names mismatch. Expected {expected_names}, got {names}",
+                )
+
     def test_attributes_indices(self):
         creators = self.get_creators()
 

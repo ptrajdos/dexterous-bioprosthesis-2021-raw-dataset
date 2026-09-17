@@ -13,7 +13,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.distance_matrix_calculators.dista
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
-    SetCreator,
+    ASetCreator,
 )
 
 import numpy as np
@@ -55,7 +55,7 @@ def euclid_flatten(distance_matrix, keepdims=False, axis=0):
     return flatten
 
 
-class SetCreatorMDS(SetCreator):
+class SetCreatorMDS(ASetCreator):
     """Creates the set using DTW and then MDS approach.
 
     Implementation inspired by::

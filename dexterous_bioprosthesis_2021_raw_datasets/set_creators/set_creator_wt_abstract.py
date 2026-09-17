@@ -3,16 +3,17 @@
 Defines common interface and logic shared by DWT and SWT set creators.
 """
 
+from typing import List, Tuple
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
-    SetCreator,
+    ASetCreator,
 )
 from sklearn.exceptions import NotFittedError
 import numpy as np
 import abc
 
 
-class SetCreatorWTAbstract(SetCreator):
+class SetCreatorWTAbstract(ASetCreator):
     """Abstract base class for wavelet-based set creators."""
 
     def __init__(
@@ -33,10 +34,9 @@ class SetCreatorWTAbstract(SetCreator):
         self.channel_selected_attribs = (
             None  # List containing number of attributes for each channel
         )
-
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
-
+        super().fit(raw_signals, y)
         raw_signals = RawSignals.construct_from_list(raw_signals)
 
         self.n_channels = raw_signals[0].to_numpy().shape[1]

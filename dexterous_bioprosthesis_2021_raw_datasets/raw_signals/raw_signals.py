@@ -3,40 +3,41 @@
 A mutable, list-backed container of :class:`RawSignal` objects that
 implements the :class:`IRawSignals` interface.
 """
+
 from __future__ import annotations
 
 from collections.abc import Collection, Iterable
 from typing import Iterator, Union
+import warnings
 
 import numpy as np
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.iraw_signals import (
     IRawSignals,
 )
+from dexterous_bioprosthesis_2021_raw_datasets.tools.warnings import ChannelNamesDeprecation
 
 from .raw_signal import RawSignal
 
 
 class RawSignals(IRawSignals):
-    """Class represents a dataset of raw signals
-    """
+    """Class represents a dataset of raw signals"""
 
-    def construct_from_list(raw_signals_list)->RawSignals:
+    def construct_from_list(raw_signals_list) -> RawSignals:
         if not isinstance(raw_signals_list, RawSignals):
             if len(raw_signals_list) == 0:
                 return RawSignals()
-            rs:RawSignal = raw_signals_list[0]
+            rs: RawSignal = raw_signals_list[0]
             fs = rs.get_sample_rate()
             return RawSignals(raw_signal_list=raw_signals_list, sample_rate=fs)
-        
+
         return raw_signals_list
 
-
     def __init__(self, raw_signal_list=None, sample_rate=1000) -> None:
-        """Creates a new instance of the class
-        """
+        """Creates a new instance of the class"""
         self.raw_signals_list = list()
         self.sample_rate = sample_rate
+        self._channel_names = tuple()
 
         if raw_signal_list is not None:
             for sig in raw_signal_list:
@@ -107,12 +108,21 @@ class RawSignals(IRawSignals):
         if self.signal_n_cols != other.signal.shape[1]:
             raise ValueError("Appending signal with diferent number of columns")
 
+        if len(self._channel_names) == 0:
+            self._channel_names = other.get_channel_names()
+        
+        if self._channel_names != other.get_channel_names():
+            warnings.warn(
+                "Channel names of added object are incompatible wich channel names of the existing object",
+                ChannelNamesDeprecation,
+                stacklevel=2,
+            )
+
         other.set_sample_rate(self.sample_rate)
         self.raw_signals_list.append(other)
 
     def __iadd__(self, other) -> RawSignals:
-        """Operator for += on an another RawSignals object
-        """
+        """Operator for += on an another RawSignals object"""
         for it in other:
             self.append(it)
 
@@ -208,3 +218,6 @@ class RawSignals(IRawSignals):
             [rs.to_numpy() for rs in self.raw_signals_list], axis=0
         )
         return np_array
+
+    def get_channel_names(self):
+        return self._channel_names

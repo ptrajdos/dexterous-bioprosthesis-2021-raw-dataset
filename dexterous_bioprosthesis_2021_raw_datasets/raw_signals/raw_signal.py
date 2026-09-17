@@ -4,9 +4,9 @@ Represents a single multi-channel time-domain signal with associated
 metadata such as class label, timestamp, sample rate, and channel names.
 """
 import numpy as np
+from typing import Tuple
 from copy import deepcopy
 
-from collections.abc import Iterable
 from collections.abc import Collection
 import numbers
 class RawSignal():
@@ -154,3 +154,7 @@ class RawSignal():
     def set_sample_rate(self, sample_rate):
         """Set the sample rate."""
         self.sample_rate = sample_rate
+
+    def get_channel_names(self)-> Tuple[str]:
+        """Return channel names"""
+        return self.channel_names

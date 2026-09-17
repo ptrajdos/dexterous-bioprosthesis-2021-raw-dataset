@@ -225,7 +225,7 @@ class RawSignalTest(unittest.TestCase):
             "One index. Shapes after selection",
         )
         self.assertTrue(
-            s_obj.channel_names == obj.channel_names, "One index. Channel names"
+            s_obj.get_channel_names() == obj.get_channel_names(), "One index. Channel names"
         )
 
         # one element tuple
@@ -235,7 +235,7 @@ class RawSignalTest(unittest.TestCase):
             "One elem tuple. Shapes after selection",
         )
         self.assertTrue(
-            s_obj.channel_names == obj.channel_names, "One slem tuple. Channel names"
+            s_obj.get_channel_names() == obj.get_channel_names(), "One slem tuple. Channel names"
         )
 
         # int selection
@@ -244,7 +244,7 @@ class RawSignalTest(unittest.TestCase):
             s_obj.signal.shape == (1, obj.signal.shape[1]),
             "Int. Shapes after selection",
         )
-        self.assertTrue(s_obj.channel_names == obj.channel_names, "Int. Channel names")
+        self.assertTrue(s_obj.get_channel_names() == obj.get_channel_names(), "Int. Channel names")
         self.assertTrue(s_obj.signal.shape[0] == 1, "Int selection. One row")
 
         # Two indices selection
@@ -255,7 +255,7 @@ class RawSignalTest(unittest.TestCase):
             s_obj.signal.shape == (S, SC), "Two indices, slice. Shapes after selection"
         )
         self.assertTrue(
-            s_obj.channel_names == obj.channel_names[:SC],
+            s_obj.get_channel_names() == obj.get_channel_names()[:SC],
             "Two indices, slice. Colum names",
         )
 
@@ -268,7 +268,7 @@ class RawSignalTest(unittest.TestCase):
         )
         #TODO this fail if channel names are not tuple. Should we force channel names to be tuple?
         self.assertTrue(
-            s_obj.channel_names == tuple([obj.channel_names[i] for i in SC]),
+            s_obj.get_channel_names() == tuple([obj.channel_names[i] for i in SC]),
             "Two indices, collection. Colum names",
         )
 
