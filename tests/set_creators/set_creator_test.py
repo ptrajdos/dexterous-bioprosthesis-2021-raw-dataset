@@ -416,6 +416,32 @@ class SetCreatorTest(unittest.TestCase):
                 n_remaining_channels = 6
                 self.check_attributes_indices(pipeline, X, n_remaining_channels)
 
+    def test_pipeline_with_rs_filters_no_selection(self):
+        creators = self.get_creators()
+
+        raw_set = self.generate_sample_data(
+            samples_number=self.get_default_sample_number(),
+            column_number=10,
+        )
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                pipeline = SetCreatorPipeline(
+                    [
+                        (
+                            "filter",
+                            RawSignalsFilterColumnNameRegex(pattern="^X[0-5]"),
+                        ),
+                        ("creator", creator),
+                    ]
+                )
+                pipeline.fit(raw_set)
+                X, y, t = pipeline.transform(raw_set)
+
+                self.basic_test_check(raw_set, X, y, t)
+                n_remaining_channels = 0 # No channels selected
+                self.check_attributes_indices(pipeline, X, n_remaining_channels)
+
 
 if __name__ == "__main__":
     unittest.main()

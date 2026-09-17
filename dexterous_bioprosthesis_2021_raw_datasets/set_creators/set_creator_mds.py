@@ -231,6 +231,15 @@ class SetCreatorMDS(ASetCreator):
 
         self.raw_signals_set = raw_signals
 
+        if raw_signals.signal_n_cols == 0:
+            n_samples = len(raw_signals)
+            self.channel_selected_attribs = []
+            self.attrib_indices_list = []
+            labels = np.asanyarray([rs.get_label() for rs in raw_signals])
+            timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
+            self.dataset = (np.empty((n_samples, 0)), labels, timestamps)
+            return self
+
         distance_matrix_channels = self.distance_matrix_calc.calculate_distance_matrix(
             raw_signals
         )
@@ -399,6 +408,13 @@ class SetCreatorMDS(ASetCreator):
             raise NotFittedError("The model is not fitted!")
 
         raw_signals = RawSignals.construct_from_list(raw_signals)
+
+        if raw_signals.signal_n_cols == 0:
+            n_samples = len(raw_signals)
+            X = np.empty((n_samples, 0))
+            labels = np.asanyarray([rs.get_label() for rs in raw_signals])
+            timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
+            return X, labels, timestamps
         new_to_train_distances = self._calculate_distances_to_training_data(raw_signals)
 
         new_X = ProgressParallel(

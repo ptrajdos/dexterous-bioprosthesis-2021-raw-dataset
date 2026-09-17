@@ -40,6 +40,18 @@ class SetCreatorClusterDist(ASetCreator):
 
     def _fit(self, raw_signals: RawSignals):
 
+        n_samples = len(raw_signals)
+        if raw_signals.signal_n_cols == 0:
+            self.channel_selected_attribs = []
+            self.reference_samples = RawSignals(
+                raw_signals[:0], sample_rate=raw_signals.sample_rate
+            )
+            representation = np.empty((n_samples, 0))
+            labels = np.asanyarray([rs.get_label() for rs in raw_signals])
+            timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
+            self.is_fitted = True
+            return representation, labels, timestamps
+
         initial_distance_matrix = self.distance_calculator.calculate_distance_matrix(
             raw_signals=raw_signals
         )
@@ -122,6 +134,7 @@ class SetCreatorClusterDist(ASetCreator):
 
     def fit_transform(self, raw_signals: RawSignals, y=None) -> tuple:
         """Fit and then transform the given data."""
+        super().fit(raw_signals, y)
         raw_signals_n = RawSignals(raw_signals)
         return self._fit(raw_signals_n)
 
@@ -131,6 +144,14 @@ class SetCreatorClusterDist(ASetCreator):
             raise NotFittedError("SetCreator has not been fitted.")
 
         raw_signals = RawSignals.construct_from_list(raw_signals)
+
+        if raw_signals.signal_n_cols == 0:
+            n_samples = len(raw_signals)
+            repr = np.empty((n_samples, 0))
+            labels = np.asanyarray([rs.get_label() for rs in raw_signals])
+            timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
+            return repr, labels, timestamps
+
         repr = np.concatenate(
             self.flatten_function(
                 self.distance_calculator.calculate_distance_matrix_set_2_set(
