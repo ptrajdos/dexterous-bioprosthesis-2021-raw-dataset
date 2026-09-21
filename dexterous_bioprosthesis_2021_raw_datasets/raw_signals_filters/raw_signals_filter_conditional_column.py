@@ -97,17 +97,22 @@ class RawSignalsFilterConditionalColumn(RawSignalsFilter):
         transformed_matched = inner_filter.transform(matched_signals)
         return self._merge_signals(raw_signals, transformed_matched, indices_list)
 
+    def _has_matches(self, indices_list):
+        return any(len(matching) > 0 for matching, _ in indices_list)
+
     def fit(self, raw_signals: RawSignals, y=None):
         """Fits all inner filters on their matched columns."""
         current = raw_signals
         for regex, inner_filter in self.column_filter_pairs:
             compiled = re.compile(regex)
             self._current_compiled = compiled
-            matched_signals, _ = self._split_signals(current)
+            matched_signals, indices_list = self._split_signals(current)
+            if not self._has_matches(indices_list):
+                continue
             inner_filter.fit(matched_signals, y)
             # Apply transform so subsequent filters see the updated signals
             transformed_matched = inner_filter.transform(matched_signals)
-            current = self._merge_signals(current, transformed_matched, _)
+            current = self._merge_signals(current, transformed_matched, indices_list)
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
@@ -118,6 +123,8 @@ class RawSignalsFilterConditionalColumn(RawSignalsFilter):
             compiled = re.compile(regex)
             self._current_compiled = compiled
             matched_signals, indices_list = self._split_signals(current)
+            if not self._has_matches(indices_list):
+                continue
             transformed_matched = inner_filter.transform(matched_signals)
             current = self._merge_signals(current, transformed_matched, indices_list)
         return current
