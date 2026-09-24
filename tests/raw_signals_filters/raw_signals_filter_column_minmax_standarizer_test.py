@@ -14,6 +14,8 @@ class RawSignalsFilterColumnMinMaxStandarizerTest(RawSignalsFilterTest):
         return [
             RawSignalsFilterColumnMinMaxStandarizer(),
             RawSignalsFilterColumnMinMaxStandarizer(range_min=-1, range_max=1),
+            RawSignalsFilterColumnMinMaxStandarizer(clip=True),
+
         ]
 
 

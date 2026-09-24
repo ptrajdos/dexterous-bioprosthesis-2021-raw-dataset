@@ -16,11 +16,12 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 class RawSignalsFilterAllMinmaxStandarizer(RawSignalsFilter):
     """Filter that applies global min-max standardisation."""
 
-    def __init__(self, range_min=0, range_max=1, eps=1e-30) -> None:
+    def __init__(self, range_min:float=0, range_max:float=1, eps:float=1e-30, clip:bool=False) -> None:
         super().__init__()
         self.range_min = range_min
         self.range_max = range_max
         self.eps = eps
+        self.clip=clip
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
@@ -43,5 +44,8 @@ class RawSignalsFilterAllMinmaxStandarizer(RawSignalsFilter):
             r_signal.signal = (
                 (r_signal.signal - self._min) / (self._max - self._min + self.eps)
             ) * (self.range_max - self.range_min) + self.range_min
+            
+            if self.clip:
+                r_signal.signal = np.clip(r_signal.signal,self.range_min, self.range_max)
 
         return copied_signals

@@ -16,6 +16,7 @@ class RawSignalsFilterAllStandarizerTest(RawSignalsFilterTest):
             RawSignalsFilterAllMinmaxStandarizer(),
             RawSignalsFilterAllMinmaxStandarizer(range_min=-1, range_max=1),
             RawSignalsFilterAllMinmaxStandarizer(range_min=-3, range_max=3),
+            RawSignalsFilterAllMinmaxStandarizer(clip=True),
         ]
 
 
