@@ -63,3 +63,14 @@ class IRawSignals(abc.ABC):
     def to_numpy_concat(self):
         """Return all signals concatenated as a single numpy array."""
         raise NotImplementedError
+
+    @abc.abstractmethod
+    def to_pandas(self):
+        """Return the signal data as a pandas DataFrame
+        indexed by (signal, sample)."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def to_pandas_concat(self):
+        """Return all signals concatenated as a single pandas DataFrame."""
+        raise NotImplementedError

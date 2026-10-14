@@ -11,6 +11,7 @@ from typing import Iterator, Union
 import warnings
 
 import numpy as np
+import pandas as pd
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.iraw_signals import (
     IRawSignals,
@@ -221,3 +222,39 @@ class RawSignals(IRawSignals):
 
     def get_channel_names(self):
         return self._channel_names
+
+    def to_pandas(self) -> pd.DataFrame:
+        """Returns the raw_signals object as a pandas DataFrame.
+        Rows are indexed by a (signal, sample) MultiIndex,
+        so df.loc[i] gives the i-th signal.
+        Assuming that all raw_signal object have the same number of channels
+
+        Returns
+        -------
+        pandas DataFrame of shape (sum(n_samples), n_channels),
+        columns named after channel names.
+
+        """
+        lengths = [len(rs) for rs in self.raw_signals_list]
+        index = pd.MultiIndex.from_arrays(
+            [
+                np.repeat(np.arange(len(lengths)), lengths),
+                np.concatenate([np.arange(n) for n in lengths]),
+            ],
+            names=["signal", "sample"],
+        )
+        return pd.DataFrame(
+            self.to_numpy_concat(), index=index, columns=list(self._channel_names)
+        )
+
+    def to_pandas_concat(self) -> pd.DataFrame:
+        """Returns the raw_signals object as a concatenated pandas DataFrame.
+        Assuming that all raw_signal object have the same number of channels
+
+        Returns
+        -------
+        pandas DataFrame of shape (sum(n_samples), n_channels),
+        columns named after channel names.
+
+        """
+        return pd.DataFrame(self.to_numpy_concat(), columns=list(self._channel_names))

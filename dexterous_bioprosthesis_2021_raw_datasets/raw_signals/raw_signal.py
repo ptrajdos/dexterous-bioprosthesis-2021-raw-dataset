@@ -4,6 +4,7 @@ Represents a single multi-channel time-domain signal with associated
 metadata such as class label, timestamp, sample rate, and channel names.
 """
 import numpy as np
+import pandas as pd
 from typing import Tuple
 from copy import deepcopy
 
@@ -134,7 +135,13 @@ class RawSignal():
         """Returns: signal representation as an numpy ndarray
         """
         return self.signal
-    
+
+    def to_pandas(self)->pd.DataFrame:
+        """Returns: signal representation as a pandas DataFrame
+        samples (rows) x channels (columns), columns named after channel names.
+        """
+        return pd.DataFrame(self.signal, columns=list(self.channel_names))
+
     def get_label(self):
         """Return the class label of this signal."""
         return self.object_class

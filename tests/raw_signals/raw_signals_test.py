@@ -1,6 +1,7 @@
 import random
 import unittest
 import numpy as np
+import pandas as pd
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 
@@ -407,6 +408,113 @@ class RawSignalsTest(unittest.TestCase):
                     np_array.shape == (n_sig * n_samples, n_channels),
                     "Wrong shape of the returned signal.",
                 )
+
+    def test_to_pandas_concat(self):
+
+        for n_sig, n_samples, n_channels in [
+            (1, 10, 1),
+            (2, 20, 2),
+            (5, 50, 5),
+            (10, 100, 10),
+            (100, 111, 10),
+        ]:
+            with self.subTest(n_sig=n_sig, n_samples=n_samples, n_channels=n_channels):
+                signals = self.generate_sample_data(
+                    column_number=n_channels,
+                    samples_number=n_samples,
+                    signal_number=n_sig,
+                )
+
+                df = signals.to_pandas_concat()
+
+                self.assertIsInstance(
+                    df, pd.DataFrame, "Returned object is not pandas DataFrame"
+                )
+                self.assertTrue(
+                    df.shape == (n_sig * n_samples, n_channels),
+                    "Wrong shape of the returned DataFrame.",
+                )
+                self.assertTrue(
+                    tuple(df.columns) == tuple(signals[0].get_channel_names()),
+                    "Wrong column names.",
+                )
+                self.assertTrue(
+                    np.allclose(df.to_numpy(), signals.to_numpy_concat()),
+                    "Wrong values.",
+                )
+
+    def test_to_pandas_concat_channel_names(self):
+        R, C, N = 12, 3, 5
+        channel_names = ["X{}".format(i) for i in range(C)]
+        signals = RawSignals(
+            [
+                RawSignal(signal=np.random.random((R, C)), channel_names=channel_names)
+                for _ in range(N)
+            ]
+        )
+
+        df = signals.to_pandas_concat()
+        self.assertTrue(df.shape == (N * R, C), "Wrong shape of the returned DataFrame.")
+        self.assertTrue(list(df.columns) == channel_names, "Wrong column names.")
+        self.assertTrue(
+            np.allclose(df.to_numpy(), signals.to_numpy_concat()), "Wrong values."
+        )
+
+    def test_to_pandas(self):
+
+        for n_sig, n_samples, n_channels in [
+            (1, 10, 1),
+            (2, 20, 2),
+            (5, 50, 5),
+            (10, 100, 10),
+        ]:
+            with self.subTest(n_sig=n_sig, n_samples=n_samples, n_channels=n_channels):
+                signals = self.generate_sample_data(
+                    column_number=n_channels,
+                    samples_number=n_samples,
+                    signal_number=n_sig,
+                )
+
+                df = signals.to_pandas()
+
+                self.assertIsInstance(
+                    df, pd.DataFrame, "Returned object is not pandas DataFrame"
+                )
+                self.assertTrue(
+                    df.shape == (n_sig * n_samples, n_channels),
+                    "Wrong shape of the returned DataFrame.",
+                )
+                self.assertTrue(
+                    list(df.index.names) == ["signal", "sample"], "Wrong index names."
+                )
+                self.assertTrue(
+                    tuple(df.columns) == tuple(signals[0].get_channel_names()),
+                    "Wrong column names.",
+                )
+                for i, rs in enumerate(signals):
+                    sig_df = df.loc[i]
+                    self.assertTrue(
+                        list(sig_df.index) == list(range(n_samples)),
+                        "Wrong sample index.",
+                    )
+                    self.assertTrue(
+                        np.allclose(sig_df.to_numpy(), rs.to_numpy()), "Wrong values."
+                    )
+
+    def test_to_pandas_variable_length(self):
+        C = 3
+        lengths = [5, 12, 7]
+        signals = RawSignals(
+            [RawSignal(signal=np.random.random((n, C))) for n in lengths]
+        )
+
+        df = signals.to_pandas()
+        self.assertTrue(df.shape == (sum(lengths), C), "Wrong shape of the returned DataFrame.")
+        for i, (rs, n) in enumerate(zip(signals, lengths)):
+            sig_df = df.loc[i]
+            self.assertTrue(len(sig_df) == n, "Wrong signal length.")
+            self.assertTrue(list(sig_df.index) == list(range(n)), "Wrong sample index.")
+            self.assertTrue(np.allclose(sig_df.to_numpy(), rs.to_numpy()), "Wrong values.")
 
     def test_set_sample_rate(self):
         n_sig = 100

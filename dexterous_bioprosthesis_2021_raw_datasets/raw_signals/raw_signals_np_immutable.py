@@ -5,6 +5,7 @@ must share the same length, number of channels, and sample rate.
 """
 from copy import deepcopy
 import numpy as np
+import pandas as pd
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.iraw_signals import (
     IRawSignals,
@@ -217,3 +218,37 @@ class RawSignalsNpImmutable(IRawSignals):
         """
         np_array =  np.reshape(self.raw_signals_buffer, (-1, self.raw_signals_buffer.shape[2]))
         return np_array
+
+    def _channel_names(self):
+        # Channel names are not stored, default RawSignal names are used.
+        return ["C{}".format(i) for i in range(self.raw_signals_buffer.shape[2])]
+
+    def to_pandas(self):
+        """Returns the raw_signals object as a pandas DataFrame.
+        Rows are indexed by a (signal, sample) MultiIndex,
+        so df.loc[i] gives the i-th signal.
+
+        Returns
+        -------
+        pandas DataFrame of shape (n_objects * n_samples, n_channels),
+        columns named after channel names.
+
+        """
+        n_objects, n_samples = self.raw_signals_buffer.shape[:2]
+        index = pd.MultiIndex.from_product(
+            [range(n_objects), range(n_samples)], names=["signal", "sample"]
+        )
+        return pd.DataFrame(
+            self.to_numpy_concat(), index=index, columns=self._channel_names()
+        )
+
+    def to_pandas_concat(self):
+        """Returns the raw_signals object as a concatenated pandas DataFrame.
+
+        Returns
+        -------
+        pandas DataFrame of shape (n_objects * n_samples, n_channels),
+        columns named after channel names.
+
+        """
+        return pd.DataFrame(self.to_numpy_concat(), columns=self._channel_names())

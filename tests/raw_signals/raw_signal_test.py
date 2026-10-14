@@ -1,6 +1,7 @@
 import unittest
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 import numpy as np
+import pandas as pd
 
 from tests.testing_tools import get_pickled_obj
 
@@ -303,6 +304,59 @@ class RawSignalTest(unittest.TestCase):
         X = obj.to_numpy()
         self.assertIsInstance(X, np.ndarray, "Wrong type")
         self.assertTrue(X.shape == (R, C), "Wrong size")
+
+    def test_to_pandas(self):
+        R, C = 50, 10
+        sig = np.random.random((R, C))
+
+        obj = RawSignal(signal=sig, timestamp=10, object_class=0)
+        df = obj.to_pandas()
+        self.assertIsInstance(df, pd.DataFrame, "Wrong type")
+        self.assertTrue(df.shape == (R, C), "Wrong size")
+        self.assertTrue(
+            tuple(df.columns) == obj.get_channel_names(), "Wrong column names"
+        )
+        self.assertTrue(np.allclose(df.to_numpy(), sig), "Wrong values")
+
+    def test_to_pandas_channel_names(self):
+        R, C = 50, 10
+        sig = np.random.random((R, C))
+        channel_names = ["X{}".format(i) for i in range(C)]
+
+        obj = RawSignal(
+            signal=sig, timestamp=10, object_class=0, channel_names=channel_names
+        )
+        df = obj.to_pandas()
+        self.assertTrue(df.shape == (R, C), "Wrong size")
+        self.assertTrue(list(df.columns) == channel_names, "Wrong column names")
+        self.assertTrue(np.allclose(df.to_numpy(), sig), "Wrong values")
+
+    def test_to_pandas_sliced(self):
+        R, C = 50, 10
+        sig = np.random.random((R, C))
+        SC = [1, 3, 5]
+
+        obj = RawSignal(signal=sig, timestamp=10, object_class=0)
+        df = obj[:20, SC].to_pandas()
+        self.assertTrue(df.shape == (20, len(SC)), "Wrong size")
+        self.assertTrue(
+            list(df.columns) == [obj.channel_names[i] for i in SC],
+            "Wrong column names",
+        )
+        self.assertTrue(np.allclose(df.to_numpy(), sig[:20, SC]), "Wrong values")
+
+    def test_to_pandas_dtype(self):
+        R, C = 50, 10
+        dtypes = [np.float32, np.float64]
+        for dtype in dtypes:
+            with self.subTest(dtype=dtype):
+                sig = np.zeros((R, C), dtype=dtype)
+                obj = RawSignal(signal=sig, timestamp=10, object_class=0)
+                df = obj.to_pandas()
+                self.assertTrue(
+                    all(df.dtypes == dtype),
+                    f"DataFrame dtype should be {dtype}",
+                )
 
     def test_label_set(self):
         R, C = 50, 10
