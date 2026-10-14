@@ -27,3 +27,7 @@ class NpSignalExtractorQuantile(NPSignalExtractor):
     def attribs_per_column(self):
         """Return the number of features extracted per channel."""
         return 1
+
+    def get_name(self) -> str:
+        """Return the base name of the extracted attribute."""
+        return "quantile_{:g}".format(self.q)

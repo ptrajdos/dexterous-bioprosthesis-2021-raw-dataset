@@ -129,3 +129,21 @@ class NpSignalExtractorTest(unittest.TestCase):
             )
             self.assertFalse(np.any(np.isnan(T)), "NaNs in outut")
             self.assertTrue(np.all(np.isfinite(T)), "Infinite values in output")
+
+    def test_attribute_names(self):
+        extractors = self.get_extractors()
+
+        for extractor in extractors:
+            with self.subTest(extractor=extractor):
+                names = extractor.get_attribute_names()
+
+                self.assertIsInstance(names, list, "Wrong type")
+                self.assertTrue(
+                    len(names) == extractor.attribs_per_column(),
+                    f"Wrong number of names. Expected {extractor.attribs_per_column()}, got {len(names)}",
+                )
+                self.assertTrue(
+                    all(isinstance(n, str) and len(n) > 0 for n in names),
+                    "Names should be non-empty strings",
+                )
+                self.assertTrue(len(set(names)) == len(names), "Names are not unique")

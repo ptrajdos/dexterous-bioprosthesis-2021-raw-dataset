@@ -52,3 +52,9 @@ class NpSignalExtractorAr(NPSignalExtractor):
     def attribs_per_column(self):
         """Return the number of features extracted per channel."""
         return self.lags + 1
+
+    def get_attribute_names(self) -> list[str]:
+        """Return the names of the features extracted per channel.
+        Constant term first, then lag coefficients.
+        """
+        return ["ar_const"] + ["ar_lag{}".format(i) for i in range(1, self.lags + 1)]

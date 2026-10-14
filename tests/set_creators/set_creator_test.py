@@ -22,6 +22,7 @@ from tests.testing_tools import (
     generate_zero_data,
 )
 import numpy as np
+import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 
 
@@ -441,6 +442,185 @@ class SetCreatorTest(unittest.TestCase):
                 self.basic_test_check(raw_set, X, y, t)
                 n_remaining_channels = 0 # No channels selected
                 self.check_attributes_indices(pipeline, X, n_remaining_channels)
+
+    def test_feature_names_out(self):
+        creators = self.get_creators()
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                raw_set = self.generate_sample_data(
+                    samples_number=self.get_default_sample_number()
+                )
+
+                creator.fit(raw_set)
+                X, y, t = creator.transform(raw_set)
+                names = creator.get_feature_names_out()
+
+                self.assertIsInstance(names, np.ndarray, "Wrong type of names")
+                self.assertTrue(
+                    len(names) == X.shape[1],
+                    f"Wrong number of names. Expected {X.shape[1]}, got {len(names)}",
+                )
+                self.assertTrue(
+                    all(isinstance(n, str) for n in names), "Names should be strings"
+                )
+                self.assertTrue(len(set(names)) == len(names), "Names are not unique")
+
+    def test_feature_names_out_channel_attribs(self):
+        """Every attribute assigned to a channel should be named after that channel."""
+        creators = self.get_creators()
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                raw_set = self.generate_sample_data(
+                    samples_number=self.get_default_sample_number()
+                )
+
+                creator.fit(raw_set)
+                names = creator.get_feature_names_out()
+                indices = creator.get_channel_attribs_indices()
+                if indices is None:
+                    continue
+
+                for channel_name, channel_indices in zip(
+                    creator.get_channel_names(), indices
+                ):
+                    for idx in channel_indices:
+                        self.assertTrue(
+                            names[idx].startswith(channel_name + "_"),
+                            f"Attribute {names[idx]} not named after channel {channel_name}",
+                        )
+
+    def test_feature_names_out_not_fitted(self):
+        creators = self.get_creators()
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                with self.assertRaises(NotFittedError):
+                    creator.get_feature_names_out()
+
+    def test_pandas_output(self):
+        creators = self.get_creators()
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                raw_set = self.generate_sample_data(
+                    samples_number=self.get_default_sample_number()
+                )
+
+                returned = creator.set_output(transform="pandas")
+                self.assertIs(returned, creator, "set_output should return self")
+
+                X_ft, y_ft, t_ft = creator.fit_transform(raw_set)
+                X, y, t = creator.transform(raw_set)
+
+                for X_df in (X_ft, X):
+                    self.assertIsInstance(X_df, pd.DataFrame, "X is not a DataFrame")
+                    self.assertTrue(
+                        list(X_df.columns) == list(creator.get_feature_names_out()),
+                        "Wrong column names",
+                    )
+                self.basic_test_check(raw_set, X.to_numpy(), y, t)
+
+                creator.set_output(transform="default")
+                X_np, _, _ = creator.transform(raw_set)
+                self.assertIsInstance(X_np, np.ndarray, "Default output is not numpy")
+                self.assertTrue(X_np.shape == X.shape, "Shapes differ")
+
+    def test_pandas_output_wrong_value(self):
+        creators = self.get_creators()
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                with self.assertRaises(ValueError):
+                    creator.set_output(transform="polars_or_whatever")
+
+    def test_pandas_output_pipeline(self):
+        creators = self.get_creators()
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                raw_set = self.generate_sample_data(
+                    samples_number=self.get_default_sample_number()
+                )
+
+                pipeline = Pipeline(
+                    [
+                        ("trans", SetCreatorTransformerWrapper(creator)),
+                        ("classifier", DecisionTreeClassifier()),
+                    ]
+                ).set_output(transform="pandas")
+
+                y = raw_set.get_labels()
+                pipeline.fit(raw_set, y)
+
+                self.assertTrue(
+                    list(pipeline["classifier"].feature_names_in_)
+                    == list(pipeline["trans"].get_feature_names_out()),
+                    "Classifier did not receive attribute names",
+                )
+                pipeline.predict(raw_set)
+
+    def test_pandas_output_set_creator_pipeline(self):
+        creators = self.get_creators()
+
+        raw_set = self.generate_sample_data(
+            samples_number=self.get_default_sample_number(),
+            column_number=10,
+        )
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                pipeline = SetCreatorPipeline(
+                    [
+                        (
+                            "filter",
+                            RawSignalsFilterColumnNameRegex(pattern="^C[0-5]"),
+                        ),
+                        ("creator", creator),
+                    ]
+                ).set_output(transform="pandas")
+                pipeline.fit(raw_set)
+                X, y, t = pipeline.transform(raw_set)
+
+                self.assertIsInstance(X, pd.DataFrame, "X is not a DataFrame")
+                self.assertTrue(
+                    list(X.columns) == list(pipeline.get_feature_names_out()),
+                    "Wrong column names",
+                )
+
+    def test_sklearn_is_fitted(self):
+        creators = self.get_creators()
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                raw_set = self.generate_sample_data(
+                    samples_number=self.get_default_sample_number()
+                )
+                wrapper = SetCreatorTransformerWrapper(creator)
+
+                self.assertFalse(creator.__sklearn_is_fitted__(), "Should not be fitted")
+                self.assertFalse(wrapper.__sklearn_is_fitted__(), "Wrapper should not be fitted")
+
+                wrapper.fit(raw_set)
+
+                self.assertTrue(creator.__sklearn_is_fitted__(), "Should be fitted")
+                self.assertTrue(wrapper.__sklearn_is_fitted__(), "Wrapper should be fitted")
+
+    def test_sklearn_tags(self):
+        try:
+            from sklearn.utils import get_tags
+        except ImportError:
+            self.skipTest("Estimator tags API requires scikit-learn >= 1.6")
+
+        creators = self.get_creators()
+
+        for creator_name, creator in creators.items():
+            with self.subTest(creator_name=creator_name):
+                for obj in (creator, SetCreatorTransformerWrapper(creator)):
+                    tags = get_tags(obj)
+                    self.assertTrue(tags.requires_fit, "Set creator requires fit")
+                    self.assertIsNotNone(tags.transformer_tags, "Should be a transformer")
 
 
 if __name__ == "__main__":

@@ -43,6 +43,7 @@ class SetCreatorClusterDist(ASetCreator):
         n_samples = len(raw_signals)
         if raw_signals.signal_n_cols == 0:
             self.channel_selected_attribs = []
+            self._slice_names = []
             self.reference_samples = RawSignals(
                 raw_signals[:0], sample_rate=raw_signals.sample_rate
             )
@@ -106,6 +107,12 @@ class SetCreatorClusterDist(ASetCreator):
 
         representation = np.concatenate(distance_matrix[:, :, best_samples_ids], axis=1)
 
+        self._slice_names = (
+            list(self._channel_names)
+            if is_channel_attribute_mapping
+            else ["F{}".format(s) for s in range(n_channels)]
+        )
+
         if is_channel_attribute_mapping:
             self.channel_selected_attribs = []
             n_best_sample_ids = len(best_samples_ids)
@@ -136,7 +143,8 @@ class SetCreatorClusterDist(ASetCreator):
         """Fit and then transform the given data."""
         super().fit(raw_signals, y)
         raw_signals_n = RawSignals(raw_signals)
-        return self._fit(raw_signals_n)
+        X, labels, timestamps = self._fit(raw_signals_n)
+        return self._wrap_output(X), labels, timestamps
 
     def transform(self, raw_signals: RawSignals) -> tuple:
         """Transform the given data."""
@@ -150,7 +158,7 @@ class SetCreatorClusterDist(ASetCreator):
             repr = np.empty((n_samples, 0))
             labels = np.asanyarray([rs.get_label() for rs in raw_signals])
             timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
-            return repr, labels, timestamps
+            return self._wrap_output(repr), labels, timestamps
 
         repr = np.concatenate(
             self.flatten_function(
@@ -165,8 +173,28 @@ class SetCreatorClusterDist(ASetCreator):
         labels = np.asanyarray([rs.get_label() for rs in raw_signals])
         timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
 
-        return repr, labels, timestamps
+        return self._wrap_output(repr), labels, timestamps
 
     def get_channel_attribs_indices(self):
         """Return the feature indices grouped by channel."""
         return self.channel_selected_attribs
+
+    def get_feature_names_out(self, input_features=None):
+        """Return attribute names formatted as {channel}_dist_ref{j}.
+        j is the index of the reference sample.
+        If the distance matrix is flattened, F{i} (flattened slice) is used instead of channel name.
+        """
+        if not self.is_fitted:
+            raise NotFittedError("SetCreator has not been fitted.")
+
+        n_reference = len(self.reference_samples)
+        names = [
+            "{}_dist_ref{}".format(slice_name, j)
+            for slice_name in self._slice_names
+            for j in range(n_reference)
+        ]
+        return np.asanyarray(names, dtype=object)
+
+    def __sklearn_is_fitted__(self) -> bool:
+        """Return True if the set creator has been fitted."""
+        return self.is_fitted

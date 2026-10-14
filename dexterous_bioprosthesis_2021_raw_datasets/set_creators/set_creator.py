@@ -7,7 +7,27 @@ a convenience base class that stores channel names during fit.
 from __future__ import annotations
 import abc
 from typing import Any, Optional, Tuple
+
+import numpy as np
+import pandas as pd
+
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
+
+
+def set_creator_sklearn_tags():
+    """Return scikit-learn tags of a set creator (transformer that requires fitting).
+
+    Used by scikit-learn >= 1.6 (e.g. Pipeline checks the tags of its steps).
+    Older versions never call it, so sklearn.utils.Tags is imported lazily.
+    """
+    from sklearn.utils import Tags, TargetTags, TransformerTags
+
+    return Tags(
+        estimator_type=None,
+        target_tags=TargetTags(required=False),
+        transformer_tags=TransformerTags(),
+        requires_fit=True,
+    )
 
 
 class SetCreator(abc.ABC):
@@ -86,6 +106,35 @@ class SetCreator(abc.ABC):
         channel names as a list/tuple
         """
 
+    @abc.abstractmethod
+    def get_feature_names_out(self, input_features=None) -> Optional[np.ndarray]:
+        """Get names of the attributes in the output set.
+
+        Arguments:
+        ---------
+        input_features -- ignored, present for scikit-learn compatibility
+
+        Returns:
+        --------
+        numpy array of attribute names (one per column of X).
+        Or None if the output is not an attribute matrix.
+        """
+
+    @abc.abstractmethod
+    def set_output(self, *, transform=None) -> SetCreator:
+        """Set the output container of X.
+
+        Arguments:
+        ---------
+        transform -- "pandas" -- X is a pandas DataFrame with attribute names as columns,
+                     "default" -- X is a numpy array,
+                     None -- configuration is unchanged
+
+        Returns:
+        --------
+        self
+        """
+
 
 class ASetCreator(SetCreator):
     """Abstract base class that implements common fit logic for set creators.
@@ -98,6 +147,7 @@ class ASetCreator(SetCreator):
 
     def __init__(self) -> None:
         self._channel_names: Tuple[str] = tuple()
+        self._output_transform = "default"
 
     def fit(self, raw_signals: RawSignals, y=None) -> ASetCreator:
         """Store channel names from the raw signals.
@@ -127,3 +177,69 @@ class ASetCreator(SetCreator):
         channel names as a list/tuple
         """
         return self._channel_names
+
+    def set_output(self, *, transform=None) -> ASetCreator:
+        """Set the output container of X.
+
+        Arguments:
+        ---------
+        transform -- "pandas" -- X is a pandas DataFrame with attribute names as columns,
+                     "default" -- X is a numpy array,
+                     None -- configuration is unchanged
+
+        Returns:
+        --------
+        self
+        """
+        if transform is None:
+            return self
+
+        if transform not in ("default", "pandas"):
+            raise ValueError(
+                "Unsupported output transform: {}. Use 'default' or 'pandas'.".format(transform)
+            )
+
+        self._output_transform = transform
+        return self
+
+    def _wrap_output(self, X):
+        """Convert X to the configured output container."""
+        if getattr(self, "_output_transform", "default") != "pandas":
+            return X
+
+        return pd.DataFrame(X, columns=self.get_feature_names_out())
+
+    def _feature_names(self, levels, attrib_groups) -> np.ndarray:
+        """Build feature names in the order: attribute group -> level -> channel -> attribute.
+
+        Arguments:
+        ---------
+        levels -- list of level names (e.g. decomposition levels or windows). [None] for no levels.
+        attrib_groups -- list of lists of per-channel attribute names (one list per extractor)
+
+        Returns:
+        --------
+        numpy array of names formatted as {channel}_{level}_{attribute}
+        """
+        names = []
+        for attrib_names in attrib_groups:
+            for level in levels:
+                for channel_name in self._channel_names:
+                    prefix = (
+                        channel_name
+                        if level is None
+                        else "{}_{}".format(channel_name, level)
+                    )
+                    names += ["{}_{}".format(prefix, a) for a in attrib_names]
+
+        return np.asanyarray(names, dtype=object)
+
+    def __sklearn_tags__(self):
+        """scikit-learn >= 1.6 tags."""
+        return set_creator_sklearn_tags()
+
+    def __sklearn_is_fitted__(self) -> bool:
+        """Return True if the set creator has been fitted.
+        Used by sklearn.utils.validation.check_is_fitted.
+        """
+        return self.get_channel_attribs_indices() is not None

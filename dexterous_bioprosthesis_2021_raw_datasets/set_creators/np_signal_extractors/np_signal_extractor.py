@@ -5,6 +5,7 @@ feature extraction.
 """
 from __future__ import annotations
 import abc
+import re
 
 import numpy as np
 import logging
@@ -100,3 +101,25 @@ class NPSignalExtractor(abc.ABC):
     def attribs_per_column(self) -> int:
         """Return the number of features extracted per channel."""
         pass
+
+    def get_name(self) -> str:
+        """Return the base name of the extracted attribute.
+        Derived from the class name, e.g. NpSignalExtractorSpectralFlatness -> spectral_flatness
+        """
+        name = type(self).__name__
+        for prefix in ("NpSignalExtractor", "NPSignalExtractor"):
+            if name.startswith(prefix):
+                name = name[len(prefix):]
+                break
+        name = re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", "_", name)
+        return name.lower() if name else "attr"
+
+    def get_attribute_names(self) -> list[str]:
+        """Return the names of the features extracted per channel.
+        The list has attribs_per_column() elements.
+        """
+        name = self.get_name()
+        n_attribs = self.attribs_per_column()
+        if n_attribs == 1:
+            return [name]
+        return ["{}_{}".format(name, i) for i in range(n_attribs)]

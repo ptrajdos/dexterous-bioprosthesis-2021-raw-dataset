@@ -18,3 +18,9 @@ class NpSignalExtractorTemporalMomentTest(NpSignalExtractorTest):
             NpSignalExtractorTemporalMoment(order=2, central=True),
             NpSignalExtractorTemporalMoment(order=3, central=False, proportional_time=False),
         ]
+
+    def test_attribute_names_values(self):
+        self.assertEqual(
+            NpSignalExtractorTemporalMoment(order=2).get_attribute_names(),
+            ["temporal_moment_2"],
+        )

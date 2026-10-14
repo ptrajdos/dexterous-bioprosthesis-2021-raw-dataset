@@ -20,3 +20,7 @@ class NpSignalExtractorQuantileTest(NpSignalExtractorTest):
                 sanitize_output=True, check_input=True, check_output=True
             ),
         ]
+
+    def test_attribute_names_values(self):
+        self.assertEqual(NpSignalExtractorQuantile(q=0.25).get_attribute_names(), ["quantile_0.25"])
+        self.assertEqual(NpSignalExtractorQuantile().get_attribute_names(), ["quantile_0.5"])

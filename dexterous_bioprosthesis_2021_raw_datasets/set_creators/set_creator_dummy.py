@@ -44,3 +44,15 @@ class SetCreatorDummy(ASetCreator):
     def get_channel_attribs_indices(self):
         """Return the feature indices grouped by channel."""
         return self.channel_attribs_indices
+
+    def get_feature_names_out(self, input_features=None):
+        """Return None. Output is a RawSignals object, not an attribute matrix."""
+        return None
+
+    def set_output(self, *, transform=None):
+        """Only the default output is supported. Output is a RawSignals object."""
+        if transform == "pandas":
+            raise ValueError(
+                "SetCreatorDummy returns RawSignals. Pandas output is not supported."
+            )
+        return super().set_output(transform=transform)

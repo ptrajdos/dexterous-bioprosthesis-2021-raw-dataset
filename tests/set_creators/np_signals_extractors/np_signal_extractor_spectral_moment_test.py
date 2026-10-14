@@ -19,3 +19,9 @@ class NpSignalExtractorSpectralMomentTest(NpSignalExtractorTest):
             NpSignalExtractorSpectralMoment(order=2),
             NpSignalExtractorSpectralMoment(order=3, centered=False)
         ]
+
+    def test_attribute_names_values(self):
+        self.assertEqual(
+            NpSignalExtractorSpectralMoment(order=3).get_attribute_names(),
+            ["spectral_moment_3"],
+        )

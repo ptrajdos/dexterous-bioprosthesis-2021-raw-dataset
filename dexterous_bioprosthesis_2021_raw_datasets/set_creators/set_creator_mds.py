@@ -222,7 +222,8 @@ class SetCreatorMDS(ASetCreator):
         """Fit and then transform the given data."""
         self.fit(raw_signals)
 
-        return self.dataset
+        X, labels, timestamps = self.dataset
+        return self._wrap_output(X), labels, timestamps
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
@@ -235,6 +236,7 @@ class SetCreatorMDS(ASetCreator):
             n_samples = len(raw_signals)
             self.channel_selected_attribs = []
             self.attrib_indices_list = []
+            self._slice_names = []
             labels = np.asanyarray([rs.get_label() for rs in raw_signals])
             timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
             self.dataset = (np.empty((n_samples, 0)), labels, timestamps)
@@ -253,9 +255,11 @@ class SetCreatorMDS(ASetCreator):
         )
 
         self.attrib_indices_list = None
+        self._slice_names = ["F{}".format(s) for s in range(distance_matrix.shape[0])]
         if distance_matrix_channels.shape[0] == distance_matrix.shape[0]:
             # Not flattened at all
             self._calculate_attrib_indices()
+            self._slice_names = list(self._channel_names)
 
         return self
 
@@ -414,7 +418,7 @@ class SetCreatorMDS(ASetCreator):
             X = np.empty((n_samples, 0))
             labels = np.asanyarray([rs.get_label() for rs in raw_signals])
             timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
-            return X, labels, timestamps
+            return self._wrap_output(X), labels, timestamps
         new_to_train_distances = self._calculate_distances_to_training_data(raw_signals)
 
         new_X = ProgressParallel(
@@ -434,8 +438,26 @@ class SetCreatorMDS(ASetCreator):
         extracted_objs_classes = np.asanyarray([x.object_class for x in raw_signals])
         extracted_objs_timestamps = np.asanyarray( [x.timestamp for x in raw_signals])
 
-        return tr_dataset, extracted_objs_classes, extracted_objs_timestamps
+        return self._wrap_output(tr_dataset), extracted_objs_classes, extracted_objs_timestamps
 
     def get_channel_attribs_indices(self):
         """Return the feature indices grouped by channel."""
         return self.attrib_indices_list
+
+    def get_feature_names_out(self, input_features=None):
+        """Return attribute names formatted as {channel}_mds{j}.
+        If the distance matrix is flattened, F{i} (flattened slice) is used instead of channel name.
+        """
+        if self.raw_signals_set is None:
+            raise NotFittedError("The model is not fitted!")
+
+        names = [
+            "{}_mds{}".format(slice_name, j)
+            for slice_name, n_attribs in zip(self._slice_names, self.channel_selected_attribs)
+            for j in range(n_attribs)
+        ]
+        return np.asanyarray(names, dtype=object)
+
+    def __sklearn_is_fitted__(self) -> bool:
+        """Return True if the set creator has been fitted."""
+        return self.raw_signals_set is not None

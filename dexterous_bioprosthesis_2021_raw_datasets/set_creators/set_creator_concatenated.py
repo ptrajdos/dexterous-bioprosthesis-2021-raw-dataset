@@ -88,7 +88,7 @@ class SetCreatorConcatenated(ASetCreator):
         
         Xf = np.concatenate(X_es, axis=1)
         
-        return Xf, y_f, t_f
+        return self._wrap_output(Xf), y_f, t_f
     
 
     def fit_transform(self, raw_signals: RawSignals, y=None):
@@ -103,3 +103,22 @@ class SetCreatorConcatenated(ASetCreator):
     def get_channel_names(self):
         """Return concatenated channel names from all sub-creators."""
         return self._concatenated_channel_names
+
+    def get_feature_names_out(self, input_features=None):
+        """Return concatenated attribute names of all sub-creators.
+        If names are not unique, names of the i-th sub-creator are prefixed with S{i}_.
+        """
+        if self.get_channel_attribs_indices() is None:
+            raise NotFittedError("SetCreator has not been fitted.")
+
+        creators_names = [list(creator.get_feature_names_out()) for creator in self.creators]
+        names = [name for creator_names in creators_names for name in creator_names]
+
+        if len(set(names)) != len(names):
+            names = [
+                "S{}_{}".format(creator_idx, name)
+                for creator_idx, creator_names in enumerate(creators_names)
+                for name in creator_names
+            ]
+
+        return np.asanyarray(names, dtype=object)

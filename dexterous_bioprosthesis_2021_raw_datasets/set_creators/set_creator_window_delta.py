@@ -109,7 +109,7 @@ class SetCreatorWindowDelta(ASetCreator):
         extracted_attribs = extracted_attribs.astype(raw_signals[0].to_numpy().dtype)
         labels = np.asanyarray(labels)
         timestamps = np.asanyarray(timestamps)
-        return extracted_attribs, labels, timestamps
+        return self._wrap_output(extracted_attribs), labels, timestamps
 
     def fit_transform(self, raw_signals: RawSignals, y=None):
         """Fit and then transform the given data."""
@@ -118,3 +118,13 @@ class SetCreatorWindowDelta(ASetCreator):
     def get_channel_attribs_indices(self):
         """Return the feature indices grouped by channel."""
         return self.channel_selected_attribs
+
+    def get_feature_names_out(self, input_features=None):
+        """Return attribute names formatted as {channel}_W{window}_{attribute}."""
+        if self.get_channel_attribs_indices() is None:
+            raise NotFittedError("SetCreator has not been fitted.")
+
+        return self._feature_names(
+            ["W{}".format(w) for w in range(self.n_windows)],
+            [extractor.get_attribute_names() for extractor in self.extractors],
+        )

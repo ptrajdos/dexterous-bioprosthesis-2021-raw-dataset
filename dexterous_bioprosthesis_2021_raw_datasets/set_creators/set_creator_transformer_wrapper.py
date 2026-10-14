@@ -3,7 +3,10 @@
 Adapts a :class:`SetCreator` to the scikit-learn transformer interface.
 """
 
-from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import SetCreator
+from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
+    SetCreator,
+    set_creator_sklearn_tags,
+)
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_dummy import SetCreatorDummy
 
 
@@ -28,3 +31,20 @@ class SetCreatorTransformerWrapper:
         """Fit and then transform the given data."""
         Xt, yt, t = self.set_creator.fit_transform(X, y)
         return Xt
+
+    def get_feature_names_out(self, input_features=None):
+        """Delegate to the wrapped SetCreator."""
+        return self.set_creator.get_feature_names_out(input_features)
+
+    def set_output(self, *, transform=None):
+        """Set the output container of the wrapped SetCreator."""
+        self.set_creator.set_output(transform=transform)
+        return self
+
+    def __sklearn_tags__(self):
+        """scikit-learn >= 1.6 tags."""
+        return set_creator_sklearn_tags()
+
+    def __sklearn_is_fitted__(self) -> bool:
+        """Delegate to the wrapped SetCreator."""
+        return self.set_creator.__sklearn_is_fitted__()

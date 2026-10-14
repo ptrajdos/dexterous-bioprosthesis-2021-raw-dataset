@@ -35,3 +35,14 @@ class SetCreatorPipeline(Pipeline):
     def get_channel_names(self):
         """Delegate to the SetCreator step's get_channel_names."""
         return self._find_set_creator().get_channel_names()
+
+    def get_feature_names_out(self, input_features=None):
+        """Delegate to the SetCreator step's get_feature_names_out."""
+        return self._find_set_creator().get_feature_names_out(input_features)
+
+    def set_output(self, *, transform=None):
+        """Set the output container of the SetCreator step.
+        Raw signal filters have no output to configure.
+        """
+        self._find_set_creator().set_output(transform=transform)
+        return self

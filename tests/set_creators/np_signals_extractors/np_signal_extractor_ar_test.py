@@ -14,4 +14,8 @@ class NpSignalExtractorArTest(NpSignalExtractorTest):
             NpSignalExtractorAr(check_input=True),
         ]
 
-        
+    def test_attribute_names_values(self):
+        self.assertEqual(
+            NpSignalExtractorAr(lags=3).get_attribute_names(),
+            ["ar_const", "ar_lag1", "ar_lag2", "ar_lag3"],
+        )
