@@ -56,9 +56,8 @@ class RawSignalsAugumenterTimeStretch(RawSignalsAugumenterBase):
         self.stretch_max = stretch_max
 
     def fit(self, raw_signals: RawSignals, y=None):
-        """Intentionally does nothing
-        """
-        return self
+        """Fit the augmenter (no data-dependent fitting)."""
+        return super().fit(raw_signals, y)
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
         """Apply time stretch to a single signal.

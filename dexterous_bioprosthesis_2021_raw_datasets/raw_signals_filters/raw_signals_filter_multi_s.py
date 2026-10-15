@@ -28,8 +28,6 @@ class RawSignalsFilterMultiSeq(RawSignalsFilter):
             post_signals = filter.fit_transform(pre_signals)
             pre_signals = post_signals
 
-        return post_signals
-
         return ret
 
     def transform(self, raw_signals: RawSignals) -> RawSignals:

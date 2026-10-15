@@ -7,12 +7,21 @@ from __future__ import annotations
 import abc
 
 from sklearn.exceptions import NotFittedError
+from dexterous_bioprosthesis_2021_raw_datasets.tools.sklearn_compat import sklearn_transformer_tags
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 
 
 class RawSignalsSpoilerInterface(abc.ABC):
     """Abstract interface for raw signal spoilers."""
+
+    def __sklearn_tags__(self):
+        """scikit-learn >= 1.6 tags."""
+        return sklearn_transformer_tags()
+
+    def __sklearn_is_fitted__(self) -> bool:
+        """Return True if fitted. Used by sklearn.utils.validation.check_is_fitted."""
+        return getattr(self, "_is_fitted", False)
 
     @abc.abstractmethod
     def fit(self, raw_signals: RawSignals, y=None) -> RawSignalsSpoilerInterface:

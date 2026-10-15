@@ -71,11 +71,12 @@ class WTAugBase(RawSignalsAugumenter):
         for r_trans in self._effective_transformations:
             r_trans.fit()
 
-    def fit(self, raw_signals: RawSignals):
+    def fit(self, raw_signals: RawSignals, y=None):
         """Fit the augmenter by initialising wavelets, transformations, and random state.
 
         Args:
             raw_signals: The input dataset (used for API compatibility).
+            y: Ignored. Present for API compatibility.
 
         Returns:
             The fitted augmenter instance.
@@ -174,15 +175,16 @@ class WTAugBase(RawSignalsAugumenter):
         sampled_signals += raw_signals[indices]
         return self.transform(sampled_signals)
 
-    def fit_transform(self, raw_signals: RawSignals) -> RawSignals:
+    def fit_transform(self, raw_signals: RawSignals, y=None) -> RawSignals:
         """Fit the augmenter and transform the dataset.
 
         Args:
             raw_signals: The dataset to augment.
+            y: Ignored. Present for API compatibility.
 
         Returns:
             Augmented :class:`RawSignals`.
 
         """
-        self.fit(raw_signals)
+        self.fit(raw_signals, y)
         return self.transform(raw_signals)

@@ -55,8 +55,12 @@ class RawSignalsAugumenterParallelApplier(RawSignalsAugumenter):
                 "You must fit the augumenter before calling transform. Call fit() or fit_transform() first."
             )
 
+    def __sklearn_is_fitted__(self) -> bool:
+        """Return True if fitted. Used by sklearn.utils.validation.check_is_fitted."""
+        return hasattr(self, "_augumenter_list")
+
     def fit(self, raw_signals: RawSignals, y=None):
-        """Intentionally does nothing
+        """Fit all augmenters on the list.
         """
         self._prepare_effective_augumenter_list()
 

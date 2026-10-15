@@ -11,23 +11,8 @@ from typing import Any, Optional, Tuple
 import numpy as np
 import pandas as pd
 
+from dexterous_bioprosthesis_2021_raw_datasets.tools.sklearn_compat import sklearn_transformer_tags
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
-
-
-def set_creator_sklearn_tags():
-    """Return scikit-learn tags of a set creator (transformer that requires fitting).
-
-    Used by scikit-learn >= 1.6 (e.g. Pipeline checks the tags of its steps).
-    Older versions never call it, so sklearn.utils.Tags is imported lazily.
-    """
-    from sklearn.utils import Tags, TargetTags, TransformerTags
-
-    return Tags(
-        estimator_type=None,
-        target_tags=TargetTags(required=False),
-        transformer_tags=TransformerTags(),
-        requires_fit=True,
-    )
 
 
 class SetCreator(abc.ABC):
@@ -236,7 +221,7 @@ class ASetCreator(SetCreator):
 
     def __sklearn_tags__(self):
         """scikit-learn >= 1.6 tags."""
-        return set_creator_sklearn_tags()
+        return sklearn_transformer_tags()
 
     def __sklearn_is_fitted__(self) -> bool:
         """Return True if the set creator has been fitted.
