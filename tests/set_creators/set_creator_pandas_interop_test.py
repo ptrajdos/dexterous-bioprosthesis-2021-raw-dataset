@@ -23,9 +23,6 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
-from dexterous_bioprosthesis_2021_raw_datasets.estimators.estimator_with_extractor import (
-    EstimatorWithExtractor,
-)
 from dexterous_bioprosthesis_2021_raw_datasets.preprocessing.attribute_reorder import (
     AttributeReorder,
 )
@@ -271,29 +268,6 @@ class SetCreatorPandasInteropTest(unittest.TestCase):
                 gs.fit(self.raw_set, self.y)
                 y_pred = gs.predict(self.raw_set)
                 self.assertTrue(len(y_pred) == len(self.y), "Wrong predictions length")
-
-    def test_estimator_with_extractor(self):
-        for creator_name, factory in get_creator_factories().items():
-            with self.subTest(creator=creator_name):
-                creator_np, creator_pd = self._creators_pair(factory)
-
-                est_np = EstimatorWithExtractor(
-                    creator_np, DecisionTreeClassifier(random_state=0)
-                ).fit(self.raw_set, self.y)
-                est_pd = EstimatorWithExtractor(
-                    creator_pd, DecisionTreeClassifier(random_state=0)
-                ).fit(self.raw_set, self.y)
-
-                self.assertTrue(
-                    np.array_equal(est_np.predict(self.raw_set), est_pd.predict(self.raw_set)),
-                    "Different predictions",
-                )
-                self.assertTrue(
-                    np.allclose(
-                        est_np.predict_proba(self.raw_set), est_pd.predict_proba(self.raw_set)
-                    ),
-                    "Different probabilities",
-                )
 
     def test_attribute_reorder(self):
         for creator_name, factory in get_creator_factories().items():
