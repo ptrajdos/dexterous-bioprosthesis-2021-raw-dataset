@@ -16,7 +16,8 @@ class UniformTransformer(BaseEstimator, TransformerMixin):
 
     Args:
         extend_factor: Fraction by which to extend the column value range.
-        element_fraction: Fraction of rows to generate (minimum 1).
+        element_fraction: Number of generated rows as a fraction of the number of
+            input rows. At least one row is generated.
 
     """
 
@@ -39,7 +40,8 @@ class UniformTransformer(BaseEstimator, TransformerMixin):
             y: Ignored.
 
         Returns:
-            Array of uniform random values with the same shape as *X*.
+            Array of uniform random values with shape
+            ``(max(int(n_samples * element_fraction), 1), n_features)``.
 
         """
         X = np.asanyarray(X)  # positional column access also for pandas DataFrames
@@ -50,11 +52,11 @@ class UniformTransformer(BaseEstimator, TransformerMixin):
 
         n_effective_rows = int( np.max( (X.shape[0] * self.element_fraction , 1)))
         
-        out = np.zeros((n_rows, n_cols))
+        out = np.zeros((n_effective_rows, n_cols))
 
         for col_idx in range(n_cols):
             ef_min = column_mins[col_idx] - self.extend_factor* np.abs(column_mins[col_idx])
-            ef_max = column_maxs[col_idx] - self.extend_factor* np.abs(column_maxs[col_idx])
+            ef_max = column_maxs[col_idx] + self.extend_factor* np.abs(column_maxs[col_idx])
             out[:,col_idx] = np.random.uniform(low=ef_min, high =ef_max, size=(n_effective_rows))
 
 
