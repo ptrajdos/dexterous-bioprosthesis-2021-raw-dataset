@@ -16,7 +16,7 @@ class RawSignalsFilterChannelIdx(RawSignalsFilter):
 
     def __init__(self,indices_list) -> None:
         super().__init__()
-        self.inidices_list = indices_list
+        self.indices_list = indices_list
     
     def fit(self,raw_signals:RawSignals,y=None):
         """Does nothing.
@@ -33,8 +33,8 @@ class RawSignalsFilterChannelIdx(RawSignalsFilter):
             timestamp = raw_signal.timestamp
             channel_names = raw_signal.channel_names
 
-            np_signal = np_signal[:,self.inidices_list]
-            channel_names = [ channel_names[idx] for idx in self.inidices_list]
+            np_signal = np_signal[:,self.indices_list]
+            channel_names = [ channel_names[idx] for idx in self.indices_list]
 
             new_signal = RawSignal(signal= np_signal, object_class=object_class,
                                      channel_names= channel_names, timestamp=timestamp)

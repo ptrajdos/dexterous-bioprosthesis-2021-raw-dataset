@@ -59,13 +59,13 @@ class RawSignalsFilterConditionalColumnTest(RawSignalsFilterTest):
 
     def test_tuple_argument(self):
         filt = RawSignalsFilterConditionalColumn(("^EMG", RawSignalsFilterColumnStandarizer()))
-        self.assertEqual(len(filt.column_filter_pairs), 1)
-        self.assertEqual(filt.column_filter_pairs[0][0], "^EMG")
+        self.assertEqual(len(filt.get_column_filter_pairs()), 1)
+        self.assertEqual(filt.get_column_filter_pairs()[0][0], "^EMG")
 
     def test_list_argument(self):
         filt = RawSignalsFilterConditionalColumn(["^EMG", RawSignalsFilterColumnStandarizer()])
-        self.assertEqual(len(filt.column_filter_pairs), 1)
-        self.assertEqual(filt.column_filter_pairs[0][0], "^EMG")
+        self.assertEqual(len(filt.get_column_filter_pairs()), 1)
+        self.assertEqual(filt.get_column_filter_pairs()[0][0], "^EMG")
 
     def test_multiple_pairs(self):
         signals = RawSignals()

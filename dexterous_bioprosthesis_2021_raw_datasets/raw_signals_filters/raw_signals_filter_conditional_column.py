@@ -32,12 +32,19 @@ class RawSignalsFilterConditionalColumn(RawSignalsFilter):
 
     def __init__(self, column_filter_pairs) -> None:
         super().__init__()
-        # Accept a single pair (regex, filter) or a list of pairs.
-        if (isinstance(column_filter_pairs, (tuple, list))
-                and len(column_filter_pairs) == 2
-                and isinstance(column_filter_pairs[0], str)):
-            column_filter_pairs = [column_filter_pairs]
-        self.column_filter_pairs = list(column_filter_pairs)
+        # Stored unchanged (scikit-learn get_params/clone convention).
+        self.column_filter_pairs = column_filter_pairs
+
+    def get_column_filter_pairs(self) -> list:
+        """Return column_filter_pairs as a list of (column_regex, filter) pairs.
+        A single pair (regex, filter) given to the constructor is wrapped in a list.
+        """
+        pairs = self.column_filter_pairs
+        if (isinstance(pairs, (tuple, list))
+                and len(pairs) == 2
+                and isinstance(pairs[0], str)):
+            return [pairs]
+        return list(pairs)
 
     def _split_signals(self, raw_signals: RawSignals):
         compiled = self._current_compiled
@@ -103,7 +110,7 @@ class RawSignalsFilterConditionalColumn(RawSignalsFilter):
     def fit(self, raw_signals: RawSignals, y=None):
         """Fits all inner filters on their matched columns."""
         current = raw_signals
-        for regex, inner_filter in self.column_filter_pairs:
+        for regex, inner_filter in self.get_column_filter_pairs():
             compiled = re.compile(regex)
             self._current_compiled = compiled
             matched_signals, indices_list = self._split_signals(current)
@@ -119,7 +126,7 @@ class RawSignalsFilterConditionalColumn(RawSignalsFilter):
         """Transforms columns sequentially for each regex/filter pair."""
         self._check_fitted()
         current = raw_signals
-        for regex, inner_filter in self.column_filter_pairs:
+        for regex, inner_filter in self.get_column_filter_pairs():
             compiled = re.compile(regex)
             self._current_compiled = compiled
             matched_signals, indices_list = self._split_signals(current)

@@ -6,7 +6,9 @@ coefficient transformations must implement.
 from __future__ import annotations
 import abc
 
-class IDecompTransformation(abc.ABC):
+from sklearn.base import BaseEstimator
+
+class IDecompTransformation(BaseEstimator, abc.ABC):
     """Abstract interface for wavelet decomposition coefficient transformations.
 
     Implementations must provide :meth:`fit` and :meth:`transform` methods

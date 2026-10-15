@@ -25,7 +25,7 @@ class RawSignalsSpoilerSine(RawSignalsSpoiler):
     ) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state)
         self.frequency = frequency
-        self.frequency_deviation = freq_deviation
+        self.freq_deviation = freq_deviation
 
     def transform(self, raw_signals: RawSignals):
         """Transform the given data."""
@@ -33,9 +33,9 @@ class RawSignalsSpoilerSine(RawSignalsSpoiler):
         copied_signals = deepcopy(raw_signals)
 
         used_frequency = (
-            2 * self.frequency_deviation * self._random_state.random(1)
+            2 * self.freq_deviation * self._random_state.random(1)
             + self.frequency
-            - self.frequency_deviation
+            - self.freq_deviation
         )
         phase_shift = 4 * np.pi * self._random_state.random(1) - 2 * np.pi
 

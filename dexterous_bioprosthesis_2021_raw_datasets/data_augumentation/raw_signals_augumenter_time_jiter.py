@@ -51,7 +51,7 @@ class RawSignalsAugumenterTimeJiter(RawSignalsAugumenterBase):
 
         self.jiter_std = jiter_std
         self.interpolation = interpolation
-        self.independant_channels = independent_channels
+        self.independent_channels = independent_channels
 
     def _sig_augument(self, raw_signal: RawSignal, n_repeats: int = 1):
         """Apply time jitter to a single signal.

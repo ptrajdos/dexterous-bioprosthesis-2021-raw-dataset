@@ -40,7 +40,7 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
         self.spoilers = spoilers
         self.spoilers_weights = spoilers_weights
         self.spoiled_fraction = spoiled_fraction
-        self.spoiler_relabelers = spoiler_relabalers
+        self.spoiler_relabalers = spoiler_relabalers
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
@@ -87,8 +87,8 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
 
             spoiled = self.spoilers[spoiler_index].transform(sampled_data[samples_idxs])
 
-            if self.spoiler_relabelers is not None:
-                new_labels = self.spoiler_relabelers[spoiler_index].fit_transform(
+            if self.spoiler_relabalers is not None:
+                new_labels = self.spoiler_relabalers[spoiler_index].fit_transform(
                     spoiled.get_labels()
                 )
                 spoiled.set_labels(new_labels)

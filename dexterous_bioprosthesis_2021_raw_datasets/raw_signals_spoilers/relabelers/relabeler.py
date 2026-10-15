@@ -4,7 +4,9 @@ Provides :class:`Relabeler` with fit/transform pattern.
 """
 import abc
 
-class Relabeler(abc.ABC):
+from sklearn.base import BaseEstimator
+
+class Relabeler(BaseEstimator, abc.ABC):
     """Abstract interface for signal relabelers."""
 
     @abc.abstractmethod

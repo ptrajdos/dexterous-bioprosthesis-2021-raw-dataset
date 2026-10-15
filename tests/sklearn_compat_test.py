@@ -73,8 +73,8 @@ def missing_dependency(cls):
     return None
 
 
-def find_classes():
-    """Return all concrete subclasses of BASE_CLASSES defined in the package."""
+def find_classes(base_classes=BASE_CLASSES):
+    """Return all concrete subclasses of base_classes defined in the package."""
     found = {}
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -88,7 +88,7 @@ def find_classes():
                 for name, cls in inspect.getmembers(module, inspect.isclass):
                     if (
                         cls.__module__ == module.__name__
-                        and issubclass(cls, BASE_CLASSES)
+                        and issubclass(cls, base_classes)
                         and not inspect.isabstract(cls)
                     ):
                         found[name] = cls

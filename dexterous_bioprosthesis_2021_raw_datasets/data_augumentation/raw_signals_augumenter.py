@@ -6,12 +6,14 @@ is designed to be compatible with scikit-learn pipelines.
 """
 from __future__ import annotations
 import abc
+
+from sklearn.base import BaseEstimator
 from dexterous_bioprosthesis_2021_raw_datasets.tools.sklearn_compat import sklearn_transformer_tags
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 
 
-class RawSignalsAugumenter(abc.ABC):
+class RawSignalsAugumenter(BaseEstimator, abc.ABC):
     """Abstract base class defining the interface for raw signal augmenters.
 
     All concrete augmenters must implement :meth:`fit`, :meth:`transform`,
