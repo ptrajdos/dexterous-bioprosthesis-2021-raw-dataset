@@ -351,9 +351,11 @@ class SetCreatorPandasInteropTest(unittest.TestCase):
                     Xt_pd = UniformTransformer().fit_transform(X_pd)
 
                 self.assertTrue(Xt_np.shape == X_np.shape, "Wrong shape")
+                self.assertIsInstance(Xt_pd, pd.DataFrame, "Output is not a DataFrame")
                 self.assertTrue(
-                    np.allclose(Xt_np, np.asanyarray(Xt_pd)), "Different results"
+                    list(Xt_pd.columns) == list(X_pd.columns), "Attribute names have been lost"
                 )
+                self.assertTrue(np.allclose(Xt_np, Xt_pd.to_numpy()), "Different results")
 
     def test_outlier_generator_uniform(self):
         for creator_name, factory in get_creator_factories().items():

@@ -7,6 +7,7 @@ generating synthetic baseline data.
 from copy import deepcopy
 from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
+import pandas as pd
 
 class UniformTransformer(BaseEstimator, TransformerMixin):
     """Transformer that replaces data with uniform random values.
@@ -42,8 +43,11 @@ class UniformTransformer(BaseEstimator, TransformerMixin):
         Returns:
             Array of uniform random values with shape
             ``(max(int(n_samples * element_fraction), 1), n_features)``.
+            pandas DataFrame with the columns of *X* if *X* is a DataFrame.
+            Its index is a new RangeIndex, since the rows are generated.
 
         """
+        columns = X.columns if isinstance(X, pd.DataFrame) else None
         X = np.asanyarray(X)  # positional column access also for pandas DataFrames
         column_mins = np.min(X,axis=0)
         column_maxs = np.max(X,axis=0)
@@ -59,6 +63,8 @@ class UniformTransformer(BaseEstimator, TransformerMixin):
             ef_max = column_maxs[col_idx] + self.extend_factor* np.abs(column_maxs[col_idx])
             out[:,col_idx] = np.random.uniform(low=ef_min, high =ef_max, size=(n_effective_rows))
 
+        if columns is not None:
+            return pd.DataFrame(out, columns=columns)
 
         return out
     

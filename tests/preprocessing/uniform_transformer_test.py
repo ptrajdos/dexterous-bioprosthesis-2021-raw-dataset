@@ -102,3 +102,33 @@ class UniformTransformerTest(unittest.TestCase):
                     # 10000 samples per column: the extended parts of the range are hit
                     self.assertTrue(np.all(Xt.min(axis=0) < mins), "Lower bound not extended")
                     self.assertTrue(np.all(Xt.max(axis=0) > maxs), "Upper bound not extended")
+
+    def test_pandas_output(self):
+        X, y = load_iris(return_X_y=True, as_frame=True)
+        n_rows, n_cols = X.shape
+
+        for element_fraction, expected_rows in [(1.0, n_rows), (0.5, n_rows // 2), (2.0, 2 * n_rows)]:
+            with self.subTest(element_fraction=element_fraction):
+                np.random.seed(0)
+                Xt = UniformTransformer(element_fraction=element_fraction).fit_transform(X)
+                np.random.seed(0)
+                Xt_np = UniformTransformer(element_fraction=element_fraction).fit_transform(
+                    X.to_numpy()
+                )
+
+                self.assertIsInstance(Xt, pd.DataFrame, "Wrong output type")
+                self.assertTrue(list(Xt.columns) == list(X.columns), "Wrong column names")
+                self.assertTrue(Xt.shape == (expected_rows, n_cols), "Wrong shape")
+                self.assertTrue(
+                    Xt.index.equals(pd.RangeIndex(expected_rows)), "Wrong index"
+                )
+                self.assertTrue(np.allclose(Xt.to_numpy(), Xt_np), "Different values")
+
+    def test_pandas_non_default_index(self):
+        """Input index is not reused, the rows are generated."""
+        X, y = load_iris(return_X_y=True, as_frame=True)
+        X.index = X.index + 1000
+
+        Xt = UniformTransformer().fit_transform(X)
+        self.assertIsInstance(Xt, pd.DataFrame, "Wrong output type")
+        self.assertTrue(Xt.index.equals(pd.RangeIndex(len(X))), "Wrong index")
