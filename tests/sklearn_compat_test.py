@@ -48,7 +48,7 @@ CONSTRUCTOR_KWARGS = {
     "RawSignalsFilterRowIdx": dict(indices_list=[0, 1, 2]),
     "RawSignalsFilterRowSlice": dict(row_slice=slice(0, 50)),
     "RawSignalsFilterWindowSegmentation": dict(window_length=0.5, overlap=0.5),
-    "RawSignalsFilterWindowSegmentationFS": dict(window_length=0.05, overlap=0.5),
+    "RawSignalsFilterWindowSegmentationFS": dict(window_length=50, overlap=25),  # ms
     "RawSignalsFilterWindowSingle": dict(start_sample=0, end_sample=50),
     "RawSignalsFilterWindowSingleIF": dict(offset=0.1, length=0.5),
     "RawSignalsFilterWindowSingleMs": dict(offset_ms=10, length_ms=50),
