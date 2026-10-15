@@ -39,6 +39,18 @@ class OutlierGenerator(abc.ABC):
 
 
 
+    def __sklearn_tags__(self):
+        """scikit-learn >= 1.6 tags. Required by check_is_fitted.
+        Older versions never call it, so sklearn.utils.Tags is imported lazily.
+        """
+        from sklearn.utils import Tags, TargetTags
+
+        return Tags(
+            estimator_type=None,
+            target_tags=TargetTags(required=True),
+            requires_fit=True,
+        )
+
     @abc.abstractmethod
     def generate(self):
         """Generates outliers

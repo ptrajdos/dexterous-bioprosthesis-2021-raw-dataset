@@ -41,6 +41,7 @@ class OutlierGeneratorUniform(OutlierGenerator):
 
          """
          super().fit(X,y)
+         X = np.asanyarray(X)  # positional column access also for pandas DataFrames
 
          column_mins = np.min(X,axis=0)
          column_maxs = np.max(X,axis=0)

@@ -42,6 +42,7 @@ class UniformTransformer(BaseEstimator, TransformerMixin):
             Array of uniform random values with the same shape as *X*.
 
         """
+        X = np.asanyarray(X)  # positional column access also for pandas DataFrames
         column_mins = np.min(X,axis=0)
         column_maxs = np.max(X,axis=0)
 
