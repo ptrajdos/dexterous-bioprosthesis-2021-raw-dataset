@@ -13,7 +13,11 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerSine(RawSignalsSpoiler):
-    """Spoiler that adds sinusoidal interference calibrated to a target SNR."""
+    """Spoiler that adds sinusoidal interference calibrated to a target SNR.
+
+    The frequency (frequency +- freq_deviation) and phase are drawn once per
+    ``transform`` call and shared by all signals, like mains interference.
+    """
 
     def __init__(
         self,
@@ -41,16 +45,16 @@ class RawSignalsSpoilerSine(RawSignalsSpoiler):
 
         for signal in copied_signals:
             selected_channels_idxs = self._random_channel_selection(signal)
-            n_samples, n_channels = signal.to_numpy().shape
+            np_sig = self._float_signal(signal)
+            n_samples, n_channels = np_sig.shape
 
-            x = np.linspace(0, n_samples, n_samples) * 1 / raw_signals.sample_rate
+            x = np.arange(n_samples) / signal.get_sample_rate()
             noise_sig_np_col = np.reshape(
                 np.sin(2 * np.pi * used_frequency * x + phase_shift), (n_samples, -1)
             )
             noise_sig_np = np.repeat(noise_sig_np_col, n_channels, axis=1)
             acc_noise_powers = self._channel_powers(noise_sig_np)
 
-            np_sig = signal.to_numpy()
             desired_noise_powers = self._desired_channel_noise_powers(np_sig)
 
             alphas = np.sqrt(desired_noise_powers / acc_noise_powers)

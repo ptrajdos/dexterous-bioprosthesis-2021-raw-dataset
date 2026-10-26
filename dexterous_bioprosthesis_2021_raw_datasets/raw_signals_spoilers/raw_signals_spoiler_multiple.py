@@ -5,6 +5,7 @@ Applies multiple spoilers to a signal dataset.
 from copy import deepcopy
 
 import numpy as np
+from sklearn.utils import check_random_state
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler_dummy import (
@@ -20,31 +21,38 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
 
     def __init__(
         self,
-        spoilers=[RawSignalsSpoilerDummy()],  # TODO need fixing!
+        spoilers=None,
         spoilers_weights=None,
         spoiled_fraction: float = 1.0,
         spoiler_relabalers=None,
+        random_state=10,
     ) -> None:
-        super().__init__()
         """
         Apply multiple signal spoilers.
 
         Arguments:
-        spoilers -- iterable of spoiler objects to apply
+        spoilers -- iterable of spoiler objects to apply. None -- a single RawSignalsSpoilerDummy
         spoiler_weights -- iterable of apoiler weights or none for uniform weights
         spoiled_fraction -- how many samples from original set will be used to generate spoiled signals
         spoiler_labels -- new labels to be assigned into spoiled signals. If None, no labels will be changed.
+        random_state -- seed or RandomState used to sample signals and assign spoilers
 
         """
+        super().__init__()
 
         self.spoilers = spoilers
         self.spoilers_weights = spoilers_weights
         self.spoiled_fraction = spoiled_fraction
         self.spoiler_relabalers = spoiler_relabalers
+        self.random_state = random_state
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
-        for spoiler in self.spoilers:
+        self._random_state = check_random_state(self.random_state)
+        self._spoilers = (
+            self.spoilers if self.spoilers is not None else [RawSignalsSpoilerDummy()]
+        )
+        for spoiler in self._spoilers:
             spoiler.fit(raw_signals, y)
 
         return super().fit(raw_signals, y)
@@ -58,25 +66,25 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
         if self.spoiled_fraction == 1.0:
             sampled_data = deepcopy(raw_signals)
         elif self.spoiled_fraction < 1.0:
-            indices = np.random.choice(
+            indices = self._random_state.choice(
                 [*range(len(raw_signals))],
                 size=int(np.ceil(self.spoiled_fraction * n_orig_objects)),
                 replace=False,
             )
             sampled_data = raw_signals[indices]
         else:
-            indices = np.random.choice(
+            indices = self._random_state.choice(
                 [*range(len(raw_signals))],
                 size=int(np.ceil(self.spoiled_fraction * n_orig_objects)),
                 replace=True,
             )
             sampled_data = raw_signals[indices]
 
-        n_spoilers = len(self.spoilers)
+        n_spoilers = len(self._spoilers)
         n_samples = len(sampled_data)
         spoiler_indices = [*range(n_spoilers)]
 
-        sample_spoiler_assign = np.random.choice(
+        sample_spoiler_assign = self._random_state.choice(
             spoiler_indices, size=n_samples, p=self.spoilers_weights
         )
 
@@ -85,7 +93,7 @@ class RawSignalsSpoilerMultiple(RawSignalsSpoilerInterface):
         for spoiler_index in spoiler_indices:
             samples_idxs = np.argwhere(sample_spoiler_assign == spoiler_index).flatten()
 
-            spoiled = self.spoilers[spoiler_index].transform(sampled_data[samples_idxs])
+            spoiled = self._spoilers[spoiler_index].transform(sampled_data[samples_idxs])
 
             if self.spoiler_relabalers is not None:
                 new_labels = self.spoiler_relabalers[spoiler_index].fit_transform(

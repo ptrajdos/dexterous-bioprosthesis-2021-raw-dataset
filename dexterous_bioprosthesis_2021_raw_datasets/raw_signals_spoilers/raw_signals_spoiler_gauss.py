@@ -30,14 +30,14 @@ class RawSignalsSpoilerGauss(RawSignalsSpoiler):
 
         for signal in copied_signals:
             selected_channels_idxs = self._random_channel_selection(signal)
-            n_samples, n_channels = signal.to_numpy().shape
+            np_sig = self._float_signal(signal)
+            n_samples, n_channels = np_sig.shape
 
-            noise_sig_np = np.random.normal(
+            noise_sig_np = self._random_state.normal(
                 loc=0, scale=1.0, size=(n_samples, n_channels)
             )
             acc_noise_powers = self._channel_powers(noise_sig_np)
 
-            np_sig = signal.to_numpy()
             desired_noise_powers = self._desired_channel_noise_powers(np_sig)
 
             alphas = np.sqrt(desired_noise_powers / acc_noise_powers)

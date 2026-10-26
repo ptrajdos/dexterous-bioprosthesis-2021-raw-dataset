@@ -13,7 +13,12 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
-    """Spoiler that adds harmonically related sine interference."""
+    """Spoiler that adds harmonically related sine interference.
+
+    The fundamental frequency (frequency +- freq_deviation) and phase are drawn
+    once per ``transform`` call and shared by all signals. harmonic_weights[i]
+    is the weight of harmonic i + 2.
+    """
 
     def __init__(
         self,
@@ -23,7 +28,7 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
         frequency=50,
         freq_deviation=2,
         n_harmonics=2,
-        harmonic_weights=[1, 1],
+        harmonic_weights=(1, 1),
     ) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state)
         self.frequency = frequency
@@ -54,9 +59,10 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
 
         for signal in copied_signals:
             selected_channels_idxs = self._random_channel_selection(signal)
-            n_samples, n_channels = signal.to_numpy().shape
+            np_sig = self._float_signal(signal)
+            n_samples, n_channels = np_sig.shape
 
-            x = np.linspace(0, n_samples, n_samples) * 1 / raw_signals.sample_rate
+            x = np.arange(n_samples) / signal.get_sample_rate()
             noise_sig_np_col = np.reshape(
                 np.sin(2 * np.pi * used_frequency * x + phase_shift), (n_samples, -1)
             )
@@ -69,7 +75,6 @@ class RawSignalsSpoilerSinesHarmonics(RawSignalsSpoiler):
             noise_sig_np = np.repeat(noise_sig_np_col, n_channels, axis=1)
             acc_noise_powers = self._channel_powers(noise_sig_np)
 
-            np_sig = signal.to_numpy()
             desired_noise_powers = self._desired_channel_noise_powers(np_sig)
 
             alphas = np.sqrt(desired_noise_powers / acc_noise_powers)

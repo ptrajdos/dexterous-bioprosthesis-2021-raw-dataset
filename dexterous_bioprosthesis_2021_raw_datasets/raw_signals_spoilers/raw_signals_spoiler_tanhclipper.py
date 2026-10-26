@@ -2,11 +2,9 @@
 
 Applies a tanh-based clipping function calibrated to a target SNR.
 """
-import warnings
 from copy import deepcopy
 
 import numpy as np
-from scipy.optimize import fsolve
 
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_spoiler import (
@@ -15,7 +13,13 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_spoilers.raw_signals_
 
 
 class RawSignalsSpoilerTanhClipper(RawSignalsSpoiler):
-    """Spoiler that applies tanh-based soft-clipping distortion."""
+    """Spoiler that applies tanh-based soft-clipping distortion.
+
+    A channel x with peak amplitude m becomes (m / a) * tanh(a * x / m).
+    The small-signal gain is 1 and the output saturates at m / a, so the
+    distortion does not depend on the signal's amplitude; a -> 0 leaves the
+    signal unchanged. Negative SNR is clamped to 0.
+    """
 
     def __init__(
         self,
@@ -25,40 +29,18 @@ class RawSignalsSpoilerTanhClipper(RawSignalsSpoiler):
     ) -> None:
         super().__init__(channels_spoiled_frac, snr, random_state=random_state)
 
+    @staticmethod
+    def _distort(channel, a):
+        a = np.abs(a)
+        peak = np.max(np.abs(channel))
+        if peak == 0 or a < 1e-12:
+            return channel.copy()
+        return (peak / a) * np.tanh(a * channel / peak)
+
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
-        if self.snr < 0:
-            self._effective_snr = 0
-            warnings.warn("SNR is negative. Setting SNR to 0")
-        else:
-            self._effective_snr = self.snr
-
-        return super().fit(raw_signals)
-
-    def _find_alpha(self, np_sig, ch_idx, guesses=(1, 0)) -> int:
-        def channel_snr(alpha):
-            res = (
-                self._calculate_snrs(
-                    np_sig[:, ch_idx],
-                    np.tanh(alpha * np_sig[:, ch_idx]) - np_sig[:, ch_idx],
-                )
-                - self._effective_snr
-            )
-            return res
-
-        best_alpha = 0
-        snr_diff = np.inf
-        for guess in guesses:
-
-            tmp_alpha = fsolve(func=channel_snr, x0=(guess))[0]
-            tmp_snr = channel_snr(tmp_alpha)
-
-            tmp_snr_diff = np.abs(tmp_snr - self._effective_snr)
-            if tmp_snr_diff < snr_diff:
-                snr_diff = tmp_snr_diff
-                best_alpha = tmp_alpha
-
-        return best_alpha
+        self._effective_snr = self._effective_snr_or_clamp()
+        return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
         """Transform the given data."""
@@ -66,16 +48,14 @@ class RawSignalsSpoilerTanhClipper(RawSignalsSpoiler):
         copied_signals = deepcopy(raw_signals)
 
         for signal in copied_signals:
-            np_sig = signal.to_numpy()
-            n_channels = np_sig.shape[1]
+            np_sig = self._float_signal(signal)
             selected_channels_idxs = self._random_channel_selection(signal)
 
-            alphas = np.zeros(n_channels)
-
             for ch_idx in selected_channels_idxs:
-
-                alphas[ch_idx] = self._find_alpha(np_sig, ch_idx)
-
-                np_sig[:, ch_idx] = np.tanh(alphas[ch_idx] * np_sig[:, ch_idx])
+                channel = np_sig[:, ch_idx].copy()
+                param = self._find_param_for_snr(
+                    channel, self._distort, guesses=(0.5, 1.0, 2.0, 5.0), target_snr=self._effective_snr
+                )
+                np_sig[:, ch_idx] = self._distort(channel, param)
 
         return copied_signals
