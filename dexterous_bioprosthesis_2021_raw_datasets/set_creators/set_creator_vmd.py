@@ -121,7 +121,7 @@ class SetCreatorVMD(ASetCreator):
                     ] = extracted
                     offset += n_extracted
 
-        extracted_attribs = extracted_attribs.astype(raw_signals[0].to_numpy().dtype)
+        extracted_attribs = extracted_attribs.astype(self._output_dtype(raw_signals))
         labels = np.asanyarray(labels)
         timestamps = np.asanyarray(timestamps)
         return self._wrap_output(extracted_attribs), labels, timestamps

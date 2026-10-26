@@ -187,6 +187,18 @@ class ASetCreator(SetCreator):
         self._output_transform = transform
         return self
 
+    @staticmethod
+    def _output_dtype(raw_signals):
+        """dtype of the extracted attributes.
+
+        The dtype of the signals if it is floating, float64 otherwise
+        (so that features of integer signals are not truncated).
+        """
+        if len(raw_signals) == 0:
+            return np.float64
+        dtype = raw_signals[0].to_numpy().dtype
+        return dtype if np.issubdtype(dtype, np.floating) else np.float64
+
     def _wrap_output(self, X):
         """Convert X to the configured output container."""
         if getattr(self, "_output_transform", "default") != "pandas":

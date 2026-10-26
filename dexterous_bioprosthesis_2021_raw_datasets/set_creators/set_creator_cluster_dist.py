@@ -1,7 +1,7 @@
 """Module implementing cluster-distance based feature extraction.
 
-Computes features based on distances to cluster centroids found
-via k-means clustering.
+Computes features based on distances to representative samples of clusters
+found via agglomerative clustering.
 """
 from sklearn.exceptions import NotFittedError
 from sklearn.metrics import silhouette_score, silhouette_samples
@@ -22,7 +22,7 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator_mds impo
 
 
 class SetCreatorClusterDist(ASetCreator):
-    """Set creator using cluster-distance features from k-means clustering."""
+    """Set creator using distances to cluster representatives (agglomerative clustering)."""
 
     def __init__(
         self, distance_calculator: DistanceMatrixCalculator, flatten_function=no_flatten
@@ -65,6 +65,8 @@ class SetCreatorClusterDist(ASetCreator):
         )
 
         max_clusters = self._max_clusters_to_try(raw_signals)
+        # silhouette needs 2 <= k <= n_samples - 1
+        ks = [k for k in range(2, max(max_clusters, 3)) if k < n_samples]
         n_channels = distance_matrix.shape[0]
 
         best_samples_ids = []
@@ -73,9 +75,13 @@ class SetCreatorClusterDist(ASetCreator):
 
             channel_dist_matrix = distance_matrix[channel_id, :, :]
 
-            silh = []
+            if not ks:
+                # Too few samples to cluster: every sample is a reference.
+                best_samples_ids += list(range(n_samples))
+                continue
 
-            for k in range(2, max_clusters):
+            silh = []
+            for k in ks:
                 ag = AgglomerativeClustering(
                     metric="precomputed", linkage="average", n_clusters=k
                 )
@@ -134,16 +140,15 @@ class SetCreatorClusterDist(ASetCreator):
         """Fit the transformer to the given data."""
         super().fit(raw_signals, y)
         raw_signals = RawSignals.construct_from_list(raw_signals)
-        raw_signals_n = RawSignals(raw_signals)
-        self._fit(raw_signals_n)
+        self._fit(raw_signals)
 
         return self
 
     def fit_transform(self, raw_signals: RawSignals, y=None) -> tuple:
         """Fit and then transform the given data."""
         super().fit(raw_signals, y)
-        raw_signals_n = RawSignals(raw_signals)
-        X, labels, timestamps = self._fit(raw_signals_n)
+        raw_signals = RawSignals.construct_from_list(raw_signals)
+        X, labels, timestamps = self._fit(raw_signals)
         return self._wrap_output(X), labels, timestamps
 
     def transform(self, raw_signals: RawSignals) -> tuple:
@@ -169,7 +174,7 @@ class SetCreatorClusterDist(ASetCreator):
             ),
             axis=1,
         )
-        repr = repr.astype(raw_signals[0].to_numpy().dtype)
+        repr = repr.astype(self._output_dtype(raw_signals))
         labels = np.asanyarray([rs.get_label() for rs in raw_signals])
         timestamps = np.asanyarray([rs.get_timestamp() for rs in raw_signals])
 

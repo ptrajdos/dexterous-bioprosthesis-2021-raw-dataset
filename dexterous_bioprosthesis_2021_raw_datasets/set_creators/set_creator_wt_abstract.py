@@ -121,7 +121,7 @@ class SetCreatorWTAbstract(ASetCreator):
                         if norm > 0:
                             extracted_attribs[raw_signal_id, idx] /= norm
 
-        extracted_attribs = extracted_attribs.astype(raw_signals[0].to_numpy().dtype)
+        extracted_attribs = extracted_attribs.astype(self._output_dtype(raw_signals))
         labels = np.asanyarray(labels)
         timestamps = np.asanyarray(timestamps)
         return self._wrap_output(extracted_attribs), labels, timestamps

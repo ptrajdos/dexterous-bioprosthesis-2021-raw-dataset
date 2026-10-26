@@ -17,7 +17,8 @@ class SetCreatorDWT(SetCreatorWTAbstract):
         coeffs = pywt.wavedec(signal, wavelet=wavelet, axis=0, level=self.num_levels)
         coeffs_with_fs = []
         for i, c in enumerate(coeffs):
-            j = self.num_levels - i if i > 0 else self.num_levels
+            # coeffs = [A_n, D_n, D_{n-1}, ..., D_1]; level j is sampled at fs / 2**j
+            j = self.num_levels - i + 1 if i > 0 else self.num_levels
             f_s_j = fs / (2**j)
             coeffs_with_fs.append((c, f_s_j))
         return coeffs_with_fs

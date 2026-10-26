@@ -1,6 +1,7 @@
-"""Module implementing function-based feature extraction.
+"""Module implementing window-based feature extraction.
 
-Extracts features using configurable numpy signal extractor functions.
+Splits each signal into windows and extracts features from every window
+using configurable numpy signal extractors.
 """
 
 from sklearn.exceptions import NotFittedError
@@ -12,14 +13,15 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import (
     ASetCreator,
 )
 import numpy as np
-import pywt
-
-
 class SetCreatorWindowDelta(ASetCreator):
-    """Set creator using configurable numpy signal extractor functions."""
+    """Set creator extracting features from consecutive signal windows.
+
+    All signals must have the same length, so that every signal yields the
+    same number of windows.
+    """
 
     def __init__(self, extractors=[], window_length=0.33, overlap=0.5) -> None:
-        """A SetCreator that applies a list of functions to the raw signals to create the dataset.
+        """A SetCreator that applies a list of functions to each window of the raw signals.
 
         Arguments:
         ---------
@@ -45,7 +47,8 @@ class SetCreatorWindowDelta(ASetCreator):
         raw_signals = RawSignals.construct_from_list(raw_signals)
 
         self.n_channels = raw_signals[0].to_numpy().shape[1]
-        n_objects = len(raw_signals)
+        self.signal_length = len(raw_signals[0])
+        self._check_lengths(raw_signals)
         n_extractors = len(self.extractors)
 
         self.segmenter = RawSignalsFilterWindowSegmentation(
@@ -73,13 +76,25 @@ class SetCreatorWindowDelta(ASetCreator):
 
         return self
 
+    def _check_lengths(self, raw_signals: RawSignals):
+        """Raise ValueError unless all signals have the fitted length."""
+        for raw_signal in raw_signals:
+            if len(raw_signal) != self.signal_length:
+                raise ValueError(
+                    "All signals must have the same length ({} samples, as in fit). Got a signal with {} samples. "
+                    "Standardise signal lengths first, e.g. with RawSignalsFilterLengthMedianStandarizer.".format(
+                        self.signal_length, len(raw_signal)
+                    )
+                )
+
     def transform(self, raw_signals: RawSignals):
         """Transform the given data."""
         if self.get_channel_attribs_indices() is None:
             raise NotFittedError("SetCreator has not been fitted.")
 
         raw_signals = RawSignals.construct_from_list(raw_signals)
-        
+        self._check_lengths(raw_signals)
+
         n_signals = len(raw_signals)
         extracted_attribs = np.zeros((n_signals, self._num_attribs))
         labels = []
@@ -90,23 +105,24 @@ class SetCreatorWindowDelta(ASetCreator):
             
             labels.append(raw_signal.get_label())
             timestamps.append(raw_signal.get_timestamp())
+            tmp_signals = raw_signals.initialize_empty()
+            tmp_signals.append(raw_signal)
+            segmented_signals = self.segmenter.transform(tmp_signals)
+
             offset = 0
             for extractor_id, extractor in enumerate(self.extractors):
-                tmp_signals = raw_signals.initialize_empty()
-                tmp_signals.append(raw_signal)
-                segmented_signals = self.segmenter.transform(tmp_signals)
-
                 for segmented_signal in segmented_signals:
                     signal = segmented_signal.to_numpy()
-                    
-                    extracted = extractor.fit_transform(signal)
+                    extracted = extractor.fit_transform(
+                        signal, fs=segmented_signal.get_sample_rate()
+                    )
                     n_extracted = extracted.shape[0]
                     extracted_attribs[raw_signal_id, offset : (offset + n_extracted)] = (
                         extracted
                     )
                     offset += n_extracted
 
-        extracted_attribs = extracted_attribs.astype(raw_signals[0].to_numpy().dtype)
+        extracted_attribs = extracted_attribs.astype(self._output_dtype(raw_signals))
         labels = np.asanyarray(labels)
         timestamps = np.asanyarray(timestamps)
         return self._wrap_output(extracted_attribs), labels, timestamps

@@ -19,11 +19,13 @@ class SetCreatorConcatenated(ASetCreator):
         self.creators = creators
         self.channel_selected_attribs = None # List containing number of attributes for each channel
         self._concatenated_channel_names = tuple()
+        self._is_fitted = False
 
     def fit(self, raw_signals: RawSignals, y=None):
         """Fit the transformer to the given data."""
         super().fit(raw_signals, y)
         raw_signals = RawSignals.construct_from_list(raw_signals)
+        self.channel_selected_attribs = None
         for creator in self.creators:
             creator.fit(raw_signals)
 
@@ -54,6 +56,7 @@ class SetCreatorConcatenated(ASetCreator):
                 # Compute offset as total number of features from this creator
                 offset += self._count_features(creator_channel_attribs)
 
+        self._is_fitted = True
         return self
 
     def _count_features(self, channel_attribs):
@@ -66,7 +69,7 @@ class SetCreatorConcatenated(ASetCreator):
 
     def transform(self, raw_signals: RawSignals):
         """Transform the given data."""
-        if self.get_channel_attribs_indices() is None:
+        if not self._is_fitted:
             raise NotFittedError("SetCreator has not been fitted.")
         
         raw_signals = RawSignals.construct_from_list(raw_signals)
@@ -108,7 +111,7 @@ class SetCreatorConcatenated(ASetCreator):
         """Return concatenated attribute names of all sub-creators.
         If names are not unique, names of the i-th sub-creator are prefixed with S{i}_.
         """
-        if self.get_channel_attribs_indices() is None:
+        if not self._is_fitted:
             raise NotFittedError("SetCreator has not been fitted.")
 
         creators_names = [list(creator.get_feature_names_out()) for creator in self.creators]
@@ -122,3 +125,10 @@ class SetCreatorConcatenated(ASetCreator):
             ]
 
         return np.asanyarray(names, dtype=object)
+
+    def __sklearn_is_fitted__(self) -> bool:
+        """Return True if the set creator has been fitted.
+        Sub-creators may have no channel-attribute mapping, so this does not
+        rely on get_channel_attribs_indices.
+        """
+        return self._is_fitted

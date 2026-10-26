@@ -5,9 +5,7 @@ Extracts features using configurable numpy signal extractor functions.
 from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.set_creator import ASetCreator
-import numpy as np 
-import pywt
-
+import numpy as np
 class SetCreatorFunctions(ASetCreator):
     """Set creator using configurable numpy signal extractor functions."""
 
@@ -69,12 +67,12 @@ class SetCreatorFunctions(ASetCreator):
             timestamps.append(raw_signal.get_timestamp()) 
             offset = 0
             for extractor_id, extractor in enumerate(self.extractors):
-                extracted = extractor.fit_transform(signal)
+                extracted = extractor.fit_transform(signal, fs=raw_signal.get_sample_rate())
                 n_extracted = extracted.shape[0]
                 extracted_attribs[raw_signal_id, offset:(offset+n_extracted)] = extracted
                 offset += n_extracted
                 
-        extracted_attribs = extracted_attribs.astype(raw_signals[0].to_numpy().dtype)
+        extracted_attribs = extracted_attribs.astype(self._output_dtype(raw_signals))
         labels = np.asanyarray(labels)
         timestamps = np.asanyarray(timestamps)
         return self._wrap_output(extracted_attribs), labels, timestamps

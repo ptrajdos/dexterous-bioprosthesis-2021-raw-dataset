@@ -74,8 +74,8 @@ class SetCreatorMDS(ASetCreator):
 
     def __init__(
         self,
-        dist_matrix_calc: DistanceMatrixCalculator = DistanceMatrixCalculatorDTWFast(),
-        mds_options: dict = {},
+        dist_matrix_calc: DistanceMatrixCalculator = None,
+        mds_options: dict = None,
         ga_options: dict = default_ga_options,
         tqdm_disable=True,
         n_jobs=None,
@@ -86,7 +86,8 @@ class SetCreatorMDS(ASetCreator):
     ) -> None:
         """Arguments:
         ---------
-        distance_matrix_calc: DistanceMatrixCalculator -- an object to calculate the distance matrix
+        distance_matrix_calc: DistanceMatrixCalculator -- an object to calculate the distance matrix.
+            None -- a new DistanceMatrixCalculatorDTWFast
         mds_options: dict -- options for the mds algorithm (as a dict) or an empty dict
         tqdm_disable: bool -- determines whetrher print tqdm progress bar
         n_jobs: int/None -- determines the number of jobs to be used to calculate MDS
@@ -97,11 +98,16 @@ class SetCreatorMDS(ASetCreator):
 
         """
         super().__init__()
-        self.mds_options = self._filter_mds_options(mds_options)
-        self.ga_options = self._filter_ga_options(ga_options)
+        # Copies, so the caller's dicts (and default_ga_options) are never modified.
+        self.mds_options = self._filter_mds_options(dict(mds_options or {}))
+        self.ga_options = self._filter_ga_options(dict(ga_options))
         self.tqdm_disable = tqdm_disable
         self.n_jobs = n_jobs
-        self.distance_matrix_calc = dist_matrix_calc
+        self.distance_matrix_calc = (
+            dist_matrix_calc
+            if dist_matrix_calc is not None
+            else DistanceMatrixCalculatorDTWFast()
+        )
         self.flatten_function = flatten_function
         self.n_attr = n_attr
         self.find_best = find_best
@@ -370,10 +376,13 @@ class SetCreatorMDS(ASetCreator):
 
             init_pop = self.initialize_population(start, stop)
 
+            ga_options = {
+                k: v for k, v in self.ga_options.items() if k != "sol_per_pop_mult"
+            }
             ga_instance = pygad.GA(
                 fitness_func=fitness_function,
                 initial_population=init_pop,
-                **self.ga_options
+                **ga_options
             )
 
             slice_solution = list(ga_instance.best_solution()[0])
@@ -386,7 +395,7 @@ class SetCreatorMDS(ASetCreator):
     def initialize_population(self, start, stop):
         train_solutions = self.dataset[0][:, start:stop]
 
-        new_solutions_number = train_solutions.shape[0] * self.ga_options.pop(
+        new_solutions_number = train_solutions.shape[0] * self.ga_options.get(
             "sol_per_pop_mult", 1
         )
 
@@ -432,7 +441,7 @@ class SetCreatorMDS(ASetCreator):
         )
 
         tr_dataset = np.asanyarray(new_X).astype(
-            self.raw_signals_set[0].to_numpy().dtype
+            self._output_dtype(self.raw_signals_set)
         )
 
         extracted_objs_classes = np.asanyarray([x.object_class for x in raw_signals])

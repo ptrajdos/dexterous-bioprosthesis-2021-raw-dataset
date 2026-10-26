@@ -32,6 +32,12 @@ class SetCreatorSWT(SetCreatorWTAbstract):
 
     def _decompose_signal(self, signal, fs=1000):
         wavelet = pywt.Wavelet(self.wavelet_name)
+        if len(signal) < 2**self.num_levels:
+            raise ValueError(
+                "SWT with {} levels needs at least {} samples. Got {}.".format(
+                    self.num_levels, 2**self.num_levels, len(signal)
+                )
+            )
         rem = len(signal) % 2**self.num_levels
         if rem > 0:
             tmp_dat = signal[:-rem]
