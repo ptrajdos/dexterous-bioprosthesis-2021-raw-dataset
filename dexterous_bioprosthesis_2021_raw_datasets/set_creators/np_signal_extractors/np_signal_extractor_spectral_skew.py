@@ -16,13 +16,9 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 class NpSignalExtractorSpectralSkew(NpSignalExtractorSpectral):
     """Extractor that computes the spectral skewness from the PSD."""
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
-
     def _transform(self, X):
 
-        psd, freqs = NpSignalExtractorSpectral._calculate_psd(X=X)
+        psd, freqs = NpSignalExtractorSpectral._calculate_psd(X=X, fs=self._get_fs())
 
         u3 = NpSignalExtractorSpectralMoment._spectral_moment(psd=psd,freqs=freqs, order=3, centered=True)
         u2 = NpSignalExtractorSpectralMoment._spectral_moment(psd=psd,freqs=freqs, order=2, centered=True)

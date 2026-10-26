@@ -1,6 +1,7 @@
 """Module implementing energy entropy extraction.
 
-Computes the entropy of the energy distribution across sub-windows.
+Computes, per channel, the Shannon entropy (in bits) of the distribution of
+signal energy over samples.
 """
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
@@ -10,25 +11,23 @@ import numpy as np
 
 
 class NpSignalExtractorEnergyEntropy(NPSignalExtractor):
-    """Extractor that computes the energy entropy of signal sub-windows."""
+    """Extractor that computes the energy entropy of each channel.
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
+    Each sample's share of the channel's total energy is treated as a
+    probability. Channels with zero total energy yield entropy 0.
+    """
 
     def _transform(self, X):
-
-        sig_squares  =  X ** 2
+        sig_squares = X ** 2
         e_tot = np.sum(sig_squares, axis=0, keepdims=True)
-        probs = np.zeros_like(sig_squares)
-        probs = np.divide(sig_squares, e_tot, where=e_tot>0)
-        probs = np.clip(probs, a_min=0, a_max=1, out=probs).astype(X.dtype)
-        assert np.all(np.isnan(probs)) == False, "NaNs in probabilities calculation"
-        logs = np.log2(probs + np.finfo(X.dtype).eps )
-        assert np.all(np.isnan(logs)) == False, "NaNs in log calculation"
-        entropy = -np.sum(np.where(probs > 0, probs * logs, 0), axis=0).astype(X.dtype)
-        assert np.all(np.isnan(entropy)) == False, "NaNs in entropy calculation"
-        return entropy
+        probs = np.divide(
+            sig_squares, e_tot, out=np.zeros_like(sig_squares), where=e_tot > 0
+        )
+        np.clip(probs, a_min=0, a_max=1, out=probs)
+        logs = np.log2(probs, out=np.zeros_like(probs), where=probs > 0)
+        entropy = -np.sum(probs * logs, axis=0)
+        # + 0.0 turns -0.0 into 0.0
+        return (entropy + 0.0).astype(X.dtype)
 
     def attribs_per_column(self):
         """Return the number of features extracted per channel."""

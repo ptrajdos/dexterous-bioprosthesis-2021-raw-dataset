@@ -20,17 +20,15 @@ class NpSignalExtractorTemporalSkew(NPSignalExtractor):
         self.proportional_time = proportional_time
 
     def _transform(self, X):
+        X_norm = NpSignalExtractorTemporalMoment._get_X_normalized_columns(X)
+        time_vector = NpSignalExtractorTemporalMoment._get_time_vector(
+            X, self.proportional_time, self._get_fs()
+        )
         u3 = NpSignalExtractorTemporalMoment._calculate_moment(
-            X=NpSignalExtractorTemporalMoment._get_X_normalized_columns(X),
-            order=3,
-            time_vector=NpSignalExtractorTemporalMoment._get_time_vector(X, self.proportional_time),
-            central=True,
+            X=X_norm, order=3, time_vector=time_vector, central=True
         )
         u2 = NpSignalExtractorTemporalMoment._calculate_moment(
-            X=NpSignalExtractorTemporalMoment._get_X_normalized_columns(X),
-            order= 2,
-            time_vector=NpSignalExtractorTemporalMoment._get_time_vector(X, self.proportional_time),
-            central=True,
+            X=X_norm, order=2, time_vector=time_vector, central=True
         )
         skew = np.divide(
             u3,

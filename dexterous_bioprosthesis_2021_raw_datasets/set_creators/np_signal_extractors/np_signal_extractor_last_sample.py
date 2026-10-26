@@ -12,10 +12,6 @@ import numpy as np
 class NpSignalExtractorLastSample(NPSignalExtractor):
     """Extractor that extracts the last sample of each signal channel."""
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
-
     def _transform(self, X):
 
         return np.copy(X[-1])

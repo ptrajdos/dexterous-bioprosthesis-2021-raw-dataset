@@ -12,10 +12,6 @@ import numpy as np
 class NpSignalExtractorComplexity(NPSignalExtractor):
     """Extractor that computes the Hjorth complexity parameter."""
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
-
     def _transform(self, X):
         x_col_vars = np.var(X, axis=0, ddof=1)
 
@@ -34,8 +30,14 @@ class NpSignalExtractorComplexity(NPSignalExtractor):
         )
 
         complexity = np.zeros_like(x_col_vars)
+        dx_mobility = np.sqrt(np.divide(
+            ddx_col_vars,
+            dx_col_vars,
+            out=np.zeros_like(dx_col_vars),
+            where=dx_col_vars > 0
+        ))
         np.divide(
-            np.sqrt(ddx_col_vars / dx_col_vars),
+            dx_mobility,
             mobility,
             out=complexity,
             where=(dx_col_vars > 0) & (mobility > 0)

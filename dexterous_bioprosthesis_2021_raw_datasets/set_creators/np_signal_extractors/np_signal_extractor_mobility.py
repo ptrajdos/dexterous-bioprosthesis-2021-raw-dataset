@@ -12,10 +12,6 @@ import numpy as np
 class NpSignalExtractorMobility(NPSignalExtractor):
     """Extractor that computes the Hjorth mobility parameter."""
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
-
     def _transform(self, X):
 
         x_col_vars = np.var(X, axis=0, ddof=1)

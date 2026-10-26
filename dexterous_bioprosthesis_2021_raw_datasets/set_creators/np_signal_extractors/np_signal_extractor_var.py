@@ -12,10 +12,6 @@ import numpy as np
 class NpSignalExtractorVar(NPSignalExtractor):
     """Extractor that computes the variance of each signal channel."""
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
-
     def _transform(self, X):
 
         return np.var(X, axis=0)

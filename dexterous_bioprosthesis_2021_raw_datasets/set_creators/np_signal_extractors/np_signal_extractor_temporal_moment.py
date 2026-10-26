@@ -27,18 +27,19 @@ class NpSignalExtractorTemporalMoment(NPSignalExtractor):
         self.proportional_time = proportional_time
 
     @staticmethod
-    def _get_time_vector(X, proportional_time=True):
+    def _get_time_vector(X, proportional_time=True, fs=1000):
+        """Time axis: [0, 1] if proportional_time, otherwise seconds."""
         n_samples = X.shape[0]
         if proportional_time:
             return np.linspace(0, 1, n_samples, dtype=X.dtype)
         else:
-            return np.arange(n_samples, dtype=X.dtype)
+            return (np.arange(n_samples) / fs).astype(X.dtype)
 
     @staticmethod
     def _get_X_normalized_columns(X):
         Xs = X ** 2
         col_sums = np.sum(Xs, axis=0)
-        mask = np.isclose(col_sums, 0)
+        mask = col_sums == 0
         col_sums[mask] = 1.0
         return Xs / col_sums
 
@@ -75,7 +76,7 @@ class NpSignalExtractorTemporalMoment(NPSignalExtractor):
             X=NpSignalExtractorTemporalMoment._get_X_normalized_columns(X),
             order=self.order,
             time_vector=NpSignalExtractorTemporalMoment._get_time_vector(
-                X, self.proportional_time
+                X, self.proportional_time, self._get_fs()
             ),
             central=self.central,
         )

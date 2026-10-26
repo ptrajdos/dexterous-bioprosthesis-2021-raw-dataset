@@ -20,22 +20,20 @@ class NpSignalExtractorTemporalKurtosis(NPSignalExtractor):
         self.proportional_time = proportional_time
 
     def _transform(self, X):
+        X_norm = NpSignalExtractorTemporalMoment._get_X_normalized_columns(X)
+        time_vector = NpSignalExtractorTemporalMoment._get_time_vector(
+            X, self.proportional_time, self._get_fs()
+        )
         u4 = NpSignalExtractorTemporalMoment._calculate_moment(
-            X=NpSignalExtractorTemporalMoment._get_X_normalized_columns(X),
-            order = 3,
-            time_vector=NpSignalExtractorTemporalMoment._get_time_vector(X, self.proportional_time),
-            central=True,
+            X=X_norm, order=4, time_vector=time_vector, central=True
         )
         u2 = NpSignalExtractorTemporalMoment._calculate_moment(
-            X=NpSignalExtractorTemporalMoment._get_X_normalized_columns(X),
-            order=2,
-            time_vector=NpSignalExtractorTemporalMoment._get_time_vector(X, self.proportional_time),
-            central=True,
+            X=X_norm, order=2, time_vector=time_vector, central=True
         )
         kurtosis = np.divide(
             u4,
             u2**2,
-            out=np.zeros_like(u4),  # set kurtosis=0 where u2==0
+            out=np.full_like(u4, 3.0),  # excess kurtosis=0 where u2==0
             where=u2 > 0
         ) - 3.0  # subtract 3 for excess kurtosis
 

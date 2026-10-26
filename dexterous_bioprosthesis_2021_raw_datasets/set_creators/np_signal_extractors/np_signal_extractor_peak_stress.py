@@ -1,6 +1,6 @@
-"""Module implementing Root Mean Square (RMS) extraction.
+"""Module implementing peak stress extraction.
 
-Computes the RMS value of each channel.
+Computes mean(x**4) / mean(x**2) for each channel.
 """
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
@@ -10,11 +10,7 @@ import numpy as np
 
 
 class NpSignalExtractorPeakStress(NPSignalExtractor):
-    """Extractor that computes the Root Mean Square value."""
-
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
+    """Extractor that computes the peak stress, mean(x**4) / mean(x**2)."""
 
     def _transform(self, X):
         m2 = np.mean(X ** 2, axis=0)

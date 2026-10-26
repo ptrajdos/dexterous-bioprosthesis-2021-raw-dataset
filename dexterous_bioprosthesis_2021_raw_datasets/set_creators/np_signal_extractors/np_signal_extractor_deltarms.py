@@ -7,10 +7,6 @@ from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors
 )
 
 import numpy as np
-
-
-import numpy as np
-
 class NpSignalExtractorDeltaRms(NPSignalExtractor):
     """Extractor that computes the RMS of the first-order difference."""
 
@@ -19,17 +15,13 @@ class NpSignalExtractorDeltaRms(NPSignalExtractor):
         self.window_length_ms = window_length_ms
         self.offset_ms = offset_ms
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        self.fs = fs
-        return super().fit(X)
-
     def _transform(self, X):
         n_samples, n_channels = X.shape
 
         # Convert ms -> samples
-        window_length = max(1, int(round(self.window_length_ms * self.fs / 1000)))
-        offset = max(1, int(round(self.offset_ms * self.fs / 1000)))
+        fs = self._get_fs()
+        window_length = max(1, int(round(self.window_length_ms * fs / 1000)))
+        offset = max(1, int(round(self.offset_ms * fs / 1000)))
 
         rms_values = []
         for start in range(0, n_samples - window_length + 1, offset):

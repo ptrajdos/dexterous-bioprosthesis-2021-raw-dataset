@@ -5,45 +5,33 @@ Computes the ratio of signal energy to energy entropy.
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
 )
+from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor_energy_entropy import (
+    NpSignalExtractorEnergyEntropy,
+)
 
 import numpy as np
 
 
 class NpSignalExtractorEnergyOverEntropy(NPSignalExtractor):
-    """Extractor that computes the energy-over-entropy ratio."""
+    """Extractor that computes the energy-over-entropy ratio of each channel.
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
+    Energy is the time integral of the squared signal, ``sum(x**2) / fs``,
+    where ``fs`` is the sample rate passed to ``fit``. Entropy is the energy
+    entropy computed by :class:`NpSignalExtractorEnergyEntropy`.
+
+    Channels with zero entropy (zero energy, or all energy in a single
+    sample) yield 0.
+    """
 
     def _transform(self, X):
-        dtype = X.dtype
+        fs = self._get_fs()
+        energy = np.sum(X ** 2, axis=0) / fs
+        entropy = NpSignalExtractorEnergyEntropy()._transform(X)
 
-        sig_squares = X ** 2
-        ch_energies = np.sum(sig_squares, axis=0)
-
-        eoe = np.zeros(X.shape[1], dtype=dtype)
-
-        nonzero = ch_energies > 0
-
-        if np.any(nonzero):
-            probs = np.zeros_like(sig_squares, dtype=float)
-            probs[:, nonzero] = (
-                sig_squares[:, nonzero] /
-                ch_energies[nonzero]
-            )
-
-            entropy = np.zeros(X.shape[1], dtype=float)
-            entropy[nonzero] = -np.sum(
-                probs[:, nonzero] * np.log2(probs[:, nonzero]),
-                axis=0,
-                where=probs[:, nonzero] > 0
-            )
-
-            valid = nonzero & (entropy > 0)
-            eoe[valid] = ch_energies[valid] / entropy[valid]
-
-        return eoe.astype(dtype)
+        eoe = np.divide(
+            energy, entropy, out=np.zeros_like(energy), where=entropy > 0
+        )
+        return eoe.astype(X.dtype)
 
     def attribs_per_column(self):
         """Return the number of features extracted per channel."""

@@ -24,15 +24,16 @@ class NpSignalExtractorSpectralMoment(NpSignalExtractorSpectral):
         self.order = order
         self.centered = centered
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
-
     @staticmethod
     def _spectral_centroid(psd, freqs):
         psd_sum = np.sum(psd, axis=0)
         # avoid division by zero
-        spectral_centroid = np.where(psd_sum > 0, np.sum(freqs[:, np.newaxis] * psd, axis=0) / psd_sum, 0.0)
+        spectral_centroid = np.divide(
+            np.sum(freqs[:, np.newaxis] * psd, axis=0),
+            psd_sum,
+            out=np.zeros_like(psd_sum),
+            where=psd_sum > 0,
+        )
         return spectral_centroid
 
     @staticmethod
@@ -52,7 +53,7 @@ class NpSignalExtractorSpectralMoment(NpSignalExtractorSpectral):
 
     def _transform(self, X):
 
-        psd, freqs = NpSignalExtractorSpectral._calculate_psd(X=X)
+        psd, freqs = NpSignalExtractorSpectral._calculate_psd(X=X, fs=self._get_fs())
         if self.order == 1:
             return NpSignalExtractorSpectralMoment._spectral_centroid(
                 psd=psd, freqs=freqs

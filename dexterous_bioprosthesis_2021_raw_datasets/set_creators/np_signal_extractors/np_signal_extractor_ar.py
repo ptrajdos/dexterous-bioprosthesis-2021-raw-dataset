@@ -20,7 +20,7 @@ class NpSignalExtractorAr(NPSignalExtractor):
         check_input=False,
         check_output=False,
         lags=2,
-        ar_args={},
+        ar_args=None,
     ) -> None:
         super().__init__(
             sanitize_output=sanitize_output,
@@ -30,10 +30,6 @@ class NpSignalExtractorAr(NPSignalExtractor):
         self.lags = lags
         self.ar_args = ar_args
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
-
     def _transform(self, X):
 
         n_channels = X.shape[1]
@@ -42,7 +38,7 @@ class NpSignalExtractorAr(NPSignalExtractor):
 
         for channel_id in range(n_channels):
             ch_series = pd.Series(X[:, channel_id])
-            model = AutoReg(ch_series, lags=self.lags, **self.ar_args).fit()
+            model = AutoReg(ch_series, lags=self.lags, **(self.ar_args or {})).fit()
             m_params = [val for val in model.params]
             attribs += m_params
 

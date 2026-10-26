@@ -1,6 +1,7 @@
-"""Module implementing Zero Crossing Rate (ZCR) extraction.
+"""Module implementing Normalised Waveform Length (NWL) extraction.
 
-Counts the number of zero crossings in each channel.
+Computes the waveform length of each channel divided by the number of
+sample differences.
 """
 from dexterous_bioprosthesis_2021_raw_datasets.set_creators.np_signal_extractors.np_signal_extractor import (
     NPSignalExtractor,
@@ -10,11 +11,7 @@ import numpy as np
 
 
 class NpSignalExtractorNWL(NPSignalExtractor):
-    """Extractor that computes the Zero Crossing Rate."""
-
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
+    """Extractor that computes the Normalised Waveform Length."""
 
     def _transform(self, X):
         nwl = np.sum(np.abs(np.diff(X, axis=0)), axis=0) / (len(X) - 1)

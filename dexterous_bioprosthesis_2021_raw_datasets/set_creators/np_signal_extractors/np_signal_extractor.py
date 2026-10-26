@@ -73,8 +73,19 @@ class NPSignalExtractor(abc.ABC):
         """Transform the input data.
         """
 
+    def _get_fs(self):
+        """Return the sample rate given to ``fit`` (1000 if not fitted)."""
+        return getattr(self, "_fs", 1000)
+
     def transform(self, X) -> np.ndarray:
-        """Transform the given data."""
+        """Transform the given data.
+
+        Non-floating input is converted to float64 before extraction,
+        so that e.g. squaring int16 samples cannot overflow.
+        """
+        X = np.asarray(X)
+        if not np.issubdtype(X.dtype, np.floating):
+            X = X.astype(np.float64)
         if self.check_input:
             self._check_input(X)
         X_t = self._transform(X)

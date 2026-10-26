@@ -12,10 +12,6 @@ import numpy as np
 class NpSignalExtractorMav(NPSignalExtractor):
     """Extractor that computes the Mean Absolute Value."""
 
-    def fit(self, X, fs=1000):
-        """Fit the transformer to the given data."""
-        return super().fit(X)
-
     def _transform(self, X):
 
         return np.mean(np.abs(X), axis=0)

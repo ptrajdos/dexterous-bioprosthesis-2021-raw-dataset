@@ -21,6 +21,8 @@ class NpSignalExtractorSpectral(NPSignalExtractor, ABC):
         ----------
         X (np.ndarray): Input signal of shape (n_samples, n_channels).
 
+        fs (float): Sample rate in Hz.
+
         Returns
         -------
         psd (np.ndarray): Power Spectral Density of shape (n_freqs, n_channels).
