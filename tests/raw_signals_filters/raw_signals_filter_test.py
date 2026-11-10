@@ -10,6 +10,8 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import Ra
 class RawSignalsFilterTest(unittest.TestCase):
 
     __test__ = False
+    # False for filters that change the sample rate on purpose (e.g. decimation)
+    preserves_sample_rate = True
 
     @classmethod
     def setUpClass(cls):
@@ -91,6 +93,22 @@ class RawSignalsFilterTest(unittest.TestCase):
 
                     except Exception as ex:
                         self.fail("An exception has been caught: {}".format(ex))
+
+    def test_sample_rate_preserved(self):
+        if not self.preserves_sample_rate:
+            self.skipTest("The filter changes the sample rate.")
+        sample_rate = 2000  # not the default of RawSignals
+        for filter in self.get_filters():
+            with self.subTest(filter=filter):
+                signals = RawSignals(sample_rate=sample_rate)
+                for i in range(1, 6):
+                    signals.append(RawSignal(signal=np.random.random((30 * i, 3))))
+
+                tr_signals = filter.fit(signals).transform(signals)
+
+                self.assertEqual(tr_signals.get_sample_rate(), sample_rate)
+                for sig in tr_signals:
+                    self.assertEqual(sig.get_sample_rate(), sample_rate)
 
     def test_filter_fit_then_transform_zeros(self):
         filters = self.get_filters()

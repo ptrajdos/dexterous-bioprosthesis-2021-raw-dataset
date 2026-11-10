@@ -48,7 +48,7 @@ class RawSignalsFilterConditionalColumn(RawSignalsFilter):
 
     def _split_signals(self, raw_signals: RawSignals):
         compiled = self._current_compiled
-        matched_signals = RawSignals()
+        matched_signals = RawSignals(sample_rate=raw_signals.get_sample_rate())
         indices_list = []
 
         for raw_signal in raw_signals:
@@ -69,7 +69,7 @@ class RawSignalsFilterConditionalColumn(RawSignalsFilter):
         return matched_signals, indices_list
 
     def _merge_signals(self, raw_signals: RawSignals, transformed_matched: RawSignals, indices_list):
-        result = RawSignals()
+        result = RawSignals(sample_rate=raw_signals.get_sample_rate())
 
         for raw_signal, transformed, (matching_indices, non_matching_indices) in zip(raw_signals, transformed_matched, indices_list):
             n_rows = raw_signal.signal.shape[0]

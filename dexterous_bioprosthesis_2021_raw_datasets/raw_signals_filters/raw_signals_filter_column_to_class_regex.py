@@ -31,7 +31,7 @@ class RawSignalsFilterColumnToClassRegex(RawSignalsFilter):
         """Transform the given data."""
         self._check_fitted()
         compiled = re.compile(self.pattern)
-        filtered_signals = RawSignals()
+        filtered_signals = RawSignals(sample_rate=raw_signals.get_sample_rate())
         for raw_signal in raw_signals:
             np_signal = raw_signal.signal
             timestamp = raw_signal.timestamp
@@ -47,7 +47,8 @@ class RawSignalsFilterColumnToClassRegex(RawSignalsFilter):
             new_raw_signal = RawSignal(signal=new_signal,
                                        object_class=class_columns,
                                        channel_names=new_channel_names,
-                                       timestamp=timestamp)
+                                       timestamp=timestamp,
+                                       sample_rate=raw_signal.sample_rate)
             filtered_signals.append(new_raw_signal)
 
         return filtered_signals

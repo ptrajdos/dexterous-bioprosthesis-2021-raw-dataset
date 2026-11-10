@@ -38,7 +38,7 @@ class RawSignalsFilterRowRange(RawSignalsFilter):
         """Transform the given data."""
         self._check_fitted()
         row_slice = slice(self.start, self.stop, self.step)
-        filtered_signals = RawSignals()
+        filtered_signals = RawSignals(sample_rate=raw_signals.get_sample_rate())
         for raw_signal in raw_signals:
             new_signal = raw_signal[row_slice]
             filtered_signals.append(new_signal)

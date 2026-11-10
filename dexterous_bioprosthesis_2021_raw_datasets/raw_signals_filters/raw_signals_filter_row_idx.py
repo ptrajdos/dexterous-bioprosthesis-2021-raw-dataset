@@ -33,7 +33,7 @@ class RawSignalsFilterRowIdx(RawSignalsFilter):
     def transform(self, raw_signals: RawSignals):
         """Transform the given data."""
         self._check_fitted()
-        filtered_signals = RawSignals()
+        filtered_signals = RawSignals(sample_rate=raw_signals.get_sample_rate())
         for raw_signal in raw_signals:
             new_signal = raw_signal[self.indices_list]
             filtered_signals.append(new_signal)

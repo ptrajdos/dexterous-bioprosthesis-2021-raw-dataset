@@ -28,7 +28,7 @@ class RawSignalsFilterColumnNameRegex(RawSignalsFilter):
         """Transform the given data."""
         self._check_fitted()
         compiled = re.compile(self.pattern)
-        filtered_signals = RawSignals()
+        filtered_signals = RawSignals(sample_rate=raw_signals.get_sample_rate())
         for raw_signal in raw_signals:
             np_signal = raw_signal.signal
             object_class = raw_signal.object_class
@@ -40,7 +40,8 @@ class RawSignalsFilterColumnNameRegex(RawSignalsFilter):
             channel_names = [channel_names[idx] for idx in matching_indices]
 
             new_signal = RawSignal(signal=np_signal, object_class=object_class,
-                                   channel_names=channel_names, timestamp=timestamp)
+                                   channel_names=channel_names, timestamp=timestamp,
+                                   sample_rate=raw_signal.sample_rate)
             filtered_signals.append(new_signal)
 
         return filtered_signals

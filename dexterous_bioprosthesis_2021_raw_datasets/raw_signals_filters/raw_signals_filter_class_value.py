@@ -34,7 +34,7 @@ class RawSignalsFilterClassValue(RawSignalsFilter):
         """Transform the given data."""
         self._check_fitted()
         allowed_values = set(self.allowed_values)
-        filtered_signals = RawSignals()
+        filtered_signals = RawSignals(sample_rate=raw_signals.get_sample_rate())
         for raw_signal in raw_signals:
             label = raw_signal.object_class
             if isinstance(label, np.ndarray):
