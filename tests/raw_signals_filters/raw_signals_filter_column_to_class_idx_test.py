@@ -70,6 +70,16 @@ class RawSignalsFilterColumnToClassIdxTest(unittest.TestCase):
 
         self.assertEqual(result[0].timestamp, 42)
 
+    def test_preserves_sample_rate(self):
+        signals = RawSignals(sample_rate=2000)
+        signals.append(RawSignal(signal=np.random.random((10, 3)).astype(np.float32), object_class=0))
+
+        filt = RawSignalsFilterColumnToClassIdx(indices_list=[0])
+        result = filt.fit_transform(signals)
+
+        self.assertEqual(result.get_sample_rate(), 2000)
+        self.assertEqual(result[0].get_sample_rate(), 2000)
+
     def test_not_fitted(self):
         signals = self._make_signals()
         filt = RawSignalsFilterColumnToClassIdx(indices_list=[0])

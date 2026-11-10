@@ -8,6 +8,7 @@ from tests.raw_signals_filters.raw_signals_filter_test import RawSignalsFilterTe
 class RawSignalsFilterDecimateTest(RawSignalsFilterTest):
 
     __test__ = True
+    preserves_sample_rate = False
 
     def get_filters(self):
         return [RawSignalsFilterDecimate()]

@@ -58,6 +58,17 @@ class RawSignalsFilterColumnToClassRegexTest(unittest.TestCase):
 
         self.assertEqual(result[0].timestamp, 99)
 
+    def test_preserves_sample_rate(self):
+        signals = RawSignals(sample_rate=2000)
+        sig = np.random.random((10, 3)).astype(np.float32)
+        signals.append(RawSignal(signal=sig, object_class=0, channel_names=["A", "B", "C"]))
+
+        filt = RawSignalsFilterColumnToClassRegex(pattern="^A")
+        result = filt.fit_transform(signals)
+
+        self.assertEqual(result.get_sample_rate(), 2000)
+        self.assertEqual(result[0].get_sample_rate(), 2000)
+
     def test_not_fitted(self):
         signals = RawSignals()
         sig = np.random.random((10, 3)).astype(np.float32)
