@@ -40,6 +40,8 @@ class RawSignalsFilterWindowSingle(RawSignalsFilter):
         copied_signals = deepcopy(raw_signals)
 
         for signal in copied_signals:
-            signal.signal = signal.signal[self.start_sample : self.end_sample, :]
+            row_slice = slice(self.start_sample, self.end_sample)
+            signal.timestamp = self._shifted_timestamp(signal, row_slice)
+            signal.signal = signal.signal[row_slice, :]
 
         return copied_signals

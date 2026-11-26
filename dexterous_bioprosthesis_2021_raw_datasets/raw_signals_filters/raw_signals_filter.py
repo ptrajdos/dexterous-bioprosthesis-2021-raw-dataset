@@ -7,11 +7,14 @@ transformer pattern.
 from __future__ import annotations
 import abc
 
+import numpy as np
+
 from sklearn.base import BaseEstimator
 
 from sklearn.exceptions import NotFittedError
 from dexterous_bioprosthesis_2021_raw_datasets.tools.sklearn_compat import sklearn_transformer_tags
 
+from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signal import RawSignal
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 
 
@@ -39,6 +42,28 @@ class RawSignalsFilter(BaseEstimator, abc.ABC):
         """
         self._is_fitted = True
         return self
+
+    @staticmethod
+    def _shifted_timestamp(raw_signal: RawSignal, row_key, sample_rate=None):
+        """Timestamp of the first sample selected by ``row_key``.
+
+        Arguments:
+        ---------
+        raw_signal -- the original (uncut) RawSignal
+        row_key -- int, slice, list of indices or boolean mask selecting rows
+        sample_rate -- sample rate to use; defaults to the signal's sample rate
+
+        Returns:
+        -------
+        The original timestamp (seconds) shifted by the offset of the first
+        selected row. If nothing is selected, the original timestamp is returned.
+
+        """
+        fs = raw_signal.sample_rate if sample_rate is None else sample_rate
+        selected = np.atleast_1d(np.arange(raw_signal.signal.shape[0])[row_key])
+        if selected.size == 0:
+            return raw_signal.timestamp
+        return raw_signal.timestamp + int(selected[0]) / fs
 
     def _check_fitted(self):
         if not hasattr(self, "_is_fitted") or not self._is_fitted:

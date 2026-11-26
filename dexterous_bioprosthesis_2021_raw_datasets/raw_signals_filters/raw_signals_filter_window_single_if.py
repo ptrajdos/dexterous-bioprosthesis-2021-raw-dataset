@@ -136,6 +136,8 @@ class RawSignalsFilterWindowSingleIF(RawSignalsFilter):
             effective_offset, effective_length = self._get_effective_offset_and_length(s_len)
             start_sample = effective_offset
             end_sample = effective_offset + effective_length
-            signal.signal = signal.signal[start_sample:end_sample, :]
+            row_slice = slice(start_sample, end_sample)
+            signal.timestamp = self._shifted_timestamp(signal, row_slice)
+            signal.signal = signal.signal[row_slice, :]
 
         return copied_signals

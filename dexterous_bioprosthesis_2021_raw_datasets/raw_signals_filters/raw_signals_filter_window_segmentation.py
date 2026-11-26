@@ -124,6 +124,9 @@ class RawSignalsFilterWindowSegmentation(RawSignalsFilter):
             while end_idx <= s_len:
                 copied_signal = signal[start_idx:end_idx, :]
                 copied_signal.signal = copied_signal.signal.copy()
+                copied_signal.timestamp = self._shifted_timestamp(
+                    signal, slice(start_idx, end_idx)
+                )
                 new_signals.append(copied_signal)
 
                 start_idx += effective_window_length - effective_overlap

@@ -1,6 +1,6 @@
 """Module implementing sample-rate-aware window-based signal segmentation.
 
-Splits each signal into segments of a specified duration in seconds.
+Splits each signal into segments of a specified duration in milliseconds.
 """
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals.raw_signals import RawSignals
 from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_filter import (
@@ -9,7 +9,11 @@ from dexterous_bioprosthesis_2021_raw_datasets.raw_signals_filters.raw_signals_f
 
 
 class RawSignalsFilterWindowSegmentationFS(RawSignalsFilter):
-    """Filter that segments signals into windows of a specified duration in seconds."""
+    """Filter that segments signals into windows of a specified duration in milliseconds.
+
+    Each window's timestamp is shifted by the window's start offset, so it
+    marks the start of the window (timestamps are in seconds).
+    """
 
     def __init__(self, window_length: float, overlap: float) -> None:
         """Segment the signal using sliding window.
@@ -31,7 +35,10 @@ class RawSignalsFilterWindowSegmentationFS(RawSignalsFilter):
         return super().fit(raw_signals, y)
 
     def transform(self, raw_signals: RawSignals):
-        """Apply windowed segmentation with overlap
+        """Apply windowed segmentation with overlap.
+
+        Each window's timestamp is set to the original timestamp plus the
+        window's start offset in seconds.
         """
         self._check_fitted()
         new_signals = RawSignals(sample_rate=raw_signals.sample_rate)
@@ -47,6 +54,10 @@ class RawSignalsFilterWindowSegmentationFS(RawSignalsFilter):
             while end_idx <= s_len:
                 copied_signal = signal[start_idx:end_idx, :]
                 copied_signal.signal = copied_signal.signal.copy()
+                # Timestamp is in seconds; shift it to the start of the window.
+                copied_signal.timestamp = self._shifted_timestamp(
+                    signal, slice(start_idx, end_idx), sample_rate=fs
+                )
                 new_signals.append(copied_signal)
 
                 start_idx += window_length_samples - overlap_samples

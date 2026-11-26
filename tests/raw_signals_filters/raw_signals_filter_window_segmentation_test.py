@@ -187,16 +187,18 @@ class RawSignalsFilterWindowSegmentationTest(RawSignalsFilterTest):
         for sig in f_signals:
             self.assertEqual(list(sig.channel_names), channel_names)
 
-    def test_windowing_preserves_timestamp(self):
-        """Windows should preserve the timestamp from the original signal."""
+    def test_windowing_shifts_timestamp(self):
+        """Each window's timestamp should point at the window's first sample."""
         sig_filter = RawSignalsFilterWindowSegmentation(window_length=10, overlap=5)
         timestamp = 1234567890.0
         signals = RawSignals()
         signals.append(RawSignal(signal=np.random.random((30, 3)), object_class="a", timestamp=timestamp))
+        fs = signals[0].sample_rate
+        step = 10 - 5
 
         f_signals = sig_filter.fit_transform(signals)
-        for sig in f_signals:
-            self.assertEqual(sig.timestamp, timestamp)
+        for win_idx, sig in enumerate(f_signals):
+            self.assertAlmostEqual(sig.timestamp, timestamp + win_idx * step / fs)
 
     def test_windowing_single_channel(self):
         """Windowing should work correctly with single-channel signals."""

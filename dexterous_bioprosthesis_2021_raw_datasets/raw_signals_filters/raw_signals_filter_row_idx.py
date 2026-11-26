@@ -36,6 +36,7 @@ class RawSignalsFilterRowIdx(RawSignalsFilter):
         filtered_signals = RawSignals(sample_rate=raw_signals.get_sample_rate())
         for raw_signal in raw_signals:
             new_signal = raw_signal[self.indices_list]
+            new_signal.timestamp = self._shifted_timestamp(raw_signal, self.indices_list)
             filtered_signals.append(new_signal)
 
         return filtered_signals

@@ -41,6 +41,8 @@ class RawSignalsFilterWindowSingleMs(RawSignalsFilter):
             sample_rate = signal.get_sample_rate()
             start_sample = int(self.offset_ms * sample_rate / 1000.0)
             end_sample = int((self.offset_ms + self.length_ms) * sample_rate / 1000.0)
-            signal.signal = signal.signal[start_sample:end_sample, :]
+            row_slice = slice(start_sample, end_sample)
+            signal.timestamp = self._shifted_timestamp(signal, row_slice)
+            signal.signal = signal.signal[row_slice, :]
 
         return copied_signals
